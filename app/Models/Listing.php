@@ -6,14 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Sanctum\HasApiTokens;
 
-class Property extends Model
+class Listing extends Model
 {
-    use HasFactory,HasApiTokens;
+    use HasFactory, HasApiTokens;
 
-    // Table name (optional if it follows naming conventions)
-    protected $table = 'properties';
-
-    // Fillable attributes for mass assignment
+    // Columns that can be mass-assigned
     protected $fillable = [
         'title',
         'description',
@@ -38,11 +35,14 @@ class Property extends Model
         'additional_details',
     ];
 
-    // Cast attributes to specific data types
+    // Cast 'additional_details' to an array
     protected $casts = [
-        'price' => 'decimal:2',
-        'second_price' => 'decimal:2',
-        'custom_fields' => 'array',
         'additional_details' => 'array',
     ];
+
+    // Relationships (Remove this if not required)
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

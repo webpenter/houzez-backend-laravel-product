@@ -2,18 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Property;
+use App\Models\Listing;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class PropertyController extends Controller
+class ListingController extends Controller
 {
     /**
-     * Store a new property.
+     * Store a new listing.
      */
     public function store(Request $request)
     {
-    
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -33,26 +32,26 @@ class PropertyController extends Controller
             'size_prefix' => 'nullable|string|max:50',
             'land_area' => 'nullable|integer|min:0',
             'land_area_size_postfix' => 'nullable|string|max:50',
-            'user_id' => 'required|string|max:50|unique:properties',
+            'user_id' => 'required|string|max:50|unique:listings',
             'year_built' => 'nullable|integer|min:1900|max:' . date('Y'),
             'additional_details' => 'nullable|array',
             'additional_details.*.title' => 'required_with:additional_details|string|max:255',
             'additional_details.*.value' => 'required_with:additional_details|string|max:255',
         ]);
 
-        $property = Property::create($validated);
+        $listing = Listing::create($validated);
 
         return response()->json([
             'success' => true,
-            'message' => 'Property created successfully!',
-            'data' => $property,
+            'message' => 'Listing created successfully!',
+            'data' => $listing,
         ], 201);
     }
 
     /**
-     * Update a property.
+     * Update a listing.
      */
-    public function update(Request $request, Property $property)
+    public function update(Request $request, Listing $listing)
     {
         $validated = $request->validate([
             'title' => 'sometimes|string|max:255',
@@ -80,52 +79,52 @@ class PropertyController extends Controller
             'additional_details.*.value' => 'required_with:additional_details|string|max:255',
         ]);
 
-        $property->update($validated);
+        $listing->update($validated);
 
         return response()->json([
             'success' => true,
-            'message' => 'Property updated successfully!',
-            'data' => $property,
+            'message' => 'Listing updated successfully!',
+            'data' => $listing,
         ]);
     }
 
     /**
-     * Delete a property.
+     * Delete a listing.
      */
-    public function destroy(Property $property)
+    public function destroy(Listing $listing)
     {
-        $property->delete();
+        $listing->delete();
 
         return response()->json([
             'success' => true,
-            'message' => 'Property deleted successfully!',
+            'message' => 'Listing deleted successfully!',
         ]);
     }
 
     /**
-     * Get all properties for the authenticated user.
+     * Get all listings for the authenticated user.
      */
     public function index()
     {
-        $properties = Auth::user()->properties; // Ensure the 'properties' relationship exists in the User model.
+        $listings = Auth::user()->listings; // Ensure the 'listings' relationship exists in the User model.
 
         return response()->json([
             'success' => true,
-            'data' => $properties,
+            'data' => $listings,
         ]);
     }
 
     /**
-     * Get a single property by ID.
+     * Get a single listing by ID.
      */
     public function show($id)
     {
-        $property = Property::find($id);
+        $listing = Listing::find($id);
 
-        if (!$property) {
-            return response()->json(['message' => 'Property not found'], 404);
+        if (!$listing) {
+            return response()->json(['message' => 'Listing not found'], 404);
         }
 
-        return response()->json($property, 200);
+        return response()->json($listing, 200);
     }
 }
