@@ -11,10 +11,15 @@ class PropertyController extends Controller
     /**
      * Store a new property.
      */
+    
     public function store(Request $request)
     {
     
         $validated = $request->validate([
+            'property_name' => 'required|string|max:255',
+        'address' => 'required|string',
+        'features' => 'required|string', // Handle array of features
+        'features.*' => 'string', // Each feature is a string
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'type' => 'nullable|string',
@@ -33,11 +38,12 @@ class PropertyController extends Controller
             'size_prefix' => 'nullable|string|max:50',
             'land_area' => 'nullable|integer|min:0',
             'land_area_size_postfix' => 'nullable|string|max:50',
-            'user_id' => 'required|string|max:50|unique:properties',
+            'user_id' => 'required|string|max:50',
             'year_built' => 'nullable|integer|min:1900|max:' . date('Y'),
             'additional_details' => 'nullable|array',
-            'additional_details.*.title' => 'required_with:additional_details|string|max:255',
-            'additional_details.*.value' => 'required_with:additional_details|string|max:255',
+                'additional_details.*.title' => 'required_with:additional_details|string|max:255',
+                'additional_details.*.value' => 'required_with:additional_details|string|max:255',
+
         ]);
 
         $property = Property::create($validated);
@@ -47,7 +53,7 @@ class PropertyController extends Controller
             'message' => 'Property created successfully!',
             'data' => $property,
         ], 201);
-    }
+    } 
 
     /**
      * Update a property.
@@ -58,6 +64,9 @@ class PropertyController extends Controller
             'title' => 'sometimes|string|max:255',
             'description' => 'nullable|string',
             'type' => 'nullable|string',
+            'energy_class' => 'required|string|max:50',
+            'global_energy_performance_index' => 'required|numeric',
+            'renewable_energy_performance_index' => 'required|numeric',
             'status' => 'nullable|string',
             'labels' => 'nullable|string',
             'price' => 'sometimes|numeric',
@@ -75,7 +84,7 @@ class PropertyController extends Controller
             'land_area_size_postfix' => 'nullable|string|max:50',
             'user_id' => 'sometimes|string|max:50',
             'year_built' => 'nullable|integer|min:1900|max:' . date('Y'),
-            'additional_details' => 'nullable|array',
+            'additional_details' => 'required|string',
             'additional_details.*.title' => 'required_with:additional_details|string|max:255',
             'additional_details.*.value' => 'required_with:additional_details|string|max:255',
         ]);
