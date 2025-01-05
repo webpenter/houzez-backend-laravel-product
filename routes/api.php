@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ListingController;
 use App\Http\Controllers\PropertyController;
+use App\Http\Controllers\PropertyLocationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -34,7 +35,11 @@ use App\Http\Controllers\UserProfileController;
                // Create property
             Route::put('/properties/{property}', [PropertyController::class, 'update']); // Update property
             Route::delete('/properties/{property}', [PropertyController::class, 'destroy']); // Delete property
-  
+            Route::get('/properties-location', [PropertyLocationController::class, 'index']);        // List properties
+            Route::post('/properties-location/store', [PropertyLocationController::class, 'store']);
+               // Create property
+            Route::put('/properties-location/{property}', [PropertyLocationController::class, 'update']); // Update property
+            Route::delete('/properties-location/{property}', [PropertyLocationController::class, 'destroy']); // Delete property
         });
 
         // Profile-related routes
