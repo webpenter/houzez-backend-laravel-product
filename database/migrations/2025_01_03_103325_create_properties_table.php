@@ -12,17 +12,35 @@ return new class extends Migration
     public function up()
 {
     Schema::create('properties', function (Blueprint $table) {
-        $table->id();
+            $table->id();
+            $table->string('name');
             $table->string('property_name');
             $table->string('address');
+            $table->string('country');
+            $table->string('county_state');
+            $table->text('private_note')->nullable();
+            $table->string('attachment')->nullable();
+            $table->string('virtual_tour')->nullable();
+            $table->string('package')->nullable();
+            $table->string('image')->nullable();
+            $table->string('video_url')->nullable();
+            $table->string('city');
+            $table->string('price_postfix')->nullable();
+            $table->integer('size')->nullable();
+            $table->string('neighborhood')->nullable();
+            $table->string('postal_code');
+            $table->decimal('latitude', 10, 8);
+            $table->decimal('longitude', 11, 8);
+            $table->text('map_street_view')->nullable();
             $table->string('features')->nullable();  
             $table->string('title');
             $table->string('description')->nullable();
             $table->string('type')->nullable();
-            $table->string('status')->nullable();
+            $table->string('status')->default('draft');
             $table->string('labels')->nullable();
             $table->decimal('price', 10, 2);
             $table->decimal('second_price', 10, 2)->nullable();
+            $table->string('price_label')->nullable();
             $table->string('after_price_label')->nullable();
             $table->string('price_prefix')->nullable();
             $table->text('custom_fields')->nullable();
@@ -40,6 +58,7 @@ return new class extends Migration
             $table->string('energy_class')->nullable();  // Energy Class
             $table->decimal('global_energy_performance_index', 10, 2)->nullable(); // Global Energy Performance Index
             $table->decimal('renewable_energy_performance_index', 10, 2)->nullable(); // Renewable Energy Performance Index
+            
             $table->timestamps();
     });
 }

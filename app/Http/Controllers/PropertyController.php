@@ -16,18 +16,34 @@ class PropertyController extends Controller
     {
     
         $validated = $request->validate([
+            'name' => 'required|string',
+            'package' => 'nullable|string',
             'property_name' => 'required|string|max:255',
+            'country' => 'required|string|max:100',
+            'attachment' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048', // Limit file types and size
+            'county_state' => 'required|string|max:100',
+            'city' => 'required|string|max:100',
+            'virtual_tour' => 'nullable|string',
+            'private_note' => 'nullable|string', // Private note validation
+            'neighborhood' => 'nullable|string|max:100',
+            'postal_code' => 'required|string|max:20',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+            'map_street_view' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'video_url' => 'nullable|url',
         'address' => 'required|string',
         'features' => 'required|string', // Handle array of features
         'features.*' => 'string', // Each feature is a string
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'type' => 'nullable|string',
-            'status' => 'nullable|string',
+            'status' => 'nullable|in:draft,published',
             'labels' => 'nullable|string',
             'price' => 'required|numeric',
             'second_price' => 'nullable|numeric',
             'after_price_label' => 'nullable|string',
+            'price_label' => 'nullable|string|max:255',
             'price_prefix' => 'nullable|string',
             'custom_fields' => 'nullable|string',
             'bedrooms' => 'required|integer|min:0',
@@ -47,7 +63,11 @@ class PropertyController extends Controller
         ]);
 
         $property = Property::create($validated);
+        if ($request->hasFile('image')) {
+            $property->image = $request->file('image')->store('images', 'public');
+        }
 
+        $property->video_url = $request->video_url;
         return response()->json([
             'success' => true,
             'message' => 'Property created successfully!',
@@ -61,18 +81,34 @@ class PropertyController extends Controller
     public function update(Request $request, Property $property)
     {
         $validated = $request->validate([
+            'name' => 'required|string',
+            'package' => 'nullable|string',
             'title' => 'sometimes|string|max:255',
+            'country' => 'required|string|max:100',
+            'attachment' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048', // Limit file types and size
+            'county_state' => 'required|string|max:100',
+            'city' => 'required|string|max:100',
+            'neighborhood' => 'nullable|string|max:100',
+            'postal_code' => 'required|string|max:20',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+            'map_street_view' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'video_url' => 'nullable|url',
             'description' => 'nullable|string',
             'type' => 'nullable|string',
             'energy_class' => 'required|string|max:50',
             'global_energy_performance_index' => 'required|numeric',
             'renewable_energy_performance_index' => 'required|numeric',
-            'status' => 'nullable|string',
+            'status' => 'nullable|in:draft,published',
             'labels' => 'nullable|string',
             'price' => 'sometimes|numeric',
             'second_price' => 'nullable|numeric',
             'after_price_label' => 'nullable|string',
+            'price_label' => 'nullable|string|max:255',
             'price_prefix' => 'nullable|string',
+            'virtual_tour' => 'nullable|string',
+            'private_note' => 'nullable|string', // Private note validation
             'custom_fields' => 'nullable|string',
             'bedrooms' => 'sometimes|integer|min:0',
             'bathrooms' => 'sometimes|integer|min:0',
@@ -90,7 +126,12 @@ class PropertyController extends Controller
         ]);
 
         $property->update($validated);
+        if ($request->hasFile('image')) {
+            $property->image = $request->file('image')->store('images', 'public');
+        }
 
+        $property->video_url = $request->video_url ?? $property->video_url;
+        $property->save();
         return response()->json([
             'success' => true,
             'message' => 'Property updated successfully!',
