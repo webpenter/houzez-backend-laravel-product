@@ -107,7 +107,7 @@ class PropertyController extends Controller
             'after_price_label' => 'nullable|string',
             'price_label' => 'nullable|string|max:255',
             'price_prefix' => 'nullable|string',
-            'virtual_tour' => 'nullable|string',
+            'virtual_tour' => 'required|string',
             'private_note' => 'nullable|string', // Private note validation
             'custom_fields' => 'nullable|string',
             'bedrooms' => 'sometimes|integer|min:0',
