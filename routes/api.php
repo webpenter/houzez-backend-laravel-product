@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\ListingController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\PropertyLocationController;
@@ -30,6 +31,11 @@ use App\Http\Controllers\UserProfileController;
             Route::post('/logout', 'logout');
             Route::put('/change-password', 'changePassword');
             Route::delete('/delete-account', 'deleteAccount');
+            Route::get('/messages', [MessageController::class, 'index']);        // List properties
+            Route::post('/messages/store', [MessageController::class, 'store']);
+               // Create property
+            Route::put('/messages/{message}', [MessageController::class, 'update']); // Update property
+            Route::delete('/messages/{messages}', [MessageController::class, 'destroy']);
             Route::get('/properties', [PropertyController::class, 'index']);        // List properties
             Route::post('/properties/store', [PropertyController::class, 'store']);
                // Create property
