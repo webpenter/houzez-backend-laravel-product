@@ -32,9 +32,9 @@ class PropertyController extends Controller
             'map_street_view' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'video_url' => 'nullable|url',
-        'address' => 'required|string',
-        'features' => 'required|string', // Handle array of features
-        'features.*' => 'string', // Each feature is a string
+            'address' => 'required|string',
+            'features' => 'required|string', // Handle array of features
+            'features.*' => 'string', // Each feature is a string
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'type' => 'nullable|string',
