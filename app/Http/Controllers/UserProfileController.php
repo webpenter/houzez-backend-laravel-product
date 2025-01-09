@@ -41,6 +41,7 @@ class UserProfileController extends Controller
     public function updateSocialMedia(Request $request)
     {
         $user = Auth::user();
+       
         $profile = $user->profile ?? UserProfile::create(['user_id' => $user->id]);
 
         $profile->update($request->only([
