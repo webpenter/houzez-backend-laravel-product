@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\MessageController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ListingController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\PropertyLocationController;
@@ -27,7 +28,20 @@ use App\Http\Controllers\UserProfileController;
             Route::get('/user', function (Request $request) {
                 return $request->user();
             });
-            
+            // Get all invoices
+    Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
+
+    // Get a single invoice
+    Route::get('/invoices/{id}', [InvoiceController::class, 'show'])->name('invoices.show');
+
+    // Create a new invoice
+    Route::post('/invoices/store', [InvoiceController::class, 'store'])->name('invoices.store');
+
+    // Update an existing invoice
+    Route::put('/invoices/{id}', [InvoiceController::class, 'update'])->name('invoices.update');
+
+    // Delete an invoice
+    Route::delete('/invoices/{id}', [InvoiceController::class, 'destroy'])->name('invoices.destroy');
             
             Route::post('/logout', 'logout');
             Route::put('/change-password', 'changePassword');
