@@ -57,11 +57,6 @@ use App\Http\Controllers\UserProfileController;
                // Create property
             Route::put('/properties/{property}', [PropertyController::class, 'update']); // Update property
             Route::delete('/properties/{property}', [PropertyController::class, 'destroy']); // Delete property
-            // Route::get('/properties-location', [PropertyLocationController::class, 'index']);        // List properties
-            // Route::post('/properties-location/store', [PropertyLocationController::class, 'store']);
-            //    // Create property
-            // Route::put('/properties-location/{property}', [PropertyLocationController::class, 'update']); // Update property
-            // Route::delete('/properties-location/{property}', [PropertyLocationController::class, 'destroy']); // Delete property
         });
 
         // Profile-related routes
