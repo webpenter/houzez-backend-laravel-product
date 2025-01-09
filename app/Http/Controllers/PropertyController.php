@@ -157,8 +157,9 @@ class PropertyController extends Controller
      */
     public function index()
     {
-        $properties = Auth::user()->properties; // Ensure the 'properties' relationship exists in the User model.
-
+        // $properties = Auth::user()->properties; // Ensure the 'properties' relationship exists in the User model.
+// dd($properties);
+$properties = Property::where('user_id', 6)->get();
         return response()->json([
             'success' => true,
             'data' => $properties,

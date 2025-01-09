@@ -15,6 +15,7 @@ use App\Http\Controllers\UserProfileController;
         Route::post('/register', 'register');
         Route::post('/login', 'login')->name('login');
         Route::get('/login', 'login')->name('login');
+        Route::get('/register', 'register');
         Route::post('/logout', 'logout')->name('logout');
        
      });
@@ -36,16 +37,17 @@ use App\Http\Controllers\UserProfileController;
                // Create property
             Route::put('/messages/{message}', [MessageController::class, 'update']); // Update property
             Route::delete('/messages/{messages}', [MessageController::class, 'destroy']);
+
             Route::get('/properties', [PropertyController::class, 'index']);        // List properties
             Route::post('/properties/store', [PropertyController::class, 'store']);
                // Create property
             Route::put('/properties/{property}', [PropertyController::class, 'update']); // Update property
             Route::delete('/properties/{property}', [PropertyController::class, 'destroy']); // Delete property
-            Route::get('/properties-location', [PropertyLocationController::class, 'index']);        // List properties
-            Route::post('/properties-location/store', [PropertyLocationController::class, 'store']);
-               // Create property
-            Route::put('/properties-location/{property}', [PropertyLocationController::class, 'update']); // Update property
-            Route::delete('/properties-location/{property}', [PropertyLocationController::class, 'destroy']); // Delete property
+            // Route::get('/properties-location', [PropertyLocationController::class, 'index']);        // List properties
+            // Route::post('/properties-location/store', [PropertyLocationController::class, 'store']);
+            //    // Create property
+            // Route::put('/properties-location/{property}', [PropertyLocationController::class, 'update']); // Update property
+            // Route::delete('/properties-location/{property}', [PropertyLocationController::class, 'destroy']); // Delete property
         });
 
         // Profile-related routes
