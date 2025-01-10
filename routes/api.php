@@ -15,10 +15,7 @@ use App\Http\Controllers\UserProfileController;
     Route::controller(UserController::class)->group(function () {
         Route::post('/register', 'register');
         Route::post('/login', 'login')->name('login');
-        Route::get('/login', 'login')->name('login');
-        Route::get('/register', 'register');
-        Route::post('/logout', 'logout')->name('logout');
-       
+        Route::post('/logout', 'logout')->name('logout');  
      });
 
     // Protected routes
