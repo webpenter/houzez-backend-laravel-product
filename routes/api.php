@@ -16,9 +16,7 @@ Route::prefix('v1')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         // User-related routes
         Route::controller(UserController::class)->group(function () {
-            Route::get('/user', function (Request $request) {
-                return $request->user();
-            });
+            Route::get('/user', 'getUser');
 
             Route::post('/logout', 'logout');
             Route::put('/change-password', 'changePassword');
@@ -26,9 +24,11 @@ Route::prefix('v1')->group(function () {
         });
 
         // Profile-related routes
-        Route::controller(UserProfileController::class)->group(function () {
-            Route::put('/profile/update', 'updateInformation');
-            Route::put('/social-media/update', 'updateSocialMedia');
+        Route::prefix('profile')->controller(UserProfileController::class)->group(function () {
+            Route::get('/get-information',  'getProfileInformation');
+            Route::post('/update-picture',  'updateProfilePicture');
+            Route::put('/update-information', 'updateInformation');
+            Route::put('/update-social-media', 'updateSocialMedia');
         });
     });
 });

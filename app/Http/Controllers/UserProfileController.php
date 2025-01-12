@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\Auth\UserProfileResource;
+use App\Models\User;
 use App\Models\UserProfile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -9,6 +11,19 @@ use Illuminate\Support\Facades\Storage;
 
 class UserProfileController extends Controller
 {
+    /**
+     * Get the authenticated user's profile information.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getProfileInformation()
+    {
+        $user = Auth::user();
+        $profile = $user->profile;
+
+        return new UserProfileResource($profile);
+    }
+
     /**
      * Update the authenticated user's profile information.
      *
@@ -72,4 +87,49 @@ class UserProfileController extends Controller
 
         $profile->profile_picture = $file->store('profile_pictures');
     }
+
+    public function updateProfilePicture(Request $request)
+    {
+        // Validate the request
+        $validated = $request->validate([
+            'profile_picture' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Limit to 2MB
+        ]);
+
+        // Retrieve the authenticated user
+        $user = Auth::user();
+
+        // Retrieve the associated profile
+        $profile = $user->profile;
+
+        if (!$profile) {
+            // If no profile exists, create a new one
+            $profile = $user->profile()->create([]);
+        }
+
+        // Delete the old picture if it exists
+        if (!empty($profile->profile_picture)) {
+            $oldPicturePath = public_path('profile-picture/' . basename($profile->profile_picture));
+            if (file_exists($oldPicturePath)) {
+                unlink($oldPicturePath);
+            }
+        }
+
+        // Store the new picture
+        $file = $request->file('profile_picture');
+        $fileName = time() . '_' . $file->getClientOriginalName();
+        $file->move(public_path('profile-picture'), $fileName);
+
+        // Update the profile picture path
+        $fullPath = url('profile-picture/' . $fileName);
+        $profile->profile_picture = $fullPath;
+        $profile->save();
+
+        // Return a response
+        return response()->json([
+            'message' => 'Profile picture updated successfully!',
+            'profile_picture_url' => $fullPath,
+            'profile' => new UserProfileResource($profile),
+        ], 200);
+    }
+
 }
