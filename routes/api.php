@@ -14,7 +14,7 @@ use App\Http\Controllers\UserProfileController;
      //Authentication routes
     Route::controller(UserController::class)->group(function () {
         Route::post('/register', 'register');
-        Route::post('/login', 'login')->name('login');
+        Route::post('/login', 'login')->name('login'); //named routes
         Route::post('/logout', 'logout')->name('logout');  
      });
 
