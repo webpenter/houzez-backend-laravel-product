@@ -88,6 +88,14 @@ class UserProfileController extends Controller
         $profile->profile_picture = $file->store('profile_pictures');
     }
 
+    public function getProfilePicture()
+    {
+        $user = Auth::user();
+        $profile = $user->profile;
+
+        return $profile->profile_picture;
+    }
+
     public function updateProfilePicture(Request $request)
     {
         // Validate the request
@@ -128,7 +136,6 @@ class UserProfileController extends Controller
         return response()->json([
             'message' => 'Profile picture updated successfully!',
             'profile_picture_url' => $fullPath,
-            'profile' => new UserProfileResource($profile),
         ], 200);
     }
 

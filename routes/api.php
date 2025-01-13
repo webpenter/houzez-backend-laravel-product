@@ -26,8 +26,9 @@ Route::prefix('v1')->group(function () {
         // Profile-related routes
         Route::prefix('profile')->controller(UserProfileController::class)->group(function () {
             Route::get('/get-information',  'getProfileInformation');
-            Route::post('/update-picture',  'updateProfilePicture');
             Route::put('/update-information', 'updateInformation');
+            Route::get('/get-picture',  'getProfilePicture');
+            Route::post('/update-picture',  'updateProfilePicture');
             Route::put('/update-social-media', 'updateSocialMedia');
         });
     });
