@@ -19,17 +19,18 @@ Route::prefix('v1')->group(function () {
             Route::get('/user', 'getUser');
 
             Route::post('/logout', 'logout');
-            Route::put('/change-password', 'changePassword');
+            Route::post('/change-password', 'changePassword');
             Route::delete('/delete-account', 'deleteAccount');
         });
 
         // Profile-related routes
         Route::prefix('profile')->controller(UserProfileController::class)->group(function () {
             Route::get('/get-information',  'getProfileInformation');
-            Route::put('/update-information', 'updateInformation');
+            Route::post('/update-information', 'updateInformation');
             Route::get('/get-picture',  'getProfilePicture');
             Route::post('/update-picture',  'updateProfilePicture');
-            Route::put('/update-social-media', 'updateSocialMedia');
+            Route::get('/get-social-media', 'getSocialMedia');
+            Route::post('/update-social-media', 'updateSocialMedia');
         });
     });
 });
