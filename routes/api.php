@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserProfileController;
 
+
 //  Route::prefix('v1')->group(function () {
      //Authentication routes
     Route::controller(UserController::class)->group(function () {
