@@ -27,7 +27,17 @@ class UserProfile extends Model
         'service_areas',
         'specialties',
         'about_me',
-        'profile_picture'
+        'profile_picture',
+        'facebook',
+        'twitter',
+        'linkedin',
+        'instagram',
+        'google_plus',
+        'youtube',
+        'pinterest',
+        'vimeo',
+        'skype',
+        'website',
     ];
 
     /**

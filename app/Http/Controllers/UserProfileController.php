@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\Auth\UserProfileResource;
+use App\Http\Resources\Auth\UserSocialMediaResource;
 use App\Models\User;
 use App\Models\UserProfile;
 use Illuminate\Http\Request;
@@ -12,83 +13,31 @@ use Illuminate\Support\Facades\Storage;
 class UserProfileController extends Controller
 {
     /**
-     * Get the authenticated user's profile information.
+     * Retrieve the authenticated user's profile picture URL.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return string|null The URL of the user's profile picture, or null if not set.
      */
-    public function getProfileInformation()
+    public function getProfilePicture()
     {
         $user = Auth::user();
         $profile = $user->profile;
 
-        return new UserProfileResource($profile);
-    }
-
-    /**
-     * Update the authenticated user's profile information.
-     *
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function updateInformation(Request $request)
-    {
-        $user = Auth::user();
-        $profile = $user->profile ?? UserProfile::create(['user_id' => $user->id]);
-
-        if ($request->hasFile('profile_picture')) {
-            $this->handleProfilePictureUpload($profile, $request->file('profile_picture'));
+        if ($profile->profile_picture) {
+            $profile_picture = $profile->profile_picture;
+        } else {
+            $profile_picture = null;
         }
 
-        $profile->update($request->except('profile_picture'));
-
-        return response()->json([
-            'message' => 'Profile updated successfully',
-            'profile' => $profile,
-        ]);
+        return $profile_picture;
     }
 
     /**
-     * Update social media accounts for the authenticated user.
+     * Update the authenticated user's profile picture.
      *
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function updateSocialMedia(Request $request)
-    {
-        $user = Auth::user();
-       
-        $profile = $user->profile ?? UserProfile::create(['user_id' => $user->id]);
-
-        $profile->update($request->only([
-            'facebook', 'twitter', 'linkedin', 'instagram', 'google_plus',
-            'youtube', 'pinterest', 'vimeo', 'skype', 'website',
-        ]));
-
-        return response()->json([
-            'message' => 'Social media accounts updated successfully',
-            'social_media' => $profile->only([
-                'facebook', 'twitter', 'linkedin', 'instagram', 'google_plus',
-                'youtube', 'pinterest', 'vimeo', 'skype', 'website',
-            ]),
-        ]);
-    }
-
-    /**
-     * Handle the profile picture upload and storage.
+     * @param \Illuminate\Http\Request $request The HTTP request containing the profile picture file.
      *
-     * @param UserProfile $profile
-     * @param \Illuminate\Http\UploadedFile $file
-     * @return void
+     * @return \Illuminate\Http\JsonResponse A JSON response with a success message and the URL of the updated profile picture.
      */
-    protected function handleProfilePictureUpload(UserProfile $profile, $file): void
-    {
-        if ($profile->profile_picture && Storage::exists($profile->profile_picture)) {
-            Storage::delete($profile->profile_picture);
-        }
-
-        $profile->profile_picture = $file->store('profile_pictures');
-    }
-
     public function updateProfilePicture(Request $request)
     {
         // Validate the request
@@ -129,8 +78,106 @@ class UserProfileController extends Controller
         return response()->json([
             'message' => 'Profile picture updated successfully!',
             'profile_picture_url' => $fullPath,
-            'profile' => new UserProfileResource($profile),
         ], 200);
+    }
+
+    /**
+     * Get the authenticated user's profile information.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getProfileInformation()
+    {
+        $user = Auth::user();
+
+        $profile = $user->profile;
+
+        if (!$profile) {
+            $profile = $user->profile()->create(['user_id' => $user->id]);
+        }
+
+        return response()->json([
+            'message' => 'Profile information fetched successfully!',
+            'profile' => new UserProfileResource($profile),
+        ]);
+    }
+
+    /**
+     * Update the authenticated user's profile information.
+     *
+     * @param \Illuminate\Http\Request $request The HTTP request containing the profile data to be updated.
+     *
+     * @return \Illuminate\Http\JsonResponse A JSON response with a success message and the updated profile resource.
+     */
+    public function updateInformation(Request $request)
+    {
+        $user = Auth::user();
+
+        // Retrieve the associated profile
+        $profile = $user->profile;
+
+        if (!$profile) {
+            // If no profile exists, create a new one
+            $profile = $user->profile()->create([['user_id' => $user->id]]);
+        }
+
+        if ($request->has('username')){
+            $user->update(['username' => $request->username]);
+        }
+
+        $profile->update($request->all());
+
+        return response()->json([
+            'message' => 'Profile updated successfully',
+            'profile' => new UserProfileResource($profile),
+        ]);
+    }
+
+    /**
+     * Get the authenticated user's social media information.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getSocialMedia()
+    {
+        $user = Auth::user();
+
+        $profile = $user->profile;
+
+        if (!$profile) {
+            $profile = $user->profile()->create(['user_id' => $user->id]);
+        }
+
+        return response()->json([
+            'message' => 'User\'s social media information fetched successfully!',
+            'profile' => new UserSocialMediaResource($profile),
+        ]);
+    }
+
+    /**
+     * Update social media accounts for the authenticated user.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateSocialMedia(Request $request)
+    {
+        $user = Auth::user();
+
+        // Retrieve the associated profile
+        $profile = $user->profile;
+
+        if (!$profile) {
+            // If no profile exists, create a new one
+            $profile = $user->profile()->create([['user_id' => $user->id]]);
+        }
+
+        $profile->update($request->all());
+
+        return response()->json([
+            'message' => 'Social media accounts updated successfully',
+            'profile' => new UserSocialMediaResource($profile),
+        ]);
     }
 
 }

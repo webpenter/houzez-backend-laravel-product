@@ -14,6 +14,13 @@ use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
+    /**
+     * Register a new user and return their details along with an authentication token.
+     *
+     * @param \App\Http\Requests\RegisterRequest $request The HTTP request containing user registration data.
+     *
+     * @return \Illuminate\Http\JsonResponse A JSON response with a success message, the registered user data, and a Sanctum authentication token.
+     */
     public function register(RegisterRequest $request)
     {
         // Create the user
@@ -33,6 +40,14 @@ class UserController extends Controller
         ], 201);
     }
 
+    /**
+     * Authenticate a user and return their details along with an authentication token.
+     *
+     * @param \App\Http\Requests\LoginRequest $request The HTTP request containing login credentials (email and password).
+     *
+     * @return \Illuminate\Http\JsonResponse A JSON response with a success message, the authenticated user data, and a Sanctum authentication token,
+     *                                        or an error message if the credentials are invalid.
+     */
     public function login(LoginRequest $request)
     {
         $user = User::where('email', $request->email)->first();
@@ -50,6 +65,13 @@ class UserController extends Controller
         ],200);
     }
 
+    /**
+     * Log out the authenticated user by revoking all their active tokens.
+     *
+     * @param \Illuminate\Http\Request $request The HTTP request object.
+     *
+     * @return \Illuminate\Http\JsonResponse A JSON response confirming the logout action.
+     */
     public function logout(Request $request)
     {
         Auth::user()->tokens->each(function ($token) {
@@ -62,12 +84,27 @@ class UserController extends Controller
         ]);
     }
 
+    /**
+     * Retrieve the authenticated user's details.
+     *
+     * @param \Illuminate\Http\Request $request The HTTP request object.
+     *
+     * @return \App\Http\Resources\UserResource A resource representing the authenticated user's details.
+     */
     public function getUser(Request $request)
     {
         $user = Auth::user();
 
         return new UserResource($user);
     }
+
+    /**
+     * Change the authenticated user's password.
+     *
+     * @param \App\Http\Requests\ChangePasswordRequest $request The HTTP request containing the current and new password.
+     *
+     * @return \Illuminate\Http\JsonResponse A JSON response with a success message if the password is updated, or an error message if the current password is incorrect.
+     */
     public function changePassword(ChangePasswordRequest $request)
     {
         $user = Auth::user();
@@ -81,6 +118,13 @@ class UserController extends Controller
         return response()->json(['message' => 'Password updated successfully']);
     }
 
+    /**
+     * Delete the authenticated user's account and revoke all associated tokens.
+     *
+     * @param \Illuminate\Http\Request $request The HTTP request object.
+     *
+     * @return \Illuminate\Http\JsonResponse A JSON response confirming the account deletion.
+     */
     public function deleteAccount(Request $request)
     {
         $user = Auth::user();

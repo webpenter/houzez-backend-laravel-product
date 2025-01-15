@@ -28,7 +28,7 @@ use App\Http\Controllers\UserProfileController;
             Route::get('/user', 'getUser');
 
             Route::post('/logout', 'logout');
-            Route::put('/change-password', 'changePassword');
+            Route::post('/change-password', 'changePassword');
             Route::delete('/delete-account', 'deleteAccount');
             Route::get('/messages', [MessageController::class, 'index']);        // List properties
             Route::post('/messages/store', [MessageController::class, 'store']);
@@ -46,9 +46,11 @@ use App\Http\Controllers\UserProfileController;
         // Profile-related routes
         Route::prefix('profile')->controller(UserProfileController::class)->group(function () {
             Route::get('/get-information',  'getProfileInformation');
+            Route::post('/update-information', 'updateInformation');
+            Route::get('/get-picture',  'getProfilePicture');
             Route::post('/update-picture',  'updateProfilePicture');
-            Route::put('/update-information', 'updateInformation');
-            Route::put('/update-social-media', 'updateSocialMedia');
+            Route::get('/get-social-media', 'getSocialMedia');
+            Route::post('/update-social-media', 'updateSocialMedia');
         });
     });
    
