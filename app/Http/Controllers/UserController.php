@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Auth\ChangePasswordRequest;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Resources\Auth\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -10,14 +14,8 @@ use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
-        $this->validateRequest($request, [
-            'username' => 'required|unique:users',
-            'email' => 'required|unique:users|email',
-            'password' => 'required|string|min:8',
-        ]);
-
         // Create the user
         $user = User::create([
             'username' => $request->username,
@@ -26,35 +24,30 @@ class UserController extends Controller
         ]);
 
         // Generate Sanctum token
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $token = $user->generateToken();
 
         return response()->json([
             'message' => 'User registered successfully',
-            'user' => $user,
+            'user' => new UserResource($user),
             'token' => $token,
         ], 201);
     }
 
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $this->validateRequest($request, [
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-        ]);
-
         $user = User::where('email', $request->email)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json(['message' => 'Invalid email or password'], 401);
         }
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $token = $user->generateToken();
 
         return response()->json([
             'message' => 'Login successful',
-            'user' => $user,
+            'user' => new UserResource($user),
             'token' => $token,
-        ]);
+        ],200);
     }
 
     public function logout(Request $request)
@@ -63,16 +56,20 @@ class UserController extends Controller
             $token->delete();
         });
 
-        return response()->json(['message' => 'Logged out successfully']);
+        return response()->json([
+            'message' => 'Logged out successfully',
+            'status' => 200
+        ]);
     }
 
-    public function changePassword(Request $request)
+    public function getUser(Request $request)
     {
-        $this->validateRequest($request, [
-            'current_password' => 'required|string',
-            'new_password' => 'required|string|min:8|confirmed',
-        ]);
+        $user = Auth::user();
 
+        return new UserResource($user);
+    }
+    public function changePassword(ChangePasswordRequest $request)
+    {
         $user = Auth::user();
 
         if (!Hash::check($request->current_password, $user->password)) {
@@ -91,14 +88,5 @@ class UserController extends Controller
         $user->tokens()->delete();
 
         return response()->json(['message' => 'Account deleted successfully']);
-    }
-
-    private function validateRequest(Request $request, array $rules)
-    {
-        $validator = Validator::make($request->all(), $rules);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
     }
 }
