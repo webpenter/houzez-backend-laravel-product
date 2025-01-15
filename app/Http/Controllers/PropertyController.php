@@ -21,7 +21,7 @@ class PropertyController extends Controller
             'property_name' => 'required|string|max:255',
             'country' => 'required|string|max:100',
             'attachment' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048', // Limit file types and size
-            'county_state' => 'required|string|max:100',
+            'country_state' => 'required|string|max:100',
             'city' => 'required|string|max:100',
             'virtual_tour' => 'nullable|string',
             'private_note' => 'nullable|string', // Private note validation

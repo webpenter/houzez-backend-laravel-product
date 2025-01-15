@@ -13,9 +13,9 @@ use App\Http\Controllers\UserProfileController;
 //  Route::prefix('v1')->group(function () {
      //Authentication routes
     Route::controller(UserController::class)->group(function () {
-        Route::post('/register', 'register');
-        Route::post('/login', 'login')->name('login'); //named routes
-        Route::post('/logout', 'logout')->name('logout');  
+        Route::post('v1/register', 'register');
+        Route::post('v1/login', 'login')->name('login'); //named routes
+        Route::post('v1/logout', 'logout')->name('logout');  
      });
 
     // Protected routes
@@ -49,4 +49,3 @@ use App\Http\Controllers\UserProfileController;
             Route::put('/update-social-media', 'updateSocialMedia');
         });
     });
-});
