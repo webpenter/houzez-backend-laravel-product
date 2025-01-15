@@ -48,8 +48,19 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    public function properties()
+
+    /**
+     * Generate a new Sanctum token.
+     *
+     * @return string
+     */
+    public function generateToken()
     {
-        return $this->hasMany(Property::class, 'user_id', 'id');
+        return $this->createToken('auth_token')->plainTextToken;
+    }
+
+    public function profile()
+    {
+        return $this->hasOne(UserProfile::class);
     }
 }

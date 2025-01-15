@@ -22,24 +22,8 @@ use App\Http\Controllers\UserProfileController;
     Route::middleware('auth:sanctum')->group(function () {
         // User-related routes
         Route::controller(UserController::class)->group(function () {
-            Route::get('/user', function (Request $request) {
-                return $request->user();
-            });
-            // Get all invoices
-    Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
+            Route::get('/user', 'getUser');
 
-    // Get a single invoice
-    Route::get('/invoices/{id}', [InvoiceController::class, 'show'])->name('invoices.show');
-
-    // Create a new invoice
-    Route::post('/invoices/store', [InvoiceController::class, 'store'])->name('invoices.store');
-
-    // Update an existing invoice
-    Route::put('/invoices/{id}', [InvoiceController::class, 'update'])->name('invoices.update');
-
-    // Delete an invoice
-    Route::delete('/invoices/{id}', [InvoiceController::class, 'destroy'])->name('invoices.destroy');
-            
             Route::post('/logout', 'logout');
             Route::put('/change-password', 'changePassword');
             Route::delete('/delete-account', 'deleteAccount');
@@ -57,10 +41,12 @@ use App\Http\Controllers\UserProfileController;
         });
 
         // Profile-related routes
-        Route::controller(UserProfileController::class)->group(function () {
-            Route::put('/profile/update', 'updateInformation');
-            Route::put('/social-media/update', 'updateSocialMedia');
+        Route::prefix('profile')->controller(UserProfileController::class)->group(function () {
+            Route::get('/get-information',  'getProfileInformation');
+            Route::put('/update-information', 'updateInformation');
+            Route::get('/get-picture',  'getProfilePicture');
+            Route::post('/update-picture',  'updateProfilePicture');
+            Route::put('/update-social-media', 'updateSocialMedia');
         });
     });
-   
-// });
+});
