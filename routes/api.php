@@ -1,25 +1,16 @@
 <?php
 
-use App\Http\Controllers\Api\MessageController;
-use App\Http\Controllers\InvoiceController;
-use App\Http\Controllers\ListingController;
-use App\Http\Controllers\PropertyController;
-use App\Http\Controllers\PropertyLocationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserProfileController;
 
-//  Route::prefix('v1')->group(function () {
-     //Authentication routes
+Route::prefix('v1')->group(function () {
+    // Authentication routes
     Route::controller(UserController::class)->group(function () {
-        Route::post('v1/register', 'register');
-        Route::post('v1/login', 'login')->name('login');
-        // Route::get('/login', 'login')->name('login');
-        // Route::get('/register', 'register');
-        Route::post('v1/logout', 'logout')->name('logout');
-       
-     });
+        Route::post('/register', 'register');
+        Route::post('/login', 'login');
+    });
 
     // Protected routes
     Route::middleware('auth:sanctum')->group(function () {
@@ -30,17 +21,6 @@ use App\Http\Controllers\UserProfileController;
             Route::post('/logout', 'logout');
             Route::post('/change-password', 'changePassword');
             Route::delete('/delete-account', 'deleteAccount');
-            Route::get('/messages', [MessageController::class, 'index']);        // List properties
-            Route::post('/messages/store', [MessageController::class, 'store']);
-               // Create property
-            Route::put('/messages/{message}', [MessageController::class, 'update']); // Update property
-            Route::delete('/messages/{messages}', [MessageController::class, 'destroy']);
-
-            Route::get('/properties', [PropertyController::class, 'index']);        // List properties
-            Route::post('/properties/store', [PropertyController::class, 'store']);
-               // Create property
-            Route::put('/properties/{property}', [PropertyController::class, 'update']); // Update property
-            Route::delete('/properties/{property}', [PropertyController::class, 'destroy']); // Delete property
         });
 
         // Profile-related routes
@@ -53,5 +33,4 @@ use App\Http\Controllers\UserProfileController;
             Route::post('/update-social-media', 'updateSocialMedia');
         });
     });
-   
-// });
+});
