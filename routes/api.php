@@ -1,23 +1,19 @@
 <?php
 
 use App\Http\Controllers\Api\MessageController;
-use App\Http\Controllers\InvoiceController;
-use App\Http\Controllers\ListingController;
 use App\Http\Controllers\PropertyController;
-use App\Http\Controllers\PropertyLocationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserProfileController;
 
 
-//  Route::prefix('v1')->group(function () {
-     //Authentication routes
+Route::prefix('v1')->group(function () {
+    // Authentication routes
     Route::controller(UserController::class)->group(function () {
-        Route::post('v1/register', 'register');
-        Route::post('v1/login', 'login')->name('login'); //named routes
-        Route::post('v1/logout', 'logout')->name('logout');  
-     });
+        Route::post('/register', 'register');
+        Route::post('/login', 'login');
+    });
 
     // Protected routes
     Route::middleware('auth:sanctum')->group(function () {
@@ -49,4 +45,5 @@ use App\Http\Controllers\UserProfileController;
             Route::post('/update-picture',  'updateProfilePicture');
             Route::put('/update-social-media', 'updateSocialMedia');
         });
+    });
     });
