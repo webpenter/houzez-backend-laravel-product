@@ -2,7 +2,10 @@
 
 
 
-use Illuminate\Http\Request;
+// use Illuminate\Http\Request;
+
+use App\Http\Controllers\Api\MessageController;
+use App\Http\Controllers\PropertyController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserProfileController;
@@ -23,6 +26,17 @@ Route::prefix('v1')->group(function () {
             Route::post('/logout', 'logout');
             Route::post('/change-password', 'changePassword');
             Route::delete('/delete-account', 'deleteAccount');
+            Route::get('/messages', [MessageController::class, 'index']);        
+             Route::post('/messages/store', [MessageController::class, 'store']);
+               
+             Route::put('/messages/{message}', [MessageController::class, 'update']);
+             Route::delete('/messages/{messages}', [MessageController::class, 'destroy']);
+
+            Route::get('/properties', [PropertyController::class, 'index']);        // List properties
+            Route::post('/properties', [PropertyController::class, 'store']);
+               // Create property
+             Route::put('/properties/{property}', [PropertyController::class, 'update']); // Update property
+             Route::delete('/properties/{property}', [PropertyController::class, 'destroy']); // Delete property
         });
 
         // Profile-related routes
