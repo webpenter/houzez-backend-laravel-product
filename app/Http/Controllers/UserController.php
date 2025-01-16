@@ -128,8 +128,14 @@ class UserController extends Controller
     public function deleteAccount(Request $request)
     {
         $user = Auth::user();
-        $user->delete();
+
+        $profile = $user->profile;
+        if ($profile) {
+            $profile->delete();
+        }
+
         $user->tokens()->delete();
+        $user->delete();
 
         return response()->json(['message' => 'Account deleted successfully']);
     }
