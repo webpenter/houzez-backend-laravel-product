@@ -113,18 +113,31 @@ class UserProfileController extends Controller
     {
         $user = Auth::user();
 
+        // Check if the username exists in the database (excluding the current user)
+        if ($request->has('username')) {
+            $existingUser = User::where('username', $request->username)
+                ->where('id', '!=', $user->id)
+                ->first();
+
+            if ($existingUser) {
+                return response()->json([
+                    'message' => 'The username is already taken. Please choose a different one.',
+                ], 409); // 409 Conflict status code
+            }
+
+            // Update the user's username
+            $user->update(['username' => $request->username]);
+        }
+
         // Retrieve the associated profile
         $profile = $user->profile;
 
         if (!$profile) {
             // If no profile exists, create a new one
-            $profile = $user->profile()->create([['user_id' => $user->id]]);
+            $profile = $user->profile()->create(['user_id' => $user->id]);
         }
 
-        if ($request->has('username')){
-            $user->update(['username' => $request->username]);
-        }
-
+        // Update the profile with the request data
         $profile->update($request->all());
 
         return response()->json([
@@ -132,6 +145,7 @@ class UserProfileController extends Controller
             'profile' => new UserProfileResource($profile),
         ]);
     }
+
 
     /**
      * Get the authenticated user's social media information.
