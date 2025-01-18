@@ -26,11 +26,7 @@ Route::prefix('v1')->group(function () {
             Route::post('/logout', 'logout');
             Route::post('/change-password', 'changePassword');
             Route::delete('/delete-account', 'deleteAccount');
-            Route::get('/messages', [MessageController::class, 'index']);        
-             Route::post('/messages/store', [MessageController::class, 'store']);
-               
-             Route::put('/messages/{message}', [MessageController::class, 'update']);
-             Route::delete('/messages/{messages}', [MessageController::class, 'destroy']);
+          
 
             Route::get('/properties', [PropertyController::class, 'index']);        // List properties
             Route::post('/properties', [PropertyController::class, 'store']);
