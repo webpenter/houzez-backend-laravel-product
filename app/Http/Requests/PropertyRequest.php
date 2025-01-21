@@ -38,7 +38,7 @@ class PropertyRequest extends FormRequest
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
             'map_street_view' => 'nullable|string',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Multiple image validation
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'video_url' => 'nullable|url',
             'address' => 'required|string',
             'features' => 'required|string',
