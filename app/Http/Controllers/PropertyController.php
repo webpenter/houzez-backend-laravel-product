@@ -12,12 +12,10 @@ class PropertyController extends Controller
     /**
      * Store a new property.
      */
-    
      public function store(PropertyRequest $request)
      {
          // Validation is automatically applied
          $validated = $request->validated();
- 
          // Save the property record
          $property = Property::create($validated);
  
