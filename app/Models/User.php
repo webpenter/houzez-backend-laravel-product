@@ -48,4 +48,19 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Generate a new Sanctum token.
+     *
+     * @return string
+     */
+    public function generateToken()
+    {
+        return $this->createToken('auth_token')->plainTextToken;
+    }
+
+    public function profile()
+    {
+        return $this->hasOne(UserProfile::class);
+    }
 }
