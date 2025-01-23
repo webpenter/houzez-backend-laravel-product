@@ -24,7 +24,7 @@ class Property extends Model
     protected $fillable = [
         // Step-1
         'title', 'description', 'type', 'status', 'label', 'price', 'second_price',
-        'after_price', 'price_prefix',
+        'after_price', 'price_prefix','user_id',
 
         // Step-2
         'bedrooms', 'bathrooms', 'garages', 'garages_size', 'area_size',
@@ -67,4 +67,14 @@ class Property extends Model
         'property_feature' => 'array',
         'contact_information' => 'array',
     ];
+
+    /**
+     * Define the relationship with the User model.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

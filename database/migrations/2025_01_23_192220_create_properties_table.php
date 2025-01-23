@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('properties', function (Blueprint $table) {
             $table->id();
-
             // Step-1 (title,description,price)
             $table->string('title');
             $table->string('description')->nullable();
@@ -30,7 +29,7 @@ return new class extends Migration
             $table->integer('bathrooms')->nullable();
             $table->integer('garages')->nullable();
             $table->string('garages_size')->nullable();
-            $table->integer('area_size');
+            $table->integer('area_size')->nullable();
             $table->string('size_prefix')->nullable();
             $table->integer('land_area')->nullable();
             $table->string('land_area_size_postfix')->nullable();
@@ -47,15 +46,15 @@ return new class extends Migration
             $table->string('energy_performance_of_the_building')->nullable();
 
             //  Step-5 (location,map)
-            $table->string('address');
+            $table->string('address')->nullable();
             $table->string('country')->nullable();
             $table->string('county_state')->nullable();
             $table->string('city')->nullable();
             $table->string('neighborhood')->nullable();
             $table->string('zip_postal_code')->nullable();
             $table->text('map_street_view')->nullable();
-            $table->decimal('latitude', 10, 8);
-            $table->decimal('longitude', 11, 8);
+            $table->decimal('latitude', 10, 8)->nullable();
+            $table->decimal('longitude', 11, 8)->nullable();
 
             //  Step-6 (video_url)
             $table->string('video_url')->nullable();

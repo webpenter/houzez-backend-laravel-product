@@ -1,10 +1,9 @@
 <?php
 
-use App\Http\Controllers\Api\MessageController;
-use App\Http\Controllers\PropertyController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserProfileController;
+use App\Http\Controllers\Property\PropertyController;
 
 Route::prefix('v1')->group(function () {
     // Authentication routes
@@ -22,12 +21,6 @@ Route::prefix('v1')->group(function () {
             Route::post('/logout', 'logout');
             Route::post('/change-password', 'changePassword');
             Route::delete('/delete-account', 'deleteAccount');
-
-
-            Route::get('/properties', [PropertyController::class, 'index']);
-            Route::post('/properties', [PropertyController::class, 'store']);
-            Route::put('/properties/{property}', [PropertyController::class, 'update']);
-            Route::delete('/properties/{property}', [PropertyController::class, 'destroy']);
         });
 
         // Profile-related routes
@@ -38,6 +31,10 @@ Route::prefix('v1')->group(function () {
             Route::post('/update-picture',  'updateProfilePicture');
             Route::get('/get-social-media', 'getSocialMedia');
             Route::post('/update-social-media', 'updateSocialMedia');
+        });
+
+        Route::prefix('properties')->controller(PropertyController::class)->group(function () {
+            Route::post('/create-or-update/{id?}', 'storeOrUpdate');
         });
     });
 });
