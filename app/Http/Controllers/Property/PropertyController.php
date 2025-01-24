@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Property;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Property\PropertyRequest;
+use App\Http\Resources\Property\EditPropertyResource;
 use App\Models\Property;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -71,6 +72,21 @@ class PropertyController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function edit(Property $property): JsonResponse
+    {
+        if (!$property) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Property not found or ID does not match.',
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'property' => new EditPropertyResource($property),
+        ], 200);
     }
 
 }
