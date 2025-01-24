@@ -48,10 +48,10 @@ class PropertyController extends Controller
     public function storestep1(AddPropertyRequestStep1 $request)
     {
         // Validation is automatically applied
-        $validated = $request->validated(); 
+        $validated = $request->validated();
         // Save the property record
         $property = Property::create($validated);
- 
+
         // Return the newly created property with the success message
         return response()->json([
             'message' => 'Property step 1 saved successfully!',
@@ -122,7 +122,7 @@ class PropertyController extends Controller
             'property' => $property
         ], 200); // Use 200 status code for successful updates
     }
-     
+
     public function storestep6(AddPropertyRequestStep6 $request, Property $property)
     {
         // Validation is automatically applied
