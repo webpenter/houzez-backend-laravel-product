@@ -15,6 +15,7 @@ use App\Models\Property;
 
 class PropertyController extends Controller
 {
+    //update
     /**
      * Get all properties for the authenticated user.
      */
