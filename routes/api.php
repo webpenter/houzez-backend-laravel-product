@@ -31,6 +31,7 @@ Route::prefix('v1')->group(function () {
             Route::post('/update-picture',  'updateProfilePicture');
             Route::get('/get-social-media', 'getSocialMedia');
             Route::post('/update-social-media', 'updateSocialMedia');
+//            Route::post('/update-social-media', 'updateSocialMedia');
         });
 
         Route::prefix('properties')->controller(PropertyController::class)->group(function () {
