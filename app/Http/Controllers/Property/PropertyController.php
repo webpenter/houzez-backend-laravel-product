@@ -12,6 +12,32 @@ use Illuminate\Support\Facades\Auth;
 class PropertyController extends Controller
 {
     /**
+     * Get all properties for the authenticated user.
+     */
+    public function index()
+    {
+        // Retrieve all properties, you can paginate if needed
+        $properties = Property::all();
+
+        return response()->json([
+            'message' => 'Successfully fetch all properties!',
+            'properties' => $properties,
+        ]);
+    }
+
+    /**
+     * Get a single property by ID.
+     */
+    public function show(Property $property)
+    {
+        // Return the property as a JSON response
+        return response()->json([
+            'message' => 'Property retrieved successfully!',
+            'property' => $property
+        ], 200); // Use 200 status code for successful retrieval
+    }
+
+    /**
      * Store or update a property.
      *
      * This method handles both the creation of a new property and the updating of an existing property.
@@ -71,6 +97,20 @@ class PropertyController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    /**
+     * Delete a property.
+     */
+    public function destroy(Property $property)
+    {
+        // Delete the property
+        $property->delete();
+
+        // Return a success message
+        return response()->json([
+            'message' => 'Property deleted successfully!'
+        ], 200); // Use 200 status code for successful deletion
     }
 
 }

@@ -4,7 +4,7 @@ namespace App\Http\Requests\Property;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AddPropertyRequestStep6 extends FormRequest
+class PropertyImageRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,7 @@ class AddPropertyRequestStep6 extends FormRequest
     public function rules(): array
     {
         return [
-            // Step 6: Video URL
-            'video_url' => 'nullable|url|max:255',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
     }
 }
