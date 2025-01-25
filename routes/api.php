@@ -1,9 +1,9 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserProfileController;
+use App\Http\Controllers\Property\PropertyController;
 
 Route::prefix('v1')->group(function () {
     // Authentication routes
@@ -31,6 +31,11 @@ Route::prefix('v1')->group(function () {
             Route::post('/update-picture',  'updateProfilePicture');
             Route::get('/get-social-media', 'getSocialMedia');
             Route::post('/update-social-media', 'updateSocialMedia');
+//            Route::post('/update-social-media', 'updateSocialMedia');
+        });
+
+        Route::prefix('properties')->controller(PropertyController::class)->group(function () {
+            Route::post('/create-or-update/{id?}', 'storeOrUpdate');
         });
     });
 });
