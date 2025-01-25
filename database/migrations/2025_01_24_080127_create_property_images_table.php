@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('property_id')->constrained('properties')->onDelete('cascade');
             $table->string('image_path');
+            $table->boolean('is_thumbnail')->default(false); // New field
             $table->timestamps();
         });
     }

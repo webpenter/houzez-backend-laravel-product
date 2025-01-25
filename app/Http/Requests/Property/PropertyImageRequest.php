@@ -19,10 +19,11 @@ class PropertyImageRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
+    public function rules()
     {
         return [
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'images' => 'required|array', // Validate that 'images' is an array
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Validate each file in the array
         ];
     }
 }

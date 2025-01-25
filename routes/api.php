@@ -32,13 +32,17 @@ Route::prefix('v1')->group(function () {
             Route::post('/update-picture',  'updateProfilePicture');
             Route::get('/get-social-media', 'getSocialMedia');
             Route::post('/update-social-media', 'updateSocialMedia');
+
             //Route::post('/update-social-media', 'updateSocialMedia');
+
         });
 
         Route::prefix('properties')->controller(PropertyController::class)->group(function () {
             Route::post('/create-or-update/{id?}', 'storeOrUpdate');
 
-            Route::post('/{property}/images', [PropertyImageController::class, 'store']);
+            Route::post('/{property}/images/create', [PropertyImageController::class, 'store']);
+            Route::post('/{propertyimage}/thumbnail', [PropertyImageController::class, 'updateThumbnail']);
+
         });
     });
 });

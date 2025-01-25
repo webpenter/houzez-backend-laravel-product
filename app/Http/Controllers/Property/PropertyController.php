@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Property;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Property\PropertyRequest;
+use App\Http\Resources\Property\EditPropertyResource;
 use App\Models\Property;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -97,20 +98,6 @@ class PropertyController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
-    }
-
-    /**
-     * Delete a property.
-     */
-    public function destroy(Property $property)
-    {
-        // Delete the property
-        $property->delete();
-
-        // Return a success message
-        return response()->json([
-            'message' => 'Property deleted successfully!'
-        ], 200); // Use 200 status code for successful deletion
     }
 
 }

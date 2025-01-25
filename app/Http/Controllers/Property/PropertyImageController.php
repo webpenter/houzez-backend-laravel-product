@@ -1,41 +1,45 @@
 <?php
 
-namespace App\Http\Controllers\Property;
+namespace App\Http\Controllers\Property; 
 
 use App\Http\Controllers\Controller;
 use App\Models\Property;
 use App\Models\PropertyImage;
-use App\Http\Requests\Property\PropertyImageRequest; // Import the custom request
-use Illuminate\Http\Request;
+use App\Http\Requests\Property\PropertyImageRequest;
+
 
 class PropertyImageController extends Controller
 {
     public function store(PropertyImageRequest $request, $propertyId)
     {
-        
+        // Fetch the property
         $property = Property::findOrFail($propertyId);
 
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
+        // Initialize an array to store image paths
+        $storedImages = [];
 
+        // Process each image
+        foreach ($request->file('images') as $image) {
             // Generate a unique name for the image
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $imageName = time() . '-' . uniqid() . '.' . $image->getClientOriginalExtension();
 
-            // Move the image to the public folder 'property-images' and get the path
-            $imagePath = $image->move(public_path('property-images'), $imageName);
+            // Use the move method to store the image in the 'property-images' folder
+            $image->move(public_path('property-images'), $imageName);
 
-            // Create the PropertyImage record in the database
+            // Save the image to the database
             $propertyImage = PropertyImage::create([
                 'property_id' => $property->id,
-                'image_path' => 'property-images/' . $imageName, // Store relative path
+                'image_path' => 'property-images/' . $imageName, // Store the relative path
             ]);
 
-            return response()->json([
-                'message' => 'Image uploaded successfully!',
-                'image' => $propertyImage
-            ], 200);
+            // Add the saved image to the response array
+            $storedImages[] = $propertyImage;
         }
 
-        return response()->json(['message' => 'No image uploaded'], 400);
+        // Return a success response
+        return response()->json([
+            'message' => 'Images uploaded successfully!',
+            'images' => $storedImages,
+        ], 200);
     }
 }
