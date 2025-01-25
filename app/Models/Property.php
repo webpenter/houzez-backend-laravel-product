@@ -77,4 +77,9 @@ class Property extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function subProperties()
+    {
+        return $this->hasMany(SubProperty::class, 'property_id');
+    }
 }

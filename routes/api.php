@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Property\SubPropertyController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserProfileController;
@@ -35,6 +36,7 @@ Route::prefix('v1')->group(function () {
 
         Route::prefix('properties')->controller(PropertyController::class)->group(function () {
             Route::post('/create-or-update/{id?}', 'storeOrUpdate');
+            Route::post('/{property}/sub-properties', [SubPropertyController::class, 'store']);
             Route::get('/edit/{property}', 'edit');
         });
     });
