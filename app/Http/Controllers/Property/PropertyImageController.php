@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Property;
 use App\Models\PropertyImage;
 use App\Http\Requests\Property\PropertyImageRequest;
-
+use Illuminate\Support\Facades\Request;
 
 class PropertyImageController extends Controller
 {
@@ -42,4 +42,25 @@ class PropertyImageController extends Controller
             'images' => $storedImages,
         ], 200);
     }
+
+    public function updateThumbnail($propertyImageId)
+    {
+        // Fetch the property image
+        $propertyImage = PropertyImage::findOrFail($propertyImageId);
+
+        // Ensure all other images for the same property are not thumbnails
+        PropertyImage::where('property_id', $propertyImage->property_id)
+            ->update(['is_thumbnail' => 0]);
+
+        // Update the specified image to be the thumbnail
+        $propertyImage->is_thumbnail = 1;
+        $propertyImage->save();
+
+        // Return a success response
+        return response()->json([
+            'message' => 'Thumbnail updated successfully!',
+            'property_image' => $propertyImage
+        ], 200);
+    }
+
 }
