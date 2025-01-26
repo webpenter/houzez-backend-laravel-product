@@ -26,7 +26,7 @@ class PropertyRequest extends FormRequest
             'title' => 'required|string|max:255',
             'description' => 'nullable|string|max:500',
             'type' => 'nullable|string|max:255',
-            'status' => 'nullable|string|in:draft,published',
+            'status' => 'nullable|string',
             'label' => 'nullable|string|max:255',
             'price' => 'required|numeric|min:0',
             'second_price' => 'nullable|numeric|min:0',
@@ -42,7 +42,7 @@ class PropertyRequest extends FormRequest
             'size_prefix' => 'nullable|string|max:255',
             'land_area' => 'nullable|integer|min:0',
             'land_area_size_postfix' => 'nullable|string|max:255',
-            'property_id' => 'nullable|string|max:255|unique:properties,property_id',
+            'property_id' => 'nullable|string|max:255',
             'year_built' => 'nullable|integer|min:1000|max:' . date('Y'),
 
             // Step-3 (property-features)
