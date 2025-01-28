@@ -9,7 +9,7 @@ class PropertyImage extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['property_id', 'image_path'];
+    protected $fillable = ['property_id', 'image_path','is_thumbnail'];
 
     public function property()
     {

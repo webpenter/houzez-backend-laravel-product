@@ -9,35 +9,12 @@ use App\Models\Property;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use App\Models\PropertyImage;
 
 class PropertyController extends Controller
 {
-    /**
-     * Get all properties for the authenticated user.
-     */
-    public function index()
-    {
-        // Retrieve all properties, you can paginate if needed
-        $properties = Property::all();
-
-        return response()->json([
-            'message' => 'Successfully fetch all properties!',
-            'properties' => $properties,
-        ]);
-    }
-
-    /**
-     * Get a single property by ID.
-     */
-    public function show(Property $property)
-    {
-        // Return the property as a JSON response
-        return response()->json([
-            'message' => 'Property retrieved successfully!',
-            'property' => $property
-        ], 200); // Use 200 status code for successful retrieval
-    }
-
     /**
      * Store or update a property.
      *
@@ -137,6 +114,108 @@ class PropertyController extends Controller
             'status' => 'success',
             'property' => new EditPropertyResource($property),
         ], 200);
+    }
+
+    /**
+     * Handles the creation or update of property images.
+     *
+     * Validates the uploaded images, ensures the property does not exceed 6 images,
+     * stores the images in the public directory, and updates the database.
+     *
+     * @param Request $request The HTTP request containing image files.
+     * @param int $propertyId The ID of the property.
+     * @return JsonResponse JSON response with success or error messages.
+     */
+    public function imagesCreateOrUpdate(Request $request, $propertyId): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'images.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'images' => 'required|array|min:1|max:6', // Limit the number of images to 6
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $images = $request->file('images');
+
+        $existingImages = PropertyImage::where('property_id', $propertyId)->count();
+
+        if ($existingImages >= 6) {
+            return response()->json(['message' => 'This property already has 6 images, no more can be uploaded.'], 422);
+        }
+
+        $remainingSlots = 6 - $existingImages;
+
+        if (count($images) > $remainingSlots) {
+            return response()->json(['message' => "You can upload only $remainingSlots more images."], 400);
+        }
+
+        $imagePaths = [];
+        foreach ($images as $key => $image) {
+            $destinationPath = public_path('property_images');
+
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0755, true);
+            }
+
+            $filename = uniqid() . '_' . $image->getClientOriginalName();
+
+            $image->move($destinationPath, $filename);
+
+            $fullPath = url('property_images/' . $filename);
+
+            $imageRecord = PropertyImage::create([
+                'property_id' => $propertyId,
+                'image_path' => $fullPath,
+                'is_thumbnail' => false,
+            ]);
+
+            $imagePaths[] = $imageRecord;
+        }
+
+        if ($existingImages == 0) {
+            $imagePaths[0]->update(['is_thumbnail' => true]);
+        } else {
+            $thumbnailImage = PropertyImage::where('property_id', $propertyId)
+                ->where('is_thumbnail', true)
+                ->first();
+
+            if (!$thumbnailImage) {
+                $imagePaths[0]->update(['is_thumbnail' => true]);
+            }
+        }
+
+        return response()->json([
+            'message' => 'Images uploaded successfully',
+            'images' => $imagePaths,
+        ]);
+    }
+
+    /**
+     * Retrieves all images for a given property.
+     *
+     * Fetches images from the database based on the property ID.
+     * Returns a JSON response with the images or an error message if no images are found.
+     *
+     * @param int $propertyId The ID of the property.
+     * @return JsonResponse JSON response containing the images or an error message.
+     */
+    public function egitImages($propertyId): JsonResponse
+    {
+        $images = PropertyImage::where('property_id', $propertyId)->get();
+
+        if ($images->isEmpty()) {
+            return response()->json([
+                'message' => 'No images found for this property.',
+                'images' => [],
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Images retrieved successfully.',
+            'images' => $images,
+        ],200);
     }
 
 }

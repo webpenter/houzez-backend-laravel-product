@@ -18,7 +18,6 @@ Route::prefix('v1')->group(function () {
         // User-related routes
         Route::controller(UserController::class)->group(function () {
             Route::get('/user', 'getUser');
-
             Route::post('/logout', 'logout');
             Route::post('/change-password', 'changePassword');
             Route::delete('/delete-account', 'deleteAccount');
@@ -32,19 +31,13 @@ Route::prefix('v1')->group(function () {
             Route::post('/update-picture',  'updateProfilePicture');
             Route::get('/get-social-media', 'getSocialMedia');
             Route::post('/update-social-media', 'updateSocialMedia');
-
-            //Route::post('/update-social-media', 'updateSocialMedia');
-
         });
 
         Route::prefix('properties')->controller(PropertyController::class)->group(function () {
             Route::post('/create-or-update/{id?}', 'storeOrUpdate');
             Route::get('/edit/{property}', 'edit');
-           
-
-            Route::post('/{property}/images/create', [PropertyImageController::class, 'store']);
-            Route::post('/{propertyimage}/thumbnail', [PropertyImageController::class, 'updateThumbnail']);
-
+            Route::post('/images/create-or-update/{property}', 'imagesCreateOrUpdate');
+            Route::get('/images/edit/{property}', 'egitImages');
         });
     });
 });
