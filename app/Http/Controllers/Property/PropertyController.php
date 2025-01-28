@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Property;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Property\PropertyRequest;
 use App\Http\Resources\Property\EditPropertyResource;
+use App\Models\FloorPlan;
 use App\Models\Property;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
@@ -55,6 +55,7 @@ class PropertyController extends Controller
 
                 $property->update($data);
 
+               
                 return response()->json([
                     'message' => 'Property updated successfully.',
                     'property' => $property,

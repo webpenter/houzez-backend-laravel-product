@@ -22,15 +22,16 @@ class SubPropertyRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string|max:255',
-            'bedrooms' => 'nullable|integer',
-            'bathrooms' => 'nullable|integer',
-            'garages' => 'nullable|integer',
-            'garage_size' => 'nullable|string|max:255',
-            'area_size' => 'nullable|integer',
-            'size_prefix' => 'nullable|string|max:50',
-            'price' => 'nullable|numeric',
-            'price_label' => 'nullable|string|max:50',
+            'subProperties' => 'required|array',
+            'subProperties.*.title' => 'required|string|max:255',
+            'subProperties.*.bedrooms' => 'nullable|integer|min:0',
+            'subProperties.*.bathrooms' => 'nullable|integer|min:0',
+            'subProperties.*.garages' => 'nullable|integer|min:0',
+            'subProperties.*.garage_size' => 'nullable|string|max:255',
+            'subProperties.*.area_size' => 'nullable|integer|min:0',
+            'subProperties.*.size_prefix' => 'nullable|string|max:50',
+            'subProperties.*.price' => 'nullable|numeric|min:0',
+            'subProperties.*.price_label' => 'nullable|string|max:50',
         ];
     }
 }
