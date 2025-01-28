@@ -39,6 +39,8 @@ Route::prefix('v1')->group(function () {
 
         Route::prefix('properties')->controller(PropertyController::class)->group(function () {
             Route::post('/create-or-update/{id?}', 'storeOrUpdate');
+            Route::get('/edit/{property}', 'edit');
+           
 
             Route::post('/{property}/images/create', [PropertyImageController::class, 'store']);
             Route::post('/{propertyimage}/thumbnail', [PropertyImageController::class, 'updateThumbnail']);

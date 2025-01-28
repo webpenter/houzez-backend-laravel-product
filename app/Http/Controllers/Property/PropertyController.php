@@ -63,13 +63,20 @@ class PropertyController extends Controller
             $data = $request->validated();
 
             $data['user_id'] = Auth::id();
+            $data['property_feature'] = $request->input('property_feature', []);
+
 
             if ($id) {
-                // Update the existing property if the ID is provided
                 $property = Property::find($id);
 
                 if (!$property) {
                     return response()->json(['message' => 'Property not found.'], 404);
+                }
+
+                if ($property->user_id !== Auth::id()) {
+                    return response()->json([
+                        'message' => 'You are not authorized to update this property.',
+                    ], 403);
                 }
 
                 $property->update($data);
@@ -79,7 +86,6 @@ class PropertyController extends Controller
                     'property' => $property,
                 ], 200);
             } else {
-                // Create a new property if no ID is provided
                 $property = Property::create($data);
 
                 return response()->json([
@@ -98,6 +104,39 @@ class PropertyController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    /**
+     * Edit a property by the authenticated user.
+     *
+     * This method handles the request to edit a property. It first checks if the property exists,
+     * then verifies if the current authenticated user is the owner of the property.
+     * If either check fails, an appropriate error response is returned. If both checks pass,
+     * a success response with the property's details is returned.
+     *
+     * @param  Property  $property  The property to be edited.
+     * @return JsonResponse  The response containing the result of the edit operation.
+     */
+    public function edit(Property $property): JsonResponse
+    {
+        if (!$property) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Property not found or ID does not match.',
+            ], 404);
+        }
+
+        if ($property->user_id !== Auth::id()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You are not authorized to edit this property.',
+            ], 403);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'property' => new EditPropertyResource($property),
+        ], 200);
     }
 
 }
