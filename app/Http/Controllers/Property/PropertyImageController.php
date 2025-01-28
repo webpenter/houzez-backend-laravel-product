@@ -21,15 +21,17 @@ class PropertyImageController extends Controller
         // Process each image
         foreach ($request->file('images') as $image) {
             // Generate a unique name for the image
-            $imageName = time() . '-' . uniqid() . '.' . $image->getClientOriginalExtension();
+            $imageName = time() . '-' .  $image->getClientOriginalName();
 
             // Use the move method to store the image in the 'property-images' folder
             $image->move(public_path('property-images'), $imageName);
 
+            $fullName = url('property-images/' . $imageName);
+
             // Save the image to the database
             $propertyImage = PropertyImage::create([
                 'property_id' => $property->id,
-                'image_path' => 'property-images/' . $imageName, // Store the relative path
+                'image_path' =>  $fullName, // Store the relative path
             ]);
 
             // Add the saved image to the response array
