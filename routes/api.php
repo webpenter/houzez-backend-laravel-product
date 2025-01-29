@@ -33,11 +33,21 @@ Route::prefix('v1')->group(function () {
             Route::post('/update-social-media', 'updateSocialMedia');
         });
 
-        Route::prefix('properties')->controller(PropertyController::class)->group(function () {
-            Route::post('/create-or-update/{id?}', 'storeOrUpdate');
-            Route::get('/edit/{property}', 'edit');
-            Route::post('/images/create-or-update/{property}', 'imagesCreateOrUpdate');
-            Route::get('/images/edit/{property}', 'egitImages');
+        // Properties-related routes
+        Route::prefix('properties')->group(function () {
+            // General-properties related routes
+            Route::controller(PropertyController::class)->group(function () {
+                Route::post('/create-or-update/{id?}', 'storeOrUpdate');
+                Route::get('/edit/{property}', 'edit');
+            });
+
+            // Property-images related routes
+            Route::controller(PropertyImageController::class)->group(function () {
+                Route::post('/images/create-or-update/{property}', 'imagesCreateOrUpdate');
+                Route::get('/images/edit/{property}', 'egitImages');
+                Route::post('/image/delete/{property}/{image}', 'deleteImage');
+                Route::post('/thumbnail/update/{property}/{image}', 'updateThumbnail');
+            });
         });
     });
 });
