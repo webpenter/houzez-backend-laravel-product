@@ -76,20 +76,6 @@ class PropertyRequest extends FormRequest
 
             // Step-12 (private-note)
             'private_note' => 'nullable|string',
-
-
-             // Floor plan rules (step-9)
-
-             
-            // 'floor_plans' => 'nullable|array', // Expecting multiple floor plans as an array
-            // 'floor_plans.*.plan_title' => 'required|string|max:255',
-            // 'floor_plans.*.plan_bedroom' => 'nullable|integer',
-            // 'floor_plans.*.plan_bathroom' => 'nullable|integer',
-            // 'floor_plans.*.plan_price' => 'nullable|numeric',
-            // 'floor_plans.*.price_postfix' => 'nullable|string|max:15',
-            // 'floor_plans.*.plan_size' => 'nullable|integer',
-            // 'floor_plans.*.plan_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            // 'floor_plans.*.plan_description' => 'nullable|string|max:255',
             ];
     }
 }

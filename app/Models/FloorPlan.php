@@ -8,13 +8,13 @@ class FloorPlan extends Model
 {
     protected $fillable = [
         'plan_title',
-        'plan_bedroom',
-        'plan_bathroom',
+        'plan_bedrooms',
+        'plan_bathrooms',
         'plan_price',
         'price_postfix',
         'plan_image',
         'plan_description',
-
+        'property_id',
     ];
 
     protected function property()

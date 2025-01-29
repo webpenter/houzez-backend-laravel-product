@@ -5,6 +5,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\Property\PropertyController;
 use App\Http\Controllers\Property\PropertyImageController;
+use App\Http\Controllers\Property\SubPropertiesController;
+use App\Http\Controllers\Property\FloorPlansController;
 
 Route::prefix('v1')->group(function () {
     // Authentication routes
@@ -37,10 +39,8 @@ Route::prefix('v1')->group(function () {
         Route::prefix('properties')->group(function () {
             // General-properties related routes
             Route::controller(PropertyController::class)->group(function () {
-                Route::post('/create-or-update/{id?}', 'storeOrUpdate');
+                Route::post('/create-or-update/{property?}', 'createOrUpdate');
                 Route::get('/edit/{property}', 'edit');
-                Route::post('/{property}/floor-plan/{floorPlanId?}',  'planStoreOrUpdate');
-                Route::post('/{property}/sub-properties/{subPropertyId?}',  'subPropertyStoreOrUpdate');
             });
 
             // Property-images related routes
@@ -49,6 +49,16 @@ Route::prefix('v1')->group(function () {
                 Route::get('/images/edit/{property}', 'egitImages');
                 Route::post('/image/delete/{property}/{image}', 'deleteImage');
                 Route::post('/thumbnail/update/{property}/{image}', 'updateThumbnail');
+            });
+
+            // Sub-properties related routes
+            Route::controller(SubPropertiesController::class)->group(function () {
+                Route::post('/{property}/sub-properties/{subProperty?}',  'createOrUpdate');
+            });
+
+            // Sub-properties related routes
+            Route::controller(FloorPlansController::class)->group(function () {
+                Route::post('/{property}/floor-plans/{floorPlan?}',  'createOrUpdate');
             });
         });
     });
