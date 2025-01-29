@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\UserProfileController;
+use App\Http\Controllers\Auth\UserController;
+use App\Http\Controllers\Auth\UserProfileController;
 use App\Http\Controllers\Property\PropertyController;
 use App\Http\Controllers\Property\PropertyImageController;
 use App\Http\Controllers\Property\SubPropertiesController;
