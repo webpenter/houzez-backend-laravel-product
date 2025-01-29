@@ -13,13 +13,14 @@ return new class extends Migration
     {
         Schema::create('properties', function (Blueprint $table) {
             $table->id();
+
             // Step-1 (title,description,price)
             $table->string('title');
             $table->string('description')->nullable();
             $table->string('type')->nullable();
             $table->string('status')->default('draft');
             $table->string('label')->nullable();
-            $table->decimal('price', 10, 2);
+            $table->decimal('price', 10, 2)->nullable();
             $table->decimal('second_price', 10, 2)->nullable();
             $table->string('after_price')->nullable();
             $table->string('price_prefix')->nullable();

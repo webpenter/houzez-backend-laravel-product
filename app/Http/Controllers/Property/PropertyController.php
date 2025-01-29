@@ -3,12 +3,20 @@
 namespace App\Http\Controllers\Property;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\property\FloorPlanRequest;
 use App\Http\Requests\Property\PropertyRequest;
+use App\Http\Requests\property\SubPropertyRequest;
 use App\Http\Resources\Property\EditPropertyResource;
 use App\Models\FloorPlan;
 use App\Models\Property;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use App\Models\PropertyImage;
+use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class PropertyController extends Controller
 {
@@ -114,4 +122,245 @@ class PropertyController extends Controller
         ], 200);
     }
 
+    /**
+     * Handles the creation or update of property images.
+     *
+     * Validates the uploaded images, ensures the property does not exceed 6 images,
+     * stores the images in the public directory, and updates the database.
+     *
+     * @param Request $request The HTTP request containing image files.
+     * @param int $propertyId The ID of the property.
+     * @return JsonResponse JSON response with success or error messages.
+     */
+    public function imagesCreateOrUpdate(Request $request, $propertyId): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'images.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'images' => 'required|array|min:1|max:6', // Limit the number of images to 6
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $images = $request->file('images');
+
+        $existingImages = PropertyImage::where('property_id', $propertyId)->count();
+
+        if ($existingImages >= 6) {
+            return response()->json(['message' => 'This property already has 6 images, no more can be uploaded.'], 422);
+        }
+
+        $remainingSlots = 6 - $existingImages;
+
+        if (count($images) > $remainingSlots) {
+            return response()->json(['message' => "You can upload only $remainingSlots more images."], 400);
+        }
+
+        $imagePaths = [];
+        foreach ($images as $key => $image) {
+            $destinationPath = public_path('property_images');
+
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0755, true);
+            }
+
+            $filename = uniqid() . '_' . $image->getClientOriginalName();
+
+            $image->move($destinationPath, $filename);
+
+            $fullPath = url('property_images/' . $filename);
+
+            $imageRecord = PropertyImage::create([
+                'property_id' => $propertyId,
+                'image_path' => $fullPath,
+                'is_thumbnail' => false,
+            ]);
+
+            $imagePaths[] = $imageRecord;
+        }
+
+        if ($existingImages == 0) {
+            $imagePaths[0]->update(['is_thumbnail' => true]);
+        } else {
+            $thumbnailImage = PropertyImage::where('property_id', $propertyId)
+                ->where('is_thumbnail', true)
+                ->first();
+
+            if (!$thumbnailImage) {
+                $imagePaths[0]->update(['is_thumbnail' => true]);
+            }
+        }
+
+        return response()->json([
+            'message' => 'Images uploaded successfully',
+            'images' => $imagePaths,
+        ]);
+    }
+
+    /**
+     * Retrieves all images for a given property.
+     *
+     * Fetches images from the database based on the property ID.
+     * Returns a JSON response with the images or an error message if no images are found.
+     *
+     * @param int $propertyId The ID of the property.
+     * @return JsonResponse JSON response containing the images or an error message.
+     */
+    public function egitImages($propertyId): JsonResponse
+    {
+        $images = PropertyImage::where('property_id', $propertyId)->get();
+
+        if ($images->isEmpty()) {
+            return response()->json([
+                'message' => 'No images found for this property.',
+                'images' => [],
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Images retrieved successfully.',
+            'images' => $images,
+        ],200);
+    }
+
+
+    public function planStoreOrUpdate(FloorPlanRequest $request, $propertyId, $floorPlanId = null)
+    {
+        try {
+            // Step 1: Check if the property exists
+            $property = Property::findOrFail($propertyId);
+    
+            // Step 2: Initialize the validated data from the request
+            $data = $request->validated();
+    
+            // Step 3: Extract the floor plans from the validated data
+            $floorPlansData = $data['floorPlans'];
+            $storedFloorPlans = [];
+    
+            // Step 4: Loop through the floor plans data
+            foreach ($floorPlansData as $floorPlan) {
+                // Step 5: Check if an image is present and handle the image upload
+                if (isset($floorPlan['plan_image']) && $floorPlan['plan_image'] instanceof \Illuminate\Http\UploadedFile) {
+                    $image = $floorPlan['plan_image'];
+    
+                    // Generate a unique name for the image file
+                    $imageName = time() . '_' . $image->getClientOriginalName();
+    
+                    // Define the path to store the image
+                    $destinationPath = public_path('floorplans');
+    
+                    // Ensure the directory exists
+                    if (!file_exists($destinationPath)) {
+                        mkdir($destinationPath, 0755, true);
+                    }
+    
+                    // Move the uploaded file to the destination
+                    $image->move($destinationPath, $imageName);
+    
+                    // Set the full URL for the stored image
+                    $floorPlan['plan_image'] = url('floorplans/' . $imageName);
+                }
+    
+                // Step 6: Check if floorPlanId is passed in the URL
+                if ($floorPlanId) {
+                    // Try to find the existing floor plan for the given property
+                    $existingFloorPlan = $property->floorPlans()->find($floorPlanId);
+    
+                    if ($existingFloorPlan) {
+                        // If the floor plan exists, update it
+                        $existingFloorPlan->update($floorPlan);
+                        $storedFloorPlans[] = $existingFloorPlan;
+                    } else {
+                        // If the floor plan doesn't exist, return a 404 response
+                        return response()->json([
+                            'message' => 'Floor plan not found.',
+                        ], 404);
+                    }
+                } else {
+                    // If no floor plan ID is passed, create a new floor plan
+                    $floorPlan['property_id'] = $propertyId; // Associate the floor plan with the property
+                    $storedFloorPlans[] = $property->floorPlans()->create($floorPlan);
+                }
+            }
+    
+            // Step 7: Return success response with the appropriate message
+            return response()->json([
+                'message' => $floorPlanId ? 'Floor plan updated successfully!' : 'Floor plan(s) created successfully!',
+                'floorPlans' => $storedFloorPlans,
+            ], $floorPlanId ? 200 : 201);
+    
+        } catch (ValidationException $e) {
+            // Handle validation errors
+            return response()->json([
+                'message' => 'Validation failed.',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (Exception $e) {
+            // Handle any other exceptions
+            return response()->json([
+                'message' => 'An error occurred while processing the request.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+
+    public function subPropertyStoreOrUpdate(SubPropertyRequest $request, $propertyId, $subPropertyId = null)
+    {
+        try {
+            // Step 1: Find the property by ID
+            $property = Property::findOrFail($propertyId);
+    
+            // Step 2: Initialize the validated data from the request
+            $data = $request->validated();
+    
+            // Step 3: Extract the sub-properties data from the validated data
+            $subPropertiesData = $data['subProperties'];
+            $storedSubProperties = [];
+    
+            // Step 4: Loop through the sub-properties data
+            foreach ($subPropertiesData as $subProperty) {
+                // Step 5: Check if subPropertyId is passed in the URL
+                if ($subPropertyId) {
+                    // Try to find the existing sub-property for the given property
+                    $existingSubProperty = $property->subProperties()->find($subPropertyId);
+    
+                    if ($existingSubProperty) {
+                        // If the sub-property exists, update it
+                        $existingSubProperty->update($subProperty);
+                        $storedSubProperties[] = $existingSubProperty;
+                    } else {
+                        // If the sub-property doesn't exist, return a 404 response
+                        return response()->json([
+                            'message' => 'Sub-property not found.',
+                        ], 404);
+                    }
+                } else {
+                    // If no sub-property ID is passed, create a new sub-property
+                    $subProperty['property_id'] = $propertyId; // Associate the sub-property with the property
+                    $storedSubProperties[] = $property->subProperties()->create($subProperty);
+                }
+            }
+    
+            // Step 6: Return success response with the appropriate message
+            return response()->json([
+                'message' => $subPropertyId ? 'Sub-property updated successfully!' : 'Sub-property(s) created successfully!',
+                'subProperties' => $storedSubProperties,
+            ], $subPropertyId ? 200 : 201);
+    
+        } catch (ValidationException $e) {
+            // Handle validation errors
+            return response()->json([
+                'message' => 'Validation failed.',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (Exception $e) {
+            // Handle any other exceptions
+            return response()->json([
+                'message' => 'An error occurred while processing the request.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }

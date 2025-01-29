@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\Property\PropertyController;
+use App\Http\Controllers\Property\PropertyImageController;
 
 Route::prefix('v1')->group(function () {
     // Authentication routes
@@ -19,7 +20,6 @@ Route::prefix('v1')->group(function () {
         // User-related routes
         Route::controller(UserController::class)->group(function () {
             Route::get('/user', 'getUser');
-
             Route::post('/logout', 'logout');
             Route::post('/change-password', 'changePassword');
             Route::delete('/delete-account', 'deleteAccount');
@@ -37,9 +37,11 @@ Route::prefix('v1')->group(function () {
 
         Route::prefix('properties')->controller(PropertyController::class)->group(function () {
             Route::post('/create-or-update/{id?}', 'storeOrUpdate');
-            Route::post('/{property}/floor-plan/{floorPlanId?}', [FloorPlanController::class, 'storeOrUpdate']);
-            Route::post('/{property}/sub-properties/{subPropertyId?}', [SubPropertyController::class, 'storeOrUpdate']);
+            Route::post('/{property}/floor-plan/{floorPlanId?}',  'planStoreOrUpdate');
+            Route::post('/{property}/sub-properties/{subPropertyId?}',  'subPropertyStoreOrUpdate');
             Route::get('/edit/{property}', 'edit');
+            Route::post('/images/create-or-update/{property}', 'imagesCreateOrUpdate');
+            Route::get('/images/edit/{property}', 'egitImages');
         });
     });
 });
