@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\MessageController;
+use App\Http\Controllers\Property\FloorPlanController;
+use App\Http\Controllers\Property\SubPropertyController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserProfileController;
@@ -38,6 +41,11 @@ Route::prefix('v1')->group(function () {
             Route::get('/edit/{property}', 'edit');
             Route::post('/images/create-or-update/{property}', 'imagesCreateOrUpdate');
             Route::get('/images/edit/{property}', 'egitImages');
+            Route::post('/{property}/floor-plan/{floorPlanId?}',  'planStoreOrUpdate');
+            Route::post('/{property}/sub-properties/{subPropertyId?}',  'subPropertyStoreOrUpdate');
         });
+
+            Route::post('/messages/create', [MessageController::class, 'send']);
+            Route::post('/messages/{message}/replies', [MessageController::class, 'reply']);
     });
 });

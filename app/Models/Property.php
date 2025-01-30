@@ -82,4 +82,19 @@ class Property extends Model
     {
         return $this->hasMany(PropertyImage::class);
     }
+
+    public function subProperties()
+    {
+        return $this->hasMany(SubProperty::class, 'property_id');
+    }
+
+    public function floorPlans()
+    {
+        return $this->hasMany(FloorPlan::class, 'property_id');
+    }
+
+    public function messages()
+    {
+        return $this->hasMany(Message::class);
+    }
 }

@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('properties', function (Blueprint $table) {
-            $table->foreignId('user_id')->constrained(table: 'users')->onDelete('cascade')->after('id');
+        Schema::create('message_replies', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('message_id')->constrained('messages')->onDelete('cascade'); // Reference to the parent message
+            $table->text('reply_content');
+            $table->timestamps();
         });
     }
 
@@ -21,9 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('properties', function (Blueprint $table) {
-            $table->dropForeign(['user_id']);
-            $table->dropColumn('user_id');
-        });
+        Schema::dropIfExists('message_replies');
     }
 };

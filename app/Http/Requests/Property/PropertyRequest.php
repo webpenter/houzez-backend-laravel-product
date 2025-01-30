@@ -76,6 +76,6 @@ class PropertyRequest extends FormRequest
 
             // Step-12 (private-note)
             'private_note' => 'nullable|string',
-        ];
+            ];
     }
 }
