@@ -1,14 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\Controller;
 use App\Http\Resources\Auth\UserProfileResource;
 use App\Http\Resources\Auth\UserSocialMediaResource;
 use App\Models\User;
-use App\Models\UserProfile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 
 class UserProfileController extends Controller
 {
@@ -193,5 +192,4 @@ class UserProfileController extends Controller
             'profile' => new UserSocialMediaResource($profile),
         ]);
     }
-
 }

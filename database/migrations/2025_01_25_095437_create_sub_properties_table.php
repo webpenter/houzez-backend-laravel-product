@@ -14,15 +14,15 @@ return new class extends Migration
         Schema::create('sub_properties', function (Blueprint $table) {
             $table->id();
             $table->foreignId('property_id')->constrained('properties')->onDelete('cascade');
-            $table->string('title');
+            $table->string('title')->nullable();
             $table->integer('bedrooms')->nullable();
             $table->integer('bathrooms')->nullable();
             $table->integer('garages')->nullable();
             $table->string('garage_size')->nullable();
             $table->integer('area_size')->nullable();
             $table->string('size_prefix')->nullable();
-            $table->decimal('price', 10, 2);
-            $table->string('price_label')->nullable(); // For "After The Price Label"
+            $table->decimal('price', 10, 2)->nullable();
+            $table->string('price_label')->nullable();
             $table->timestamps();
         });
     }

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\property;
+namespace App\Http\Requests\Property;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class SubPropertyRequest extends FormRequest
+class SubPropertiesRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

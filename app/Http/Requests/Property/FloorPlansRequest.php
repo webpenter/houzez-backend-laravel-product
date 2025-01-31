@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\property;
+namespace App\Http\Requests\Property;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class FloorPlanRequest extends FormRequest
+class FloorPlansRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,7 +13,7 @@ class FloorPlanRequest extends FormRequest
     {
         return true;
     }
-                    
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -24,12 +24,12 @@ class FloorPlanRequest extends FormRequest
         return [
             'floorPlans' => 'required|array',
             'floorPlans.*.plan_title' => 'required|string|max:255',
-            'floorPlans.*.plan_bedroom' => 'nullable|integer',
-            'floorPlans.*.plan_bathroom' => 'nullable|integer',
+            'floorPlans.*.plan_bedrooms' => 'nullable|integer',
+            'floorPlans.*.plan_bathrooms' => 'nullable|integer',
             'floorPlans.*.plan_price' => 'nullable|integer',
             'floorPlans.*.price_postfix' => 'nullable|string|max:15',
             'floorPlans.*.plan_size' => 'nullable|integer',
-            'floorPlans.*.plan_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',  
+            'floorPlans.*.plan_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'floorPlans.*.plan_description' => 'nullable|string|max:255',
         ];
     }

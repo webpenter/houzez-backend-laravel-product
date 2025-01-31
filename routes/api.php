@@ -1,13 +1,14 @@
 <?php
 
-use App\Http\Controllers\MessageController;
-use App\Http\Controllers\Property\FloorPlanController;
-use App\Http\Controllers\Property\SubPropertyController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\UserProfileController;
+use App\Http\Controllers\Auth\UserController;
+use App\Http\Controllers\Auth\UserProfileController;
+use App\Http\Controllers\Message\MessageController;
+use App\Http\Controllers\Message\MessageReplyController;
 use App\Http\Controllers\Property\PropertyController;
 use App\Http\Controllers\Property\PropertyImageController;
+use App\Http\Controllers\Property\SubPropertiesController;
+use App\Http\Controllers\Property\FloorPlansController;
 
 Route::prefix('v1')->group(function () {
     // Authentication routes
@@ -36,16 +37,42 @@ Route::prefix('v1')->group(function () {
             Route::post('/update-social-media', 'updateSocialMedia');
         });
 
-        Route::prefix('properties')->controller(PropertyController::class)->group(function () {
-            Route::post('/create-or-update/{id?}', 'storeOrUpdate');
-            Route::get('/edit/{property}', 'edit');
-            Route::post('/images/create-or-update/{property}', 'imagesCreateOrUpdate');
-            Route::get('/images/edit/{property}', 'egitImages');
-            Route::post('/{property}/floor-plan/{floorPlanId?}',  'planStoreOrUpdate');
-            Route::post('/{property}/sub-properties/{subPropertyId?}',  'subPropertyStoreOrUpdate');
+        // Properties-related routes
+        Route::prefix('properties')->group(function () {
+            // General-properties related routes
+            Route::controller(PropertyController::class)->group(function () {
+                Route::post('/create-or-update/{property?}', 'createOrUpdate');
+                Route::get('/edit/{property}', 'edit');
+            });
+
+            // Property-images related routes
+            Route::controller(PropertyImageController::class)->group(function () {
+                Route::post('/images/create-or-update/{property}', 'imagesCreateOrUpdate');
+                Route::get('/images/edit/{property}', 'egitImages');
+                Route::post('/image/delete/{property}/{image}', 'deleteImage');
+                Route::post('/thumbnail/update/{property}/{image}', 'updateThumbnail');
+            });
+
+            // Sub-properties related routes
+            Route::controller(SubPropertiesController::class)->group(function () {
+                Route::post('/{property}/sub-properties/{subProperty?}',  'createOrUpdate');
+            });
+
+            // Sub-properties related routes
+            Route::controller(FloorPlansController::class)->group(function () {
+                Route::post('/{property}/floor-plans/{floorPlan?}',  'createOrUpdate');
+            });
         });
 
+
             Route::post('/messages/create', [MessageController::class, 'send']);
-            Route::post('/messages/{message}/replies', [MessageController::class, 'reply']);
+            Route::get('/messages', [MessageController::class, 'index']);
+            Route::get('/messages/{message}', [MessageController::class, 'show']);
+            Route::post('/messages/update/{message}', [MessageController::class, 'update']);
+            Route::post('/messages/delete/{message}', [MessageController::class, 'destroy']);
+
+
+            Route::post('/messages/{message}/replies', [MessageReplyController::class, 'reply']);
+
     });
 });
