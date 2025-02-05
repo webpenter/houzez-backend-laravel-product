@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Message;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Message\MessageResource;
-use App\Http\Resources\Message\MessageCollection;
 use App\Models\Message;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
