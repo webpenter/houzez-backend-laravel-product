@@ -38,6 +38,7 @@ class PropertyRepository implements PropertyRepositoryInterface
     {
         $data['user_id'] = Auth::id();
         $data['property_feature'] = $data['property_feature'] ?? [];
+        $data['contact_information'] = $data['contact_information'] ?? [];
 
         if ($id) {
             $property = Property::find($id);
