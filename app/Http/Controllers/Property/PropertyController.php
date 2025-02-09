@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Property;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Property\PropertyRequest;
+use App\Http\Resources\Property\DashboardPropertyResource;
 use App\Http\Resources\Property\EditPropertyResource;
 use App\Models\Property;
+use App\Repositories\PropertyRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
@@ -13,61 +15,57 @@ use PHPUnit\Exception;
 
 class PropertyController extends Controller
 {
+    protected $propertyRepository;
+
     /**
-     * Store or update a property.
+     * Inject the PropertyRepository into the controller.
      *
-     * This method handles both the creation of a new property and the updating of an existing property.
+     * @param PropertyRepositoryInterface $propertyRepository
+     */
+    public function __construct(PropertyRepositoryInterface $propertyRepository)
+    {
+        $this->propertyRepository = $propertyRepository;
+    }
+
+    /**
+     * ## Get User Properties
      *
-     * - If an ID is provided, it will attempt to find the property and update it.
-     * - If no ID is provided, a new property will be created.
+     * Retrieves all properties associated with a given user.
      *
-     * The request is automatically validated using the PropertyRequest class. If validation fails,
-     * a 422 Unprocessable Entity response with validation errors will be returned.
+     * @param int $userId The ID of the user whose properties are to be retrieved.
+     * @return Collection A collection of Property models.
+     */
+    public function getUserProperties(): JsonResponse
+    {
+        $properties = $this->propertyRepository->getUserProperties(Auth::id());
+
+        return response()->json([
+            'status' => 'success',
+            'properties' => DashboardPropertyResource::collection($properties),
+        ], 200);
+    }
+    /**
+     * ## Create or Update Property
      *
-     * Any other exceptions (e.g., database errors) are caught and a 500 Internal Server Error response
-     * with a generic error message will be returned.
+     * - If an ID is provided, it updates the existing property.
+     * - If no ID is provided, it creates a new property.
+     * - Ensures the authenticated user is the owner before updating.
+     * - Returns a JSON response with success or error messages.
      *
-     * @param PropertyRequest $request The validated request containing property data.
-     * @param int|null $id The ID of the property to update, or null to create a new property.
-     *
-     * @return JsonResponse A JSON response indicating success or failure.
+     * @param PropertyRequest $request
+     * @param int|null $id
+     * @return JsonResponse
      */
     public function createOrUpdate(PropertyRequest $request, $id = null): JsonResponse
     {
         try {
             $data = $request->validated();
+            $property = $this->propertyRepository->createOrUpdate($data, $id);
 
-            $data['user_id'] = Auth::id();
-            $data['property_feature'] = $request->input('property_feature', []);
-
-
-            if ($id) {
-                $property = Property::find($id);
-
-                if (!$property) {
-                    return response()->json(['message' => 'Property not found.'], 404);
-                }
-
-                if ($property->user_id !== Auth::id()) {
-                    return response()->json([
-                        'message' => 'You are not authorized to update this property.',
-                    ], 403);
-                }
-
-                $property->update($data);
-
-                return response()->json([
-                    'message' => 'Property updated successfully.',
-                    'property' => $property,
-                ], 200);
-            } else {
-                $property = Property::create($data);
-
-                return response()->json([
-                    'message' => 'Property created successfully.',
-                    'property' => $property,
-                ], 201);
-            }
+            return response()->json([
+                'message' => $id ? 'Property updated successfully.' : 'Property created successfully.',
+                'property' => $property,
+            ], $id ? 200 : 201);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'message' => 'Validation failed.',
@@ -75,43 +73,35 @@ class PropertyController extends Controller
             ], 422);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'An error occurred while processing the request.',
-                'error' => $e->getMessage(),
-            ], 500);
+                'message' => $e->getMessage(),
+            ], $e->getCode() ?: 500);
         }
     }
 
     /**
-     * Edit a property by the authenticated user.
+     * ## Edit Property
      *
-     * This method handles the request to edit a property. It first checks if the property exists,
-     * then verifies if the current authenticated user is the owner of the property.
-     * If either check fails, an appropriate error response is returned. If both checks pass,
-     * a success response with the property's details is returned.
+     * Fetches a specific property for editing.
+     * Ensures that the authenticated user is the owner of the property.
      *
-     * @param  Property  $property  The property to be edited.
-     * @return JsonResponse  The response containing the result of the edit operation.
+     * @param int $propertyId
+     * @return JsonResponse
      */
-    public function edit(Property $property): JsonResponse
+    public function edit(int $propertyId): JsonResponse
     {
-        if (!$property) {
+        try {
+            $property = $this->propertyRepository->getPropertyForEdit($propertyId);
+
+            return response()->json([
+                'status' => 'success',
+                'property' => new EditPropertyResource($property),
+            ], 200);
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Property not found or ID does not match.',
-            ], 404);
+                'message' => $e->getMessage(),
+            ], $e->getCode() ?: 500);
         }
-
-        if ($property->user_id !== Auth::id()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'You are not authorized to edit this property.',
-            ], 403);
-        }
-
-        return response()->json([
-            'status' => 'success',
-            'property' => new EditPropertyResource($property),
-        ], 200);
     }
 
 }

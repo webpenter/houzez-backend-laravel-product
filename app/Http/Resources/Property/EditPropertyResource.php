@@ -15,7 +15,6 @@ class EditPropertyResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id ?? null,
             'title' => $this->title ?? null,
             'description' => $this->description ?? null,
             'type' => $this->type ?? null,
@@ -53,9 +52,6 @@ class EditPropertyResource extends JsonResource
             'virtual_tour' => $this->virtual_tour ?? null,
             'contact_information' => $this->contact_information ?? null,
             'private_note' => $this->private_note ?? null,
-            'created_at' => $this->created_at ?? null,
-            'updated_at' => $this->updated_at ?? null,
-            'user_id' => $this->user_id ?? null,
         ];
     }
 }
