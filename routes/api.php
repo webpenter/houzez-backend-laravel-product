@@ -7,6 +7,7 @@ use App\Http\Controllers\Property\PropertyController;
 use App\Http\Controllers\Property\PropertyImageController;
 use App\Http\Controllers\Property\SubPropertiesController;
 use App\Http\Controllers\Property\FloorPlansController;
+use App\Http\Controllers\Property\PropertyAttachmentController;
 
 Route::prefix('v1')->group(function () {
     // Authentication routes
@@ -50,6 +51,13 @@ Route::prefix('v1')->group(function () {
                 Route::get('/images/edit/{property}', 'getImages');
                 Route::post('/image/delete/{property}/{image}', 'deleteImage');
                 Route::post('/thumbnail/update/{property}/{image}', 'updateThumbnail');
+            });
+
+            // Property-attachments related routes
+            Route::controller(PropertyAttachmentController::class)->group(function () {
+                Route::post('/attachments/create-or-update/{property}', 'storeOrUpdate');
+                Route::get('/attachments/edit/{property}', 'edit');
+                Route::post('/attachments/delete/{attachment}', 'delete');
             });
 
             // Sub-properties related routes
