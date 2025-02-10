@@ -43,6 +43,8 @@ Route::prefix('v1')->group(function () {
                 Route::get('/get-user', 'getUserProperties');
                 Route::post('/create-or-update/{property?}', 'createOrUpdate');
                 Route::get('/edit/{property}', 'edit');
+                Route::post('/delete/{property}', 'destroy');
+                Route::post('/duplicate/{property}', 'duplicate');
             });
 
             // Property-images related routes
