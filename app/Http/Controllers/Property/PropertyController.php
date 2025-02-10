@@ -103,5 +103,4 @@ class PropertyController extends Controller
             ], $e->getCode() ?: 500);
         }
     }
-
 }
