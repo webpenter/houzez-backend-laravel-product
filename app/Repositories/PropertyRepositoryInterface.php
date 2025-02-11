@@ -18,7 +18,7 @@ interface PropertyRepositoryInterface
      * @param string $sortBy The sorting criteria (default: 'default').
      * @return Collection A collection of Property models.
      */
-    public function getUserProperties(int $userId, $search = null, $sortBy = 'default'): Collection;
+    public function getUserProperties(int $userId, $search = null, $sortBy = 'default', $propertyStatus = null): Collection;
 
     /**
      * ## Create or Update Property

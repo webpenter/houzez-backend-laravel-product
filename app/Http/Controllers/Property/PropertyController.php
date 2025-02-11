@@ -38,14 +38,12 @@ class PropertyController extends Controller
      */
     public function getUserProperties(Request $request): JsonResponse
     {
-        // **Retrieve Request Parameters**
-        $search = $request->input('search'); // Search term (optional)
-        $sortBy = $request->input('sortBy', 'default'); // Sorting criteria (default: newest first)
+        $search = $request->input('search');
+        $sortBy = $request->input('sortBy', 'default');
+        $propertyStatus = $request->input('propertyStatus');
 
-        // **Fetch Properties from Repository**
-        $properties = $this->propertyRepository->getUserProperties(Auth::id(), $search, $sortBy);
+        $properties = $this->propertyRepository->getUserProperties(Auth::id(), $search, $sortBy, $propertyStatus);
 
-        // **Return JSON Response**
         return response()->json([
             'status' => 'success',
             'properties' => DashboardPropertyResource::collection($properties),
@@ -120,7 +118,7 @@ class PropertyController extends Controller
      * @param int $id The ID of the property to delete.
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy($id)
+    public function destroy($id): JsonResponse
     {
         try {
             $deleted = $this->propertyRepository->deleteProperty($id);
@@ -138,7 +136,7 @@ class PropertyController extends Controller
      * @param int $id The ID of the property to duplicate.
      * @return \Illuminate\Http\JsonResponse
      */
-    public function duplicate($id)
+    public function duplicate($id): JsonResponse
     {
         try {
             $newProperty = $this->propertyRepository->duplicateProperty($id);

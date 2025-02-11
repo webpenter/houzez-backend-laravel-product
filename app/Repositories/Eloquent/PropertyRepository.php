@@ -21,15 +21,19 @@ class PropertyRepository implements PropertyRepositoryInterface
      * @param string $sortBy The sorting criteria (default: 'default').
      * @return Collection A collection of Property models.
      */
-    public function getUserProperties(int $userId, $search = null, $sortBy = 'default'): Collection
+    public function getUserProperties(int $userId, $search = null, $sortBy = 'default', $propertyStatus = null): Collection
     {
         $query = Property::whereUserId($userId);
 
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%$search%")
-                ->orWhere('description', 'like', "%$search%");
+                    ->orWhere('description', 'like', "%$search%");
             });
+        }
+
+        if (!empty($propertyStatus)) {
+            $query->where('property_status', $propertyStatus);
         }
 
         switch ($sortBy) {
@@ -52,7 +56,6 @@ class PropertyRepository implements PropertyRepositoryInterface
 
         return $query->get();
     }
-
 
     /**
      * ## Create or Update Property
