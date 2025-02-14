@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Property;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Property\PropertyRequest;
-use App\Http\Resources\Property\DashboardPropertyResource;
+use App\Http\Resources\Property\UserPropertyResource;
 use App\Http\Resources\Property\EditPropertyResource;
 use App\Models\Property;
 use App\Repositories\PropertyRepositoryInterface;
@@ -29,7 +29,7 @@ class PropertyController extends Controller
     }
 
     /**
-     * ## Get User Properties API
+     * ## Get User Properties
      *
      * Handles API requests to fetch user properties with optional search and sorting.
      *
@@ -46,7 +46,7 @@ class PropertyController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'properties' => DashboardPropertyResource::collection($properties),
+            'properties' => UserPropertyResource::collection($properties),
         ], 200);
     }
 
