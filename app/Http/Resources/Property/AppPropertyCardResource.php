@@ -5,7 +5,7 @@ namespace App\Http\Resources\Property;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class FeaturedPropertyResource extends JsonResource
+class AppPropertyCardResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

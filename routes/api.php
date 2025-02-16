@@ -22,6 +22,7 @@ Route::prefix('v1')->group(function () {
         // Properties-related routes
         Route::prefix('properties')->controller(AppPropertyController::class)->group(function () {
             Route::get('/get-featured', 'getFeaturedProperties');
+            Route::get('/get-searched-and-filtered', 'getSearchedAndFilteredProperties');
         });
     });
 
