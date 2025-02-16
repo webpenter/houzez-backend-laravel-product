@@ -129,7 +129,7 @@ class PropertyController extends Controller
     }
 
     /**
-     * ## Controller Method for Duplicating Property
+     * ## Duplicating Property
      *
      * Handles the request to duplicate a property.
      *

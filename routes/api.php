@@ -9,6 +9,7 @@ use App\Http\Controllers\Property\SubPropertiesController;
 use App\Http\Controllers\Property\FloorPlansController;
 use App\Http\Controllers\Property\PropertyAttachmentController;
 use App\Http\Controllers\Property\AppPropertyController;
+use App\Http\Controllers\StripePayment\PlanController;
 
 Route::prefix('v1')->group(function () {
     // Authentication routes
@@ -81,6 +82,12 @@ Route::prefix('v1')->group(function () {
             Route::controller(FloorPlansController::class)->group(function () {
                 Route::post('/{property}/floor-plans/{floorPlan?}',  'createOrUpdate');
             });
+        });
+
+        // Stripe-payments related routes
+        Route::prefix('stripe-payments')->group(function () {
+            Route::post('/store-plan', [PlanController::class, 'storePlan']);
+            Route::post('/update-plan/{plan}', [PlanController::class, 'updatePlan']);
         });
     });
 });
