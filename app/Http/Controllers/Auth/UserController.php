@@ -23,14 +23,20 @@ class UserController extends Controller
      */
     public function register(RegisterRequest $request)
     {
-        // Create the user
+        $validated = $request->validated();
+
+        if (!$validated) {
+            return response()->json([
+                'errors' => $request->errors(),
+            ], 422);
+        }
+
         $user = User::create([
             'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
-        // Generate Sanctum token
         $token = $user->generateToken();
 
         return response()->json([
