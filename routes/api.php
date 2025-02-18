@@ -10,6 +10,7 @@ use App\Http\Controllers\Property\PropertyImageController;
 use App\Http\Controllers\Property\SubPropertiesController;
 use App\Http\Controllers\Property\FloorPlansController;
 use App\Http\Controllers\Property\PropertyAttachmentController;
+use App\Http\Controllers\Property\AppPropertyController;
 
 Route::prefix('v1')->group(function () {
     // Authentication routes
@@ -18,7 +19,15 @@ Route::prefix('v1')->group(function () {
         Route::post('/login', 'login');
     });
 
-    // Protected routes
+    // App routes
+    Route::prefix('app')->group(function () {
+        // Properties-related routes
+        Route::prefix('properties')->controller(AppPropertyController::class)->group(function () {
+            Route::get('/get-featured', 'getFeaturedProperties');
+        });
+    });
+
+    // Dashboard routes
     Route::middleware('auth:sanctum')->group(function () {
         // User-related routes
         Route::controller(UserController::class)->group(function () {
@@ -45,6 +54,8 @@ Route::prefix('v1')->group(function () {
                 Route::get('/get-user', 'getUserProperties');
                 Route::post('/create-or-update/{property?}', 'createOrUpdate');
                 Route::get('/edit/{property}', 'edit');
+                Route::post('/delete/{property}', 'destroy');
+                Route::post('/duplicate/{property}', 'duplicate');
             });
 
             // Property-images related routes

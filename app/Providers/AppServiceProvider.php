@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Repositories\AppPropertyRepositoryInterface;
+use App\Repositories\Eloquent\AppPropertyRepository;
 use App\Repositories\Eloquent\PropertyAttachmentRepository;
 use App\Repositories\Eloquent\PropertyImageRepository;
 use App\Repositories\Eloquent\PropertyRepository;
@@ -20,6 +22,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(PropertyRepositoryInterface::class, PropertyRepository::class);
         $this->app->bind(PropertyImageRepositoryInterface::class, PropertyImageRepository::class);
         $this->app->bind(PropertyAttachmentRepositoryInterface::class, PropertyAttachmentRepository::class);
+        $this->app->bind(AppPropertyRepositoryInterface::class, AppPropertyRepository::class);
     }
 
     /**

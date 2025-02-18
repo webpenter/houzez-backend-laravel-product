@@ -11,11 +11,14 @@ interface PropertyRepositoryInterface
      * ## Get User Properties
      *
      * Retrieves all properties associated with a given user.
+     * Includes optional search and sorting functionality.
      *
      * @param int $userId The ID of the user whose properties are to be retrieved.
+     * @param string|null $search The search query for filtering properties (optional).
+     * @param string $sortBy The sorting criteria (default: 'default').
      * @return Collection A collection of Property models.
      */
-    public function getUserProperties(int $userId): Collection;
+    public function getUserProperties(int $userId, $search = null, $sortBy = 'default', $propertyStatus = null): Collection;
 
     /**
      * ## Create or Update Property
@@ -39,4 +42,27 @@ interface PropertyRepositoryInterface
      * @throws \Exception If the property is not found or unauthorized access is attempted.
      */
     public function getPropertyForEdit(int $propertyId): Property;
+
+    /**
+     * ## Delete Property
+     *
+     * Deletes a property and all its associated images.
+     * Ensures that the authenticated user is the owner before deletion.
+     *
+     * @param int $id The ID of the property to delete.
+     * @return bool True if deletion is successful, false otherwise.
+     * @throws \Exception If the property is not found or unauthorized access is attempted.
+     */
+    public function deleteProperty(int $id): bool;
+
+    /**
+     * ## Duplicate Property
+     *
+     * Duplicates an existing property along with its images.
+     *
+     * @param int $id The ID of the property to duplicate.
+     * @return Property The duplicated property instance.
+     * @throws \Exception If the property is not found.
+     */
+    public function duplicateProperty(int $id): Property;
 }

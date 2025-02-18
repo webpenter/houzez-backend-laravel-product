@@ -4,11 +4,12 @@ namespace App\Http\Controllers\Property;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Property\PropertyRequest;
-use App\Http\Resources\Property\DashboardPropertyResource;
+use App\Http\Resources\Property\UserPropertyResource;
 use App\Http\Resources\Property\EditPropertyResource;
 use App\Models\Property;
 use App\Repositories\PropertyRepositoryInterface;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use PHPUnit\Exception;
@@ -30,20 +31,25 @@ class PropertyController extends Controller
     /**
      * ## Get User Properties
      *
-     * Retrieves all properties associated with a given user.
+     * Handles API requests to fetch user properties with optional search and sorting.
      *
-     * @param int $userId The ID of the user whose properties are to be retrieved.
-     * @return Collection A collection of Property models.
+     * @param Request $request The incoming HTTP request containing filters.
+     * @return JsonResponse JSON response with properties list.
      */
-    public function getUserProperties(): JsonResponse
+    public function getUserProperties(Request $request): JsonResponse
     {
-        $properties = $this->propertyRepository->getUserProperties(Auth::id());
+        $search = $request->input('search');
+        $sortBy = $request->input('sortBy', 'default');
+        $propertyStatus = $request->input('propertyStatus');
+
+        $properties = $this->propertyRepository->getUserProperties(Auth::id(), $search, $sortBy, $propertyStatus);
 
         return response()->json([
             'status' => 'success',
-            'properties' => DashboardPropertyResource::collection($properties),
+            'properties' => UserPropertyResource::collection($properties),
         ], 200);
     }
+
     /**
      * ## Create or Update Property
      *
@@ -103,4 +109,41 @@ class PropertyController extends Controller
             ], $e->getCode() ?: 500);
         }
     }
+
+    /**
+     * ## Deleting Property
+     *
+     * Handles the request to delete a property.
+     *
+     * @param int $id The ID of the property to delete.
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function destroy($id): JsonResponse
+    {
+        try {
+            $deleted = $this->propertyRepository->deleteProperty($id);
+            return response()->json(['message' => 'Property deleted successfully'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode() ?: 400);
+        }
+    }
+
+    /**
+     * ## Controller Method for Duplicating Property
+     *
+     * Handles the request to duplicate a property.
+     *
+     * @param int $id The ID of the property to duplicate.
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function duplicate($id): JsonResponse
+    {
+        try {
+            $newProperty = $this->propertyRepository->duplicateProperty($id);
+            return response()->json(['message' => 'Property duplicated successfully', 'property' => $newProperty], 201);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode() ?: 400);
+        }
+    }
+
 }
