@@ -32,7 +32,7 @@ class AppPropertyController extends Controller
      */
     public function getFeaturedProperties(): JsonResponse
     {
-        $properties = $this->propertyRepository->getFeaturedProperties(3);
+        $properties = $this->propertyRepository->getFeaturedProperties(6);
 
         return response()->json([
             'success' => true,
