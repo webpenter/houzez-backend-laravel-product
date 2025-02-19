@@ -86,8 +86,14 @@ Route::prefix('v1')->group(function () {
 
         // Stripe-payments related routes
         Route::prefix('stripe-payments')->group(function () {
-            Route::post('/store-plan', [PlanController::class, 'storePlan']);
-            Route::post('/update-plan/{plan}', [PlanController::class, 'updatePlan']);
+            // Plans related routes
+            Route::controller(PlanController::class)->group(function () {
+                Route::get('/get-all-plans', 'getAllPlans');
+                Route::get('/get-select-plans', 'getSelectPlans');
+                Route::post('/store-plan', 'storePlan');
+                Route::post('/update-plan/{plan}', 'updatePlan');
+                Route::post('/delete-plan/{plan}', 'deletePlan');
+            });
         });
     });
 });
