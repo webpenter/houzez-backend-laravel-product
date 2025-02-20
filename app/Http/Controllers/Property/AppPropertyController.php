@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Property;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Property\AppPropertiesCardResource;
 use App\Http\Resources\Property\AppPropertyCardResource;
 use App\Repositories\AppPropertyRepositoryInterface;
 use Illuminate\Http\JsonResponse;
@@ -34,7 +35,7 @@ class AppPropertyController extends Controller
     {
         $properties = $this->propertyRepository->getFeaturedProperties(6);
 
-        return response()->json([
+        return new JsonResponse([
             'success' => true,
             'properties' => AppPropertyCardResource::collection($properties),
         ]);
@@ -62,9 +63,60 @@ class AppPropertyController extends Controller
             $maxPrice !== 'any' ? (float) $maxPrice : null
         );
 
-        return response()->json([
+        return new JsonResponse([
             'success' => true,
             'properties' => AppPropertyCardResource::collection($properties),
         ]);
     }
+
+    public function getAllProperties(Request $request): JsonResponse
+    {
+        $search = $request->get('search');
+        $propertyTypes = $request->get('propertyTypes');
+        $city = $request->get('city');
+        $maxBedrooms = $request->get('maxBedrooms');
+        $maxPrice = $request->get('maxPrice');
+
+        $properties = $this->propertyRepository->getFilteredProperties(
+            $search,
+            !empty($propertyTypes) ? (array) $propertyTypes : null,
+            $city,
+            $maxBedrooms !== 'any' ? (int) $maxBedrooms : null,
+            $maxPrice !== 'any' ? (float) $maxPrice : null
+        );
+
+        return new JsonResponse([
+            'success' => true,
+            'properties' => AppPropertiesCardResource::collection($properties),
+        ]);
+    }
+
+
+//public function getAllProperties(Request $request): JsonResponse
+//    {
+//        $search = $request->get('search');
+//        $status = $request->get('status');
+//        $maxBedrooms = $request->get('maxBedrooms');
+//        $minBedrooms = $request->get('minBedrooms');
+//        $maxBathrooms = $request->get('maxBathrooms');
+//        $minBathrooms = $request->get('minBathrooms');
+//        $maxPrice = $request->get('maxPrice');
+//        $minPrice = $request->get('minPrice');
+//
+//        $properties = $this->propertyRepository->getAllProperties(
+//            $search,
+//            $status,
+//            $maxBedrooms,
+//            $minBedrooms,
+//            $maxBathrooms,
+//            $minBathrooms,
+//            $maxPrice,
+//            $minPrice
+//        );
+//
+//        return new JsonResponse([
+//            'success' => true,
+//            'properties' => AppPropertiesCardResource::collection($properties),
+//        ]);
+//    }
 }

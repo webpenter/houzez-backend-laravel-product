@@ -31,4 +31,15 @@ interface AppPropertyRepositoryInterface
         ?int $maxBedrooms,
         ?float $maxPrice
     ): Collection;
+
+    public function getAllProperties(
+        ?string $search,
+        ?array $status,
+        ?int $maxBedrooms,
+        ?int $minBedrooms,
+        ?int $maxBathrooms,
+        ?int $minBathrooms,
+        ?float $maxPrice,
+        ?float $minPrice
+    ): Collection;
 }
