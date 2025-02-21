@@ -17,6 +17,7 @@ class AppPropertyCardResource extends JsonResource
         return [
             'id' => $this->id ?? null,
             'title' => $this->title ?? null,
+            'slug' => $this->title ?? null,
             'address' => $this->address ?? null,
             'description' => $this->description ?? null,
             'bedrooms' => $this->bedrooms ?? null,

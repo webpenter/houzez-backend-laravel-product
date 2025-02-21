@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Property extends Model
 {
@@ -22,7 +23,7 @@ class Property extends Model
      * @var array
      */
     protected $fillable = [
-        'title', 'description', 'type', 'status', 'label', 'price', 'second_price',
+        'title','slug', 'description', 'type', 'status', 'label', 'price', 'second_price',
         'after_price', 'price_prefix','user_id',
 
         'bedrooms', 'bathrooms', 'garages', 'garages_size', 'area_size',
@@ -62,6 +63,34 @@ class Property extends Model
         'is_paid' => 'boolean',
         'is_featured' => 'boolean',
     ];
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($post) {
+            $post->slug = static::generateUniqueSlug($post->title);
+        });
+
+        static::updating(function ($post) {
+            if ($post->isDirty('title')) { // Only update slug if title changes
+                $post->slug = static::generateUniqueSlug($post->title, $post->id);
+            }
+        });
+    }
+
+    private static function generateUniqueSlug($title, $excludeId = null)
+    {
+        $slug = Str::slug($title);
+        $originalSlug = $slug;
+        $count = 1;
+
+        while (static::where('slug', $slug)->where('id', '!=', $excludeId)->exists()) {
+            $slug = $originalSlug . '-' . $count++;
+        }
+
+        return $slug;
+    }
 
     /**
      * Define the relationship with the User model.
