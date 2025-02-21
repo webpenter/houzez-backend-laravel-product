@@ -21,7 +21,7 @@ class AppPropertiesCardResource extends JsonResource
             'bathrooms' => $this->bathrooms ?? null,
             'area_size' => $this->area_size ?? null,
             'price' => $this->price ?? null,
-            'images' => $this->images->select('image_path','is_thumbnail') ?? null,
+            'thumbnail' => $this->images->where('is_thumbnail','1')->pluck('image_path')->first() ?? null,
         ];
     }
 }

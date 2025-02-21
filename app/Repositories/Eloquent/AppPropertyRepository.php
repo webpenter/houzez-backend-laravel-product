@@ -50,36 +50,4 @@ class AppPropertyRepository implements AppPropertyRepositoryInterface
             ->get();
     }
 
-    public function getAllProperties(
-        ?string $search,
-        ?array $status,
-        ?int $maxBedrooms,
-        ?int $minBedrooms,
-        ?int $maxBathrooms,
-        ?int $minBathrooms,
-        ?float $maxPrice,
-        ?float $minPrice
-    ): Collection {
-        $filters = [
-            'status' => $status,
-            'bedrooms <= ' => $maxBedrooms,
-            'bedrooms >= ' => $minBedrooms,
-            'bathrooms <= ' => $maxBathrooms,
-            'bathrooms >= ' => $minBathrooms,
-            'price <= ' => $maxPrice,
-            'price >= ' => $minPrice,
-        ];
-
-        return Property::where('property_status', 'published')
-            ->when($search, fn($query) => $query->where('title', 'like', "%$search%"))
-            ->where(function ($query) use ($filters) {
-                foreach ($filters as $column => $value) {
-                    if (!is_null($value)) {
-                        [$column, $operator] = explode(' ', $column . ' =');
-                        $query->where($column, $operator, $value);
-                    }
-                }
-            })
-            ->get();
-    }
 }

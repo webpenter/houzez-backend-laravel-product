@@ -69,6 +69,12 @@ class AppPropertyController extends Controller
         ]);
     }
 
+    /**
+     * ## Fetch all properties based on filters from the request.
+     *
+     * @param Request $request The incoming request containing filter parameters.
+     * @return JsonResponse The response containing the filtered properties.
+     */
     public function getAllProperties(Request $request): JsonResponse
     {
         $search = $request->get('search');
@@ -90,33 +96,4 @@ class AppPropertyController extends Controller
             'properties' => AppPropertiesCardResource::collection($properties),
         ]);
     }
-
-
-//public function getAllProperties(Request $request): JsonResponse
-//    {
-//        $search = $request->get('search');
-//        $status = $request->get('status');
-//        $maxBedrooms = $request->get('maxBedrooms');
-//        $minBedrooms = $request->get('minBedrooms');
-//        $maxBathrooms = $request->get('maxBathrooms');
-//        $minBathrooms = $request->get('minBathrooms');
-//        $maxPrice = $request->get('maxPrice');
-//        $minPrice = $request->get('minPrice');
-//
-//        $properties = $this->propertyRepository->getAllProperties(
-//            $search,
-//            $status,
-//            $maxBedrooms,
-//            $minBedrooms,
-//            $maxBathrooms,
-//            $minBathrooms,
-//            $maxPrice,
-//            $minPrice
-//        );
-//
-//        return new JsonResponse([
-//            'success' => true,
-//            'properties' => AppPropertiesCardResource::collection($properties),
-//        ]);
-//    }
 }

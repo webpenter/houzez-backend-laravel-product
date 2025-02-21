@@ -173,7 +173,6 @@ class PropertyRepository implements PropertyRepositoryInterface
         $newProperty = $property->replicate();
         $newProperty->save();
 
-        // Duplicate associated images
         $images = PropertyImage::where('property_id', $id)->get();
         foreach ($images as $image) {
             $newImage = $image->replicate();
