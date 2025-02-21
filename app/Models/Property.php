@@ -25,26 +25,17 @@ class Property extends Model
     protected $fillable = [
         'title','slug', 'description', 'type', 'status', 'label', 'price', 'second_price',
         'after_price', 'price_prefix','user_id',
-
         'bedrooms', 'bathrooms', 'garages', 'garages_size', 'area_size',
         'size_prefix', 'land_area', 'land_area_size_postfix', 'property_id', 'year_built',
-
         'property_feature',
-
         'energy_class', 'global_energy_performance_index', 'renewable_energy_performance_index',
         'energy_performance_of_the_building',
-
         'address', 'country', 'county_state', 'city', 'neighborhood', 'zip_postal_code',
         'map_street_view', 'latitude', 'longitude',
-
         'video_url',
-
         'virtual_tour',
-
         'contact_information',
-
         'private_note',
-
         'property_status', 'is_paid', 'is_featured',
     ];
 
@@ -64,6 +55,10 @@ class Property extends Model
         'is_featured' => 'boolean',
     ];
 
+    /**
+     * Boot method is automatically called when the model is initialized.
+     * This is used to set up event listeners for creating and updating the model.
+     */
     public static function boot()
     {
         parent::boot();
@@ -73,12 +68,19 @@ class Property extends Model
         });
 
         static::updating(function ($post) {
-            if ($post->isDirty('title')) { // Only update slug if title changes
+            if ($post->isDirty('title')) {
                 $post->slug = static::generateUniqueSlug($post->title, $post->id);
             }
         });
     }
 
+    /**
+     * Generate a unique slug for a given title.
+     *
+     * @param string $title The title of the property.
+     * @param int|null $excludeId (Optional) The ID to exclude when checking for existing slugs.
+     * @return string A unique slug.
+     */
     private static function generateUniqueSlug($title, $excludeId = null)
     {
         $slug = Str::slug($title);
@@ -102,16 +104,34 @@ class Property extends Model
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * Define a one-to-many relationship with the PropertyImage model.
+     * This indicates that a property can have multiple images.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function images()
     {
         return $this->hasMany(PropertyImage::class);
     }
 
+    /**
+     * Define a one-to-many relationship with the SubProperty model.
+     * A property can have multiple sub-properties.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function subProperties()
     {
         return $this->hasMany(SubProperty::class, 'property_id');
     }
 
+    /**
+     * Define a one-to-many relationship with the FloorPlan model.
+     * This means a property can have multiple floor plans.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function floorPlans()
     {
         return $this->hasMany(FloorPlan::class, 'property_id');
