@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StripePayment\StorePlanRequest;
 use App\Http\Requests\StripePayment\UpdatePlanRequest;
 use App\Http\Resources\StripePayment\DashboardPlanResource;
-use App\Http\Resources\StripePayment\SelectPackagesResource;
+use App\Http\Resources\StripePayment\SelectPackageResource;
 use App\Repositories\StripePlanRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Stripe\Plan;
@@ -59,7 +59,7 @@ class PlanController extends Controller
 
         return new JsonResponse([
             'success' => true,
-            'plans' => SelectPackagesResource::collection($result),
+            'plans' => SelectPackageResource::collection($result),
         ]);
     }
 

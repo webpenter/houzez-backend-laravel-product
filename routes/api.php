@@ -10,6 +10,7 @@ use App\Http\Controllers\Property\FloorPlansController;
 use App\Http\Controllers\Property\PropertyAttachmentController;
 use App\Http\Controllers\Property\AppPropertyController;
 use App\Http\Controllers\StripePayment\PlanController;
+use App\Http\Controllers\StripePayment\SubscriptionController;
 
 Route::prefix('v1')->group(function () {
     // Authentication routes
@@ -94,6 +95,11 @@ Route::prefix('v1')->group(function () {
                 Route::post('/store-plan', 'storePlan');
                 Route::post('/update-plan/{plan}', 'updatePlan');
                 Route::post('/delete-plan/{plan}', 'deletePlan');
+            });
+
+            // Subscription related routes
+            Route::controller(SubscriptionController::class)->group(function () {
+                Route::get('/checkout/{plan}', 'checkout');
             });
         });
     });

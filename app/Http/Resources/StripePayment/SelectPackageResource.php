@@ -5,7 +5,7 @@ namespace App\Http\Resources\StripePayment;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class SelectPackagesResource extends JsonResource
+class SelectPackageResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
