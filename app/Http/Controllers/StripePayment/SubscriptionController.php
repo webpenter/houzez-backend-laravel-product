@@ -35,11 +35,32 @@ class SubscriptionController extends Controller
             ], 404);
         }
 
-        return response()->json([
+        return new JsonResponse([
             'success' => true,
             'package' => new SelectPackageResource($plan),
             'intent' => auth()->user()->createSetupIntent()
         ], 200);
+    }
+
+    /**
+     * Process Subscription
+     *
+     * This method handles the subscription request by forwarding
+     * the necessary data to the SubscriptionRepository.
+     *
+     * @param $request - The incoming HTTP request containing user data, payment method, and plan ID.
+     *
+     * @return JsonResponse - A JSON response indicating success or failure.
+     */
+    public function process(Request $request): JsonResponse
+    {
+        $response = $this->subscriptionRepository->process(
+            $request->user(),
+            $request->payment_method,
+            $request->plan_id
+        );
+
+        return new JsonResponse($response, $response['success'] ? 200 : 500);
     }
 
 }

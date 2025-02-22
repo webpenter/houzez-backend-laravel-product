@@ -100,6 +100,7 @@ Route::prefix('v1')->group(function () {
             // Subscription related routes
             Route::controller(SubscriptionController::class)->group(function () {
                 Route::get('/checkout/{plan}', 'checkout');
+                Route::post('/process', 'process');
             });
         });
     });
