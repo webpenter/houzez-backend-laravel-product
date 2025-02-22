@@ -6,13 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Property\PropertyRequest;
 use App\Http\Resources\Property\UserPropertyResource;
 use App\Http\Resources\Property\EditPropertyResource;
-use App\Models\Property;
 use App\Repositories\PropertyRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\ValidationException;
-use PHPUnit\Exception;
 
 class PropertyController extends Controller
 {

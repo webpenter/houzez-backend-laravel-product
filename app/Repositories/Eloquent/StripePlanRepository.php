@@ -4,10 +4,42 @@ namespace App\Repositories\Eloquent;
 
 use App\Models\Plan as PlanModel;
 use App\Repositories\StripePlanRepositoryInterface;
+use Illuminate\Database\Eloquent\Collection;
 use Stripe\Plan;
 use Stripe\Product;
 class StripePlanRepository implements StripePlanRepositoryInterface
 {
+    /**
+     * Get all plans.
+     *
+     * This method retrieves all plans from the PlanModel
+     * and returns them as a collection.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getAllPlans(): Collection
+    {
+        return PlanModel::query()
+            ->latest()
+            ->get();
+    }
+
+    /**
+     * Get select plans.
+     *
+     * This method retrieves all active plans from the PlanModel
+     * and returns them as a collection.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getSelectPlans(): Collection
+    {
+        return PlanModel::query()
+            ->whereActive(true)
+            ->latest()
+            ->get();
+    }
+
     /**
      * Create a new plan.
      *
@@ -72,5 +104,32 @@ class StripePlanRepository implements StripePlanRepositoryInterface
         ]);
 
         return ['plan' => $plan, 'plan_model' => $planModel];
+    }
+
+    /**
+     * Delete a plan from Stripe and the database.
+     *
+     * @param string $id
+     * @return bool
+     * @throws \Exception
+     */
+    public function deletePlan(string $id): bool
+    {
+        \Stripe\Stripe::setApiKey(config('services.stripe.secret'));
+
+        $planModel = PlanModel::where('plan_id', $id)->firstOrFail();
+
+        try {
+            // Delete the plan from Stripe
+            $plan = Plan::retrieve($id);
+            $plan->delete();
+
+            // Delete the plan from the database
+            $planModel->delete();
+
+            return true;
+        } catch (\Exception $e) {
+            throw new \Exception('Failed to delete plan: ' . $e->getMessage());
+        }
     }
 }

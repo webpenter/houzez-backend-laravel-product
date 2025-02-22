@@ -5,7 +5,7 @@ namespace App\Http\Resources\Property;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class AppPropertyCardResource extends JsonResource
+class AppPropertiesCardResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -18,8 +18,6 @@ class AppPropertyCardResource extends JsonResource
             'id' => $this->id ?? null,
             'title' => $this->title ?? null,
             'slug' => $this->slug ?? null,
-            'address' => $this->address ?? null,
-            'description' => $this->description ?? null,
             'bedrooms' => $this->bedrooms ?? null,
             'bathrooms' => $this->bathrooms ?? null,
             'area_size' => $this->area_size ?? null,

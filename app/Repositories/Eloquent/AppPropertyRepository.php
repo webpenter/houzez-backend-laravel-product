@@ -49,4 +49,5 @@ class AppPropertyRepository implements AppPropertyRepositoryInterface
             ->when($maxPrice && $maxPrice !== 'any', fn($query) => $query->where('price', '<=', $maxPrice))
             ->get();
     }
+
 }
