@@ -8,6 +8,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Resources\Auth\UserResource;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -21,12 +22,12 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse A JSON response with a success message, the registered user data, and a Sanctum authentication token.
      */
-    public function register(RegisterRequest $request)
+    public function register(RegisterRequest $request): JsonResponse
     {
         $validated = $request->validated();
 
         if (!$validated) {
-            return response()->json([
+            return new JsonResponse([
                 'errors' => $request->errors(),
             ], 422);
         }
@@ -39,7 +40,7 @@ class UserController extends Controller
 
         $token = $user->generateToken();
 
-        return response()->json([
+        return new JsonResponse([
             'message' => 'User registered successfully',
             'user' => new UserResource($user),
             'token' => $token,
@@ -54,17 +55,19 @@ class UserController extends Controller
      * @return \Illuminate\Http\JsonResponse A JSON response with a success message, the authenticated user data, and a Sanctum authentication token,
      *                                        or an error message if the credentials are invalid.
      */
-    public function login(LoginRequest $request)
+    public function login(LoginRequest $request): JsonResponse
     {
         $user = User::where('email', $request->email)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json(['message' => 'Invalid email or password'], 401);
+            return new JsonResponse([
+                'message' => 'Invalid email or password'
+            ], 401);
         }
 
         $token = $user->generateToken();
 
-        return response()->json([
+        return new JsonResponse([
             'message' => 'Login successful',
             'user' => new UserResource($user),
             'token' => $token,
@@ -78,13 +81,13 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse A JSON response confirming the logout action.
      */
-    public function logout(Request $request)
+    public function logout(Request $request): JsonResponse
     {
         Auth::user()->tokens->each(function ($token) {
             $token->delete();
         });
 
-        return response()->json([
+        return new JsonResponse([
             'message' => 'Logged out successfully',
             'status' => 200
         ]);
@@ -111,17 +114,21 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse A JSON response with a success message if the password is updated, or an error message if the current password is incorrect.
      */
-    public function changePassword(ChangePasswordRequest $request)
+    public function changePassword(ChangePasswordRequest $request): JsonResponse
     {
         $user = Auth::user();
 
         if (!Hash::check($request->current_password, $user->password)) {
-            return response()->json(['message' => 'Current password is incorrect'], 403);
+            return new JsonResponse([
+                'message' => 'Current password is incorrect'
+            ], 403);
         }
 
         $user->update(['password' => Hash::make($request->new_password)]);
 
-        return response()->json(['message' => 'Password updated successfully']);
+        return new JsonResponse([
+            'message' => 'Password updated successfully'
+        ]);
     }
 
     /**
@@ -131,7 +138,7 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse A JSON response confirming the account deletion.
      */
-    public function deleteAccount(Request $request)
+    public function deleteAccount(Request $request): JsonResponse
     {
         $user = Auth::user();
 
@@ -143,6 +150,8 @@ class UserController extends Controller
         $user->tokens()->delete();
         $user->delete();
 
-        return response()->json(['message' => 'Account deleted successfully']);
+        return new JsonResponse([
+            'message' => 'Account deleted successfully'
+        ]);
     }
 }

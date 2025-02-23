@@ -34,7 +34,7 @@ class PropertyImageController extends Controller
     public function imagesCreateOrUpdate(PropertyImageRequest $request, $propertyId): JsonResponse
     {
         $result = $this->propertyImageRepository->createOrUpdateImages($request, $propertyId);
-        return response()->json($result['response'], $result['status']);
+        return new JsonResponse($result['response'], $result['status']);
     }
 
     /**
@@ -50,10 +50,14 @@ class PropertyImageController extends Controller
         $images = $this->propertyImageRepository->getImagesByPropertyId($propertyId);
 
         if ($images->isEmpty()) {
-            return response()->json(['message' => 'No images found.'], 404);
+            return new JsonResponse([
+                'message' => 'No images found.'
+            ], 404);
         }
 
-        return response()->json(['images' => $images], 200);
+        return new JsonResponse([
+            'images' => $images
+        ], 200);
     }
 
     /**
@@ -67,7 +71,9 @@ class PropertyImageController extends Controller
      */
     public function updateThumbnail($propertyId, $imageId): JsonResponse
     {
-        return response()->json(['success' => $this->propertyImageRepository->updateThumbnail($propertyId, $imageId)], 200);
+        return new JsonResponse([
+            'success' => $this->propertyImageRepository->updateThumbnail($propertyId, $imageId)
+        ], 200);
     }
 
     /**
@@ -81,6 +87,8 @@ class PropertyImageController extends Controller
      */
     public function deleteImage($propertyId, $imageId): JsonResponse
     {
-        return response()->json(['success' => $this->propertyImageRepository->deleteImage($propertyId, $imageId)], 200);
+        return new JsonResponse([
+            'success' => $this->propertyImageRepository->deleteImage($propertyId, $imageId)
+        ], 200);
     }
 }

@@ -44,7 +44,7 @@ class PropertyController extends Controller
 
         $properties = $this->propertyRepository->getUserProperties(Auth::id(), $search, $sortBy, $propertyStatus);
 
-        return response()->json([
+        return new JsonResponse([
             'status' => 'success',
             'properties' => UserPropertyResource::collection($properties),
         ], 200);
@@ -68,17 +68,17 @@ class PropertyController extends Controller
             $data = $request->validated();
             $property = $this->propertyRepository->createOrUpdate($data, $id);
 
-            return response()->json([
+            return new JsonResponse([
                 'message' => $id ? 'Property updated successfully.' : 'Property created successfully.',
                 'property' => $property,
             ], $id ? 200 : 201);
         } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
+            return new JsonResponse([
                 'message' => 'Validation failed.',
                 'errors' => $e->errors(),
             ], 422);
         } catch (\Exception $e) {
-            return response()->json([
+            return new JsonResponse([
                 'message' => $e->getMessage(),
             ], $e->getCode() ?: 500);
         }
@@ -98,12 +98,12 @@ class PropertyController extends Controller
         try {
             $property = $this->propertyRepository->getPropertyForEdit($propertyId);
 
-            return response()->json([
+            return new JsonResponse([
                 'status' => 'success',
                 'property' => new EditPropertyResource($property),
             ], 200);
         } catch (\Exception $e) {
-            return response()->json([
+            return new JsonResponse([
                 'status' => 'error',
                 'message' => $e->getMessage(),
             ], $e->getCode() ?: 500);
@@ -122,9 +122,13 @@ class PropertyController extends Controller
     {
         try {
             $deleted = $this->propertyRepository->deleteProperty($id);
-            return response()->json(['message' => 'Property deleted successfully'], 200);
+            return new JsonResponse([
+                'message' => 'Property deleted successfully'
+            ], 200);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], $e->getCode() ?: 400);
+            return new JsonResponse([
+                'error' => $e->getMessage()
+            ], $e->getCode() ?: 400);
         }
     }
 
@@ -140,9 +144,15 @@ class PropertyController extends Controller
     {
         try {
             $newProperty = $this->propertyRepository->duplicateProperty($id);
-            return response()->json(['message' => 'Property duplicated successfully', 'property' => $newProperty], 201);
+
+            return new JsonResponse([
+                'message' => 'Property duplicated successfully',
+                'property' => $newProperty
+            ], 201);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], $e->getCode() ?: 400);
+            return response()->json([
+                'error' => $e->getMessage()
+            ], $e->getCode() ?: 400);
         }
     }
 
