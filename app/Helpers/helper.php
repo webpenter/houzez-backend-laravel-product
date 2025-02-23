@@ -1,5 +1,14 @@
 <?php
 
+use Carbon\Carbon;
+
+if (!function_exists('formatDate')) {
+    function formatDate($date, $format = 'F j, Y') {
+        return $date ? \Carbon\Carbon::parse($date)->format($format) : null;
+    }
+}
+
+
 if (!function_exists('formatTextWithNumber')) {
     function formatTextWithNumber($number, $text) {
         return $number > 1 ? "$number {$text}s" : "$number $text";
