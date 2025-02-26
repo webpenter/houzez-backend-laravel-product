@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Auth\UserProfileResource;
 use App\Http\Resources\Auth\UserSocialMediaResource;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,19 +17,14 @@ class UserProfileController extends Controller
      *
      * @return string|null The URL of the user's profile picture, or null if not set.
      */
-    public function getProfilePicture()
+    public function getProfilePicture(): ?string
     {
         $user = Auth::user();
         $profile = $user->profile;
 
-        if ($profile->profile_picture) {
-            $profile_picture = $profile->profile_picture;
-        } else {
-            $profile_picture = null;
-        }
-
-        return $profile_picture;
+        return $profile->profile_picture ?? null;
     }
+
 
     /**
      * Update the authenticated user's profile picture.
@@ -37,25 +33,19 @@ class UserProfileController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse A JSON response with a success message and the URL of the updated profile picture.
      */
-    public function updateProfilePicture(Request $request)
+    public function updateProfilePicture(Request $request): JsonResponse
     {
-        // Validate the request
         $validated = $request->validate([
-            'profile_picture' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Limit to 2MB
+            'profile_picture' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Retrieve the authenticated user
         $user = Auth::user();
-
-        // Retrieve the associated profile
         $profile = $user->profile;
 
         if (!$profile) {
-            // If no profile exists, create a new one
             $profile = $user->profile()->create([]);
         }
 
-        // Delete the old picture if it exists
         if (!empty($profile->profile_picture)) {
             $oldPicturePath = public_path('profile-picture/' . basename($profile->profile_picture));
             if (file_exists($oldPicturePath)) {
@@ -63,18 +53,15 @@ class UserProfileController extends Controller
             }
         }
 
-        // Store the new picture
         $file = $request->file('profile_picture');
         $fileName = time() . '_' . $file->getClientOriginalName();
         $file->move(public_path('profile-picture'), $fileName);
 
-        // Update the profile picture path
         $fullPath = url('profile-picture/' . $fileName);
         $profile->profile_picture = $fullPath;
         $profile->save();
 
-        // Return a response
-        return response()->json([
+        return new JsonResponse([
             'message' => 'Profile picture updated successfully!',
             'profile_picture_url' => $fullPath,
         ], 200);
@@ -85,7 +72,7 @@ class UserProfileController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getProfileInformation()
+    public function getProfileInformation(): JsonResponse
     {
         $user = Auth::user();
 
@@ -95,7 +82,7 @@ class UserProfileController extends Controller
             $profile = $user->profile()->create(['user_id' => $user->id]);
         }
 
-        return response()->json([
+        return new JsonResponse([
             'message' => 'Profile information fetched successfully!',
             'profile' => new UserProfileResource($profile),
         ]);
@@ -108,38 +95,33 @@ class UserProfileController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse A JSON response with a success message and the updated profile resource.
      */
-    public function updateInformation(Request $request)
+    public function updateInformation(Request $request): JsonResponse
     {
         $user = Auth::user();
 
-        // Check if the username exists in the database (excluding the current user)
         if ($request->has('username')) {
             $existingUser = User::where('username', $request->username)
                 ->where('id', '!=', $user->id)
                 ->first();
 
             if ($existingUser) {
-                return response()->json([
+                return new JsonResponse([
                     'message' => 'The username is already taken. Please choose a different one.',
-                ], 409); // 409 Conflict status code
+                ], 409);
             }
 
-            // Update the user's username
             $user->update(['username' => $request->username]);
         }
 
-        // Retrieve the associated profile
         $profile = $user->profile;
 
         if (!$profile) {
-            // If no profile exists, create a new one
             $profile = $user->profile()->create(['user_id' => $user->id]);
         }
 
-        // Update the profile with the request data
         $profile->update($request->all());
 
-        return response()->json([
+        return new JsonResponse([
             'message' => 'Profile updated successfully',
             'profile' => new UserProfileResource($profile),
         ]);
@@ -151,7 +133,7 @@ class UserProfileController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getSocialMedia()
+    public function getSocialMedia(): JsonResponse
     {
         $user = Auth::user();
 
@@ -161,7 +143,7 @@ class UserProfileController extends Controller
             $profile = $user->profile()->create(['user_id' => $user->id]);
         }
 
-        return response()->json([
+        return new JsonResponse([
             'message' => 'User\'s social media information fetched successfully!',
             'profile' => new UserSocialMediaResource($profile),
         ]);
@@ -173,21 +155,18 @@ class UserProfileController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function updateSocialMedia(Request $request)
+    public function updateSocialMedia(Request $request): JsonResponse
     {
         $user = Auth::user();
-
-        // Retrieve the associated profile
         $profile = $user->profile;
 
         if (!$profile) {
-            // If no profile exists, create a new one
             $profile = $user->profile()->create([['user_id' => $user->id]]);
         }
 
         $profile->update($request->all());
 
-        return response()->json([
+        return new JsonResponse([
             'message' => 'Social media accounts updated successfully',
             'profile' => new UserSocialMediaResource($profile),
         ]);

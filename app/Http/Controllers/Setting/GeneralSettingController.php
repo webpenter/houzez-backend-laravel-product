@@ -15,6 +15,14 @@ class GeneralSettingController extends Controller
         $this->generalSettingRepository = $generalSettingRepository;
     }
 
+
+    public function index()
+    {
+        $settings = $this->generalSettingRepository->getSettings();
+        return response()->json($settings);
+    }
+
+
     public function store(GeneralSettingRequest $request)
     {
         $settings = $this->generalSettingRepository->createOrUpdate($request->validated());

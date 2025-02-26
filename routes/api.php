@@ -14,6 +14,7 @@ use App\Http\Controllers\Property\AppPropertyController;
 use App\Http\Controllers\Setting\GeneralSettingController;
 use App\Http\Controllers\StripePayment\PlanController;
 use App\Http\Controllers\StripePayment\SubscriptionController;
+use App\Http\Controllers\StripePayment\InvoicesController;
 
 Route::prefix('v1')->group(function () {
     // Authentication routes
@@ -113,10 +114,18 @@ Route::prefix('v1')->group(function () {
             // Subscription related routes
             Route::controller(SubscriptionController::class)->group(function () {
                 Route::get('/checkout/{plan}', 'checkout');
+                Route::post('/process', 'process');
+                Route::get('/get-user-subscriptions', 'getUserSubscriptions');
+                Route::get('/cancel-subscription', 'cancelSubscription');
+                Route::get('/resume-subscription', 'resumeSubscription');
             });
+
+            // Invoices related routes
+            Route::get('/invoices',[InvoicesController::class,'invoices']);
         });
 
         Route::prefix('settings')->group(function () {
+            Route::get('/general', [GeneralSettingController::class, 'index']);
             Route::post('/general/create', [GeneralSettingController::class, 'store']);
         });
     });
