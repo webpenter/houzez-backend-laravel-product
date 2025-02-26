@@ -90,9 +90,11 @@ Route::prefix('v1')->group(function () {
         // Stripe-payments related routes
         Route::prefix('stripe-payments')->group(function () {
             // Plans related routes
-            Route::controller(PlanController::class)->group(function () {
+            Route::controller(PlanController::class)
+                ->middleware('isAdmin')
+                ->group(function () {
                 Route::get('/get-all-plans', 'getAllPlans');
-                Route::get('/get-select-plans', 'getSelectPlans');
+                Route::get('/get-select-plans', 'getSelectPlans')->withoutMiddleware('isAdmin');
                 Route::post('/store-plan', 'storePlan');
                 Route::post('/update-plan/{plan}', 'updatePlan');
                 Route::post('/delete-plan/{plan}', 'deletePlan');
