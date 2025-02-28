@@ -19,6 +19,7 @@ class EditPropertyResource extends JsonResource
             'description' => $this->description ?? null,
             'type' => $this->type ?? null,
             'status' => $this->status ?? null,
+            'property_status' => $this->property_status ?? null,
             'label' => $this->label ?? null,
             'price' => $this->price ?? null,
             'second_price' => $this->second_price ?? null,

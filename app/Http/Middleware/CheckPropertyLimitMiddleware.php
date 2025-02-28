@@ -31,12 +31,12 @@ class CheckPropertyLimitMiddleware
             return $next($request);
         }
 
-        if (!$user->subscription?->active()) {
+        if (!$user->userSubscription?->active()) {
             return response()->json(['message' => 'You need an active subscription'], 403);
         }
 
         $currentPosts = $user->properties()->count();
-        $postLimit = $user->subscription->plan->number_of_listings ?? 0;
+        $postLimit = $user->userSubscription->plan->number_of_listings ?? 0;
 
         if ($currentPosts >= $postLimit) {
             return response()->json(['message' => 'Post limit exceeded, upgrade your plan'], 403);
