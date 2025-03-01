@@ -39,11 +39,13 @@ class UserController extends Controller
         ]);
 
         $token = $user->generateToken();
+        $admin = $user->isAdmin();
 
         return new JsonResponse([
             'message' => 'User registered successfully',
             'user' => new UserResource($user),
             'token' => $token,
+            'admin' => $admin,
         ], 201);
     }
 
@@ -66,11 +68,13 @@ class UserController extends Controller
         }
 
         $token = $user->generateToken();
+        $admin = $user->isAdmin();
 
         return new JsonResponse([
             'message' => 'Login successful',
             'user' => new UserResource($user),
             'token' => $token,
+            'admin' => $admin,
         ],200);
     }
 
@@ -100,11 +104,16 @@ class UserController extends Controller
      *
      * @return \App\Http\Resources\UserResource A resource representing the authenticated user's details.
      */
-    public function getUser(Request $request)
+    public function getUser(Request $request): JsonResponse
     {
         $user = Auth::user();
+        $admin = $user->isAdmin();
 
-        return new UserResource($user);
+        return new JsonResponse([
+            'status' => 200,
+            'user' => new UserResource($user),
+            'admin' => $admin,
+        ]);
     }
 
     /**

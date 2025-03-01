@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
             //site details
             $table->string('site_logo')->nullable();
-            $table->string('site_name');
+            $table->string('site_name')->nullable();
             $table->string('site_title')->nullable();
             $table->text('site_description')->nullable();
-            $table->string('site_address')->nullable();
+            $table->text('site_address')->nullable();
             
             $table->string('contact_number')->nullable();
             $table->string('email_address')->nullable();
