@@ -78,7 +78,9 @@ class PropertyRepository implements PropertyRepositoryInterface
      */
     public function createOrUpdate(array $data, ?int $id = null): Property
     {
-        $data['user_id'] = Auth::id();
+        $user = Auth::user();
+
+        $data['user_id'] = $user->id;
         $data['property_feature'] = $data['property_feature'] ?? [];
         $data['contact_information'] = $data['contact_information'] ?? [];
 
@@ -88,7 +90,7 @@ class PropertyRepository implements PropertyRepositoryInterface
                 throw new \Exception('Property not found.', 404);
             }
 
-            if ($property->user_id !== Auth::id()) {
+            if (!$user->isAdmin() && $property->user_id !== $user->id) {
                 throw new \Exception('You are not authorized to update this property.', 403);
             }
 
@@ -111,13 +113,14 @@ class PropertyRepository implements PropertyRepositoryInterface
      */
     public function getPropertyForEdit(int $propertyId): Property
     {
+        $user = Auth::user();
         $property = Property::find($propertyId);
 
         if (!$property) {
             throw new \Exception('Property not found or ID does not match.', 404);
         }
 
-        if ($property->user_id !== Auth::id()) {
+        if (!$user->isAdmin() && $property->user_id !== $user->id) {
             throw new \Exception('You are not authorized to edit this property.', 403);
         }
 
@@ -136,13 +139,14 @@ class PropertyRepository implements PropertyRepositoryInterface
      */
     public function deleteProperty(int $id): bool
     {
+        $user = Auth::user();
         $property = Property::find($id);
 
         if (!$property) {
             throw new \Exception('Property not found.', 404);
         }
 
-        if ($property->user_id !== Auth::id()) {
+        if (!$user->isAdmin() && $property->user_id !== $user->id) {
             throw new \Exception('You are not authorized to delete this property.', 403);
         }
 
