@@ -2,17 +2,25 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Cashier\Billable;
+use Laravel\Cashier\Subscription;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    /**
+     * Use Laravel model traits for API tokens, factory, notifications, and billing.
+     *
+     * - `HasApiTokens`: Enables API token authentication for the model.
+     * - `HasFactory`: Allows the model to use a factory for testing and seeding.
+     * - `Notifiable`: Adds notification support for the model.
+     * - `Billable`: Enables Laravel Cashier billing functionalities.
+     */
     use HasApiTokens, HasFactory, Notifiable, Billable;
 
     /**
@@ -82,19 +90,50 @@ class User extends Authenticatable
         return $this->hasOne(UserProfile::class);
     }
 
-     /**
-     * Get messages sent by the user.
+    /**
+     * Get the latest subscription for the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function sentMessages()
+    public function userSubscription(): HasOne
     {
-        return $this->hasMany(Message::class, 'sender_id');
+        return $this->hasOne(Subscription::class, 'user_id', 'id')->latest();
     }
 
     /**
-     * Get messages received by the user.
+     * Retrieve the properties associated with the current model.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function receivedMessages()
+    public function properties(): HasMany
     {
-        return $this->hasMany(Message::class, 'receiver_id');
+        return $this->hasMany(Property::class);
     }
+
+    /**
+     * Determine if the user can create a property.
+     *
+     * A user can create a property if:
+     * - They are an admin.
+     * - They have an active subscription.
+     * - They have not exceeded the listing limit of their plan.
+     *
+     * @return bool
+     */
+    public function canCreateProperty(): bool
+    {
+        if ($this->isAdmin()) {
+            return true;
+        }
+
+        if ($this->userSubscription?->active()) {
+            $currentPosts = $this->properties()->count();
+            $postLimit = $this->userSubscription->plan->number_of_listings ?? 0;
+
+            return $currentPosts < $postLimit;
+        }
+
+        return false;
+    }
+
 }

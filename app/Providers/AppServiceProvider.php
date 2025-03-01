@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Repositories\AppPropertyRepositoryInterface;
+use App\Repositories\BedroomRepositoryInterface;
 use App\Repositories\Eloquent\AppPropertyRepository;
+use App\Repositories\Eloquent\BedroomRepository;
 use App\Repositories\Eloquent\GeneralSettingRepository;
 use App\Repositories\Eloquent\PropertyAttachmentRepository;
 use App\Repositories\Eloquent\PropertyImageRepository;
@@ -36,6 +38,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(StripePlanRepositoryInterface::class, StripePlanRepository::class);
         $this->app->bind(GeneralSettingRepositoryInterface::class, GeneralSettingRepository::class);
         $this->app->bind(StripeSubscriptionRepositoryInterface::class, StripeSubscriptionRepository::class);
+
+        //Bedroom repo
+        $this->app->bind(BedroomRepositoryInterface::class, BedroomRepository::class);
     }
 
     /**

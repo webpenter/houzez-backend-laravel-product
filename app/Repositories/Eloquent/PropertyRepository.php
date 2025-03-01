@@ -4,6 +4,7 @@ namespace App\Repositories\Eloquent;
 
 use App\Models\Property;
 use App\Models\PropertyImage;
+use App\Models\User;
 use App\Repositories\PropertyRepositoryInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -23,7 +24,13 @@ class PropertyRepository implements PropertyRepositoryInterface
      */
     public function getUserProperties(int $userId, $search = null, $sortBy = 'default', $propertyStatus = null): Collection
     {
-        $query = Property::whereUserId($userId);
+        $user = User::find($userId);
+
+        if (!$user) {
+            return collect();
+        }
+
+        $query = $user->isAdmin() ? Property::query() : Property::whereUserId($userId);
 
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {

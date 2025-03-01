@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\UserController;
 use App\Http\Controllers\Auth\UserProfileController;
+use App\Http\Controllers\BedroomController;
 use App\Http\Controllers\Message\MessageController;
 use App\Http\Controllers\Message\MessageReplyController;
 use App\Http\Controllers\Property\PropertyController;
@@ -58,7 +59,7 @@ Route::prefix('v1')->group(function () {
             // General-properties related routes
             Route::controller(PropertyController::class)->group(function () {
                 Route::get('/get-user', 'getUserProperties');
-                Route::post('/create-or-update/{property?}', 'createOrUpdate');
+                Route::post('/create-or-update/{property?}', 'createOrUpdate')->middleware('checkPropertyLimit');
                 Route::get('/edit/{property}', 'edit');
                 Route::post('/delete/{property}', 'destroy');
                 Route::post('/duplicate/{property}', 'duplicate');
@@ -127,6 +128,15 @@ Route::prefix('v1')->group(function () {
         Route::prefix('settings')->group(function () {
             Route::get('/general', [GeneralSettingController::class, 'index']);
             Route::post('/general/create', [GeneralSettingController::class, 'store']);
+        });
+
+        // bedroom routes
+        Route::prefix('bedrooms')->group(function () {
+            Route::get('/', [BedroomController::class, 'index']); // List all bedrooms
+            Route::post('/create', [BedroomController::class, 'store']); // Create a new bedroom
+            Route::get('/{bedroom}', [BedroomController::class, 'show']); // Get single bedroom (Model Binding)
+            Route::post('/update/{bedroom}', [BedroomController::class, 'update']); // Update bedroom (Model Binding)
+            Route::post('/delete/{bedroom}', [BedroomController::class, 'destroy']); // Delete bedroom (Model Binding)
         });
     });
 });

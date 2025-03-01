@@ -39,13 +39,13 @@ class UserController extends Controller
         ]);
 
         $token = $user->generateToken();
-        $admin = $user->isAdmin();
 
         return new JsonResponse([
             'message' => 'User registered successfully',
             'user' => new UserResource($user),
             'token' => $token,
-            'admin' => $admin,
+            'admin' => false,
+            'isSubscribed' => false,
         ], 201);
     }
 
@@ -69,12 +69,14 @@ class UserController extends Controller
 
         $token = $user->generateToken();
         $admin = $user->isAdmin();
+        $isSubscribed = $user->canCreateProperty();
 
         return new JsonResponse([
             'message' => 'Login successful',
             'user' => new UserResource($user),
             'token' => $token,
             'admin' => $admin,
+            'isSubscribed' => $isSubscribed,
         ],200);
     }
 
@@ -108,11 +110,13 @@ class UserController extends Controller
     {
         $user = Auth::user();
         $admin = $user->isAdmin();
+        $isSubscribed = $user->canCreateProperty();
 
         return new JsonResponse([
             'status' => 200,
             'user' => new UserResource($user),
             'admin' => $admin,
+            'isSubscribed' => $isSubscribed,
         ]);
     }
 

@@ -51,7 +51,7 @@ class StripePlanRepository implements StripePlanRepositoryInterface
         \Stripe\Stripe::setApiKey(config('services.stripe.secret'));
 
         $plan = Plan::create([
-            'amount' => $data['amount'] * 100,
+            'amount' => $data['amount'],
             'currency' => $data['currency'],
             'interval' => $data['billing_period'],
             'interval_count' => $data['interval_count'],
