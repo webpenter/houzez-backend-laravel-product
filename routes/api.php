@@ -9,6 +9,7 @@ use App\Http\Controllers\Property\SubPropertiesController;
 use App\Http\Controllers\Property\FloorPlansController;
 use App\Http\Controllers\Property\PropertyAttachmentController;
 use App\Http\Controllers\Property\AppPropertyController;
+use App\Http\Controllers\Property\FavoritePropertyController;
 use App\Http\Controllers\StripePayment\PlanController;
 use App\Http\Controllers\StripePayment\SubscriptionController;
 use App\Http\Controllers\StripePayment\InvoicesController;
@@ -84,6 +85,13 @@ Route::prefix('v1')->group(function () {
             // Sub-properties related routes
             Route::controller(FloorPlansController::class)->group(function () {
                 Route::post('/{property}/floor-plans/{floorPlan?}',  'createOrUpdate');
+            });
+
+            // Favorites-properties related routes
+            Route::prefix('favorites')->controller(FavoritePropertyController::class)->group(function () {
+                Route::get('/get-user', 'index');
+                Route::post('/store/{property}', 'store');
+                Route::post('/delete/{favoriteProperty}', 'destroy');
             });
         });
 
