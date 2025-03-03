@@ -285,6 +285,17 @@ namespace App\Models{
 /**
  * 
  *
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Subscriber newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Subscriber newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Subscriber query()
+ */
+	class Subscriber extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * 
+ *
  * @property int $id
  * @property int $user_id
  * @property string $type

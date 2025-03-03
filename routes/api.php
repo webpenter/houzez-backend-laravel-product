@@ -12,6 +12,7 @@ use App\Http\Controllers\Property\AppPropertyController;
 use App\Http\Controllers\StripePayment\PlanController;
 use App\Http\Controllers\StripePayment\SubscriptionController;
 use App\Http\Controllers\StripePayment\InvoicesController;
+use App\Http\Controllers\NewsletterController;
 
 Route::prefix('v1')->group(function () {
     // Authentication routes
@@ -110,5 +111,8 @@ Route::prefix('v1')->group(function () {
             // Invoices related routes
             Route::get('/invoices',[InvoicesController::class,'invoices']);
         });
+            // newsletter route
+            Route::post('/subscribe', [NewsletterController::class, 'store']);
     });
+
 });
