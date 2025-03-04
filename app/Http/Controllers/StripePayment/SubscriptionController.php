@@ -85,7 +85,7 @@ class SubscriptionController extends Controller
         return new JsonResponse([
             'success' => true,
             'subscriptions' => UserSubscriptionsResource::collection($subscriptions)
-        ],200);
+        ],200); 
     }
 
     /**

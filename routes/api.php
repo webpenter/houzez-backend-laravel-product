@@ -12,6 +12,7 @@ use App\Http\Controllers\Property\SubPropertiesController;
 use App\Http\Controllers\Property\FloorPlansController;
 use App\Http\Controllers\Property\PropertyAttachmentController;
 use App\Http\Controllers\Property\AppPropertyController;
+use App\Http\Controllers\Property\FavoritePropertyController;
 use App\Http\Controllers\Setting\GeneralSettingController;
 use App\Http\Controllers\StripePayment\PlanController;
 use App\Http\Controllers\StripePayment\SubscriptionController;
@@ -89,17 +90,14 @@ Route::prefix('v1')->group(function () {
             Route::controller(FloorPlansController::class)->group(function () {
                 Route::post('/{property}/floor-plans/{floorPlan?}',  'createOrUpdate');
             });
+
+            // Favorites-properties related routes
+            Route::prefix('favorites')->controller(FavoritePropertyController::class)->group(function () {
+                Route::get('/get-user', 'index');
+                Route::post('/store/{property}', 'store');
+                Route::post('/delete/{favoriteProperty}', 'destroy');
+            });
         });
-
-
-            Route::post('/messages/create', [MessageController::class, 'send']);
-            Route::get('/messages', [MessageController::class, 'index']);
-            Route::get('/messages/{message}', [MessageController::class, 'show']);
-            Route::post('/messages/update/{message}', [MessageController::class, 'update']);
-            Route::post('/messages/delete/{message}', [MessageController::class, 'destroy']);
-
-
-            Route::post('/messages/{message}/replies', [MessageReplyController::class, 'reply']);
 
         // Stripe-payments related routes
         Route::prefix('stripe-payments')->group(function () {
