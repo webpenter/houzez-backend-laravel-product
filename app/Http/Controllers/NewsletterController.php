@@ -35,9 +35,9 @@ class NewsletterController extends Controller
         ]);
     
         return response()->json([
-            'message' => 'Successfully subscribed to the newsletter.',
+            'message' => 'Successfully subscribed.',
             'data' => $subscriber
-        ], 201);
+        ], 200);
     }
     
 }
