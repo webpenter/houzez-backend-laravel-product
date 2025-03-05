@@ -84,7 +84,7 @@ Route::prefix('v1')->group(function () {
 
             // Sub-properties related routes
             Route::controller(FloorPlansController::class)->group(function () {
-                Route::post('/{property}/floor-plans/{floorPlan?}',  'createOrUpdate');
+                Route::post('/{property}/floor-plans/{floorPlan?}', 'createOrUpdate');
             });
         });
 
