@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Subscriber;
+namespace App\Http\Controllers\NewsletterSubscribe;
 
 use App\Http\Controllers\Controller;
 use App\Models\Subscriber;
@@ -8,7 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class SubscriberController extends Controller
+class NewsletterSubscribeController extends Controller
 {
     /**
      * Subscribe a user to the newsletter.

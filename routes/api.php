@@ -13,7 +13,7 @@ use App\Http\Controllers\Property\FavoritePropertyController;
 use App\Http\Controllers\StripePayment\PlanController;
 use App\Http\Controllers\StripePayment\SubscriptionController;
 use App\Http\Controllers\StripePayment\InvoicesController;
-use App\Http\Controllers\Subscriber\SubscriberController;
+use App\Http\Controllers\NewsletterSubscribe\NewsletterSubscribeController;
 
 Route::prefix('v1')->group(function () {
     // Authentication routes
@@ -32,7 +32,7 @@ Route::prefix('v1')->group(function () {
         });
 
         // Subscriber related route
-        Route::post('/subscribe', [SubscriberController::class, 'subscribe']);
+        Route::post('/subscribe', [NewsletterSubscribeController::class, 'subscribe']);
     });
 
     // Dashboard routes
