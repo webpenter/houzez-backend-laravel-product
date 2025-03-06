@@ -34,6 +34,15 @@ interface FavoritePropertyRepositoryInterface
     public function removeFromFavorites(int $userId, int $propertyId): bool;
 
     /**
+     * Remove an already exists property from favorites
+     *
+     * @param int $userId
+     * @param int $propertyId
+     * @return bool
+     */
+    public function removeAlreadyExistsProperty(int $userId, int $propertyId): bool;
+
+    /**
      * Checks if the user has already marked the property as a favorite.
      *
      * @param int $userId

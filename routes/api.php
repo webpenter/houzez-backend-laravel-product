@@ -31,7 +31,7 @@ Route::prefix('v1')->group(function () {
             Route::get('/get-all', 'getAllProperties');
         });
 
-        // Subscriber related route
+        // Newsletter-Subscribe related route
         Route::post('/subscribe', [NewsletterSubscribeController::class, 'subscribe']);
     });
 
@@ -86,7 +86,7 @@ Route::prefix('v1')->group(function () {
                 Route::post('/{property}/sub-properties/{subProperty?}',  'createOrUpdate');
             });
 
-            // Sub-properties related routes
+            // Floor-plans related routes
             Route::controller(FloorPlansController::class)->group(function () {
                 Route::post('/{property}/floor-plans/{floorPlan?}', 'createOrUpdate');
             });
@@ -94,7 +94,8 @@ Route::prefix('v1')->group(function () {
             // Favorites-properties related routes
             Route::prefix('favorites')->controller(FavoritePropertyController::class)->group(function () {
                 Route::get('/get-user', 'index');
-                Route::post('/store/{property}', 'store');
+                Route::post('/add-or-remove/{property}', 'addOrRemove');
+                Route::get('/is-favorite/{property}', 'isFavorite');
                 Route::post('/delete/{favoriteProperty}', 'destroy');
             });
         });
