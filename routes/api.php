@@ -13,7 +13,7 @@ use App\Http\Controllers\Property\FavoritePropertyController;
 use App\Http\Controllers\StripePayment\PlanController;
 use App\Http\Controllers\StripePayment\SubscriptionController;
 use App\Http\Controllers\StripePayment\InvoicesController;
-use App\Http\Controllers\NewsletterController;
+use App\Http\Controllers\Subscriber\SubscriberController;
 
 Route::prefix('v1')->group(function () {
     // Authentication routes
@@ -30,6 +30,9 @@ Route::prefix('v1')->group(function () {
             Route::get('/get-searched-and-filtered', 'getSearchedAndFilteredProperties');
             Route::get('/get-all', 'getAllProperties');
         });
+
+        // Subscriber related route
+        Route::post('/subscribe', [SubscriberController::class, 'subscribe']);
     });
 
     // Dashboard routes
@@ -119,8 +122,6 @@ Route::prefix('v1')->group(function () {
             // Invoices related routes
             Route::get('/invoices',[InvoicesController::class,'invoices']);
         });
-            // newsletter route
-            Route::post('/subscribe', [NewsletterController::class, 'store']);
     });
 
 });
