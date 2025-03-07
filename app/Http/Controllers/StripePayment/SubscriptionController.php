@@ -9,7 +9,7 @@ use App\Models\Plan as PlanModel;
 use App\Repositories\StripeSubscriptionRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Laravel\Cashier\Subscription;
+use App\Models\Subscription;
 
 class SubscriptionController extends Controller
 {
