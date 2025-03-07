@@ -14,6 +14,7 @@ use App\Http\Controllers\StripePayment\PlanController;
 use App\Http\Controllers\StripePayment\SubscriptionController;
 use App\Http\Controllers\StripePayment\InvoicesController;
 use App\Http\Controllers\NewsletterSubscribe\NewsletterSubscribeController;
+use App\Http\Controllers\Others\SavedSearchController;
 
 Route::prefix('v1')->group(function () {
     // Authentication routes
@@ -98,6 +99,13 @@ Route::prefix('v1')->group(function () {
                 Route::get('/is-favorite/{property}', 'isFavorite');
                 Route::post('/delete/{favoriteProperty}', 'destroy');
             });
+        });
+
+        // Saved-searches related routes
+        Route::prefix('saved-searches')->controller(SavedSearchController::class)->group(function () {
+            Route::get('/get-user', 'getUserSearches');
+            Route::post('/store', 'store');
+            Route::post('/delete/{id}', 'destroy');
         });
 
         // Stripe-payments related routes
