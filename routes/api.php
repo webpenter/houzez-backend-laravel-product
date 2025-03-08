@@ -17,6 +17,7 @@ use App\Http\Controllers\Setting\GeneralSettingController;
 use App\Http\Controllers\StripePayment\PlanController;
 use App\Http\Controllers\StripePayment\SubscriptionController;
 use App\Http\Controllers\StripePayment\InvoicesController;
+use App\Http\Controllers\NewsletterSubscribe\NewsletterSubscribeController;
 
 Route::prefix('v1')->group(function () {
     // Authentication routes
@@ -33,6 +34,9 @@ Route::prefix('v1')->group(function () {
             Route::get('/get-searched-and-filtered', 'getSearchedAndFilteredProperties');
             Route::get('/get-all', 'getAllProperties');
         });
+
+        // Newsletter-Subscribe related route
+        Route::post('/subscribe', [NewsletterSubscribeController::class, 'subscribe']);
     });
 
     // Dashboard routes
@@ -86,15 +90,16 @@ Route::prefix('v1')->group(function () {
                 Route::post('/{property}/sub-properties/{subProperty?}',  'createOrUpdate');
             });
 
-            // Sub-properties related routes
+            // Floor-plans related routes
             Route::controller(FloorPlansController::class)->group(function () {
-                Route::post('/{property}/floor-plans/{floorPlan?}',  'createOrUpdate');
+                Route::post('/{property}/floor-plans/{floorPlan?}', 'createOrUpdate');
             });
 
             // Favorites-properties related routes
             Route::prefix('favorites')->controller(FavoritePropertyController::class)->group(function () {
                 Route::get('/get-user', 'index');
-                Route::post('/store/{property}', 'store');
+                Route::post('/add-or-remove/{property}', 'addOrRemove');
+                Route::get('/is-favorite/{property}', 'isFavorite');
                 Route::post('/delete/{favoriteProperty}', 'destroy');
             });
         });
@@ -122,19 +127,6 @@ Route::prefix('v1')->group(function () {
             // Invoices related routes
             Route::get('/invoices',[InvoicesController::class,'invoices']);
         });
-
-        Route::prefix('settings')->group(function () {
-            Route::get('/general', [GeneralSettingController::class, 'index']);
-            Route::post('/general/create', [GeneralSettingController::class, 'store']);
-        });
-
-        // bedroom routes
-        Route::prefix('bedrooms')->group(function () {
-            Route::get('/', [BedroomController::class, 'index']); // List all bedrooms
-            Route::post('/create', [BedroomController::class, 'store']); // Create a new bedroom
-            Route::get('/{bedroom}', [BedroomController::class, 'show']); // Get single bedroom (Model Binding)
-            Route::post('/update/{bedroom}', [BedroomController::class, 'update']); // Update bedroom (Model Binding)
-            Route::post('/delete/{bedroom}', [BedroomController::class, 'destroy']); // Delete bedroom (Model Binding)
-        });
     });
+
 });
