@@ -1,20 +1,20 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\UserController;
 use App\Http\Controllers\Auth\UserProfileController;
+use App\Http\Controllers\Others\NewsletterSubscribeController;
+use App\Http\Controllers\Others\SavedSearchController;
+use App\Http\Controllers\Property\AppPropertyController;
+use App\Http\Controllers\Property\FavoritePropertyController;
+use App\Http\Controllers\Property\FloorPlansController;
+use App\Http\Controllers\Property\PropertyAttachmentController;
 use App\Http\Controllers\Property\PropertyController;
 use App\Http\Controllers\Property\PropertyImageController;
 use App\Http\Controllers\Property\SubPropertiesController;
-use App\Http\Controllers\Property\FloorPlansController;
-use App\Http\Controllers\Property\PropertyAttachmentController;
-use App\Http\Controllers\Property\AppPropertyController;
-use App\Http\Controllers\Property\FavoritePropertyController;
+use App\Http\Controllers\StripePayment\InvoicesController;
 use App\Http\Controllers\StripePayment\PlanController;
 use App\Http\Controllers\StripePayment\SubscriptionController;
-use App\Http\Controllers\StripePayment\InvoicesController;
-use App\Http\Controllers\NewsletterSubscribe\NewsletterSubscribeController;
-use App\Http\Controllers\Others\SavedSearchController;
+use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
     // Authentication routes
@@ -130,6 +130,15 @@ Route::prefix('v1')->group(function () {
 
             // Invoices related routes
             Route::get('/invoices',[InvoicesController::class,'invoices']);
+        });
+
+        // Admin related routes
+        Route::middleware('isAdmin')->group(function () {
+            // Newsletter-Subscribe related route
+            Route::controller(NewsletterSubscribeController::class)->group(function () {
+                Route::get('/get-all-subscribers',  'getAllSubscribers');
+                Route::post('/delete-subscriber/{subscriber}', 'destroy');
+            });
         });
     });
 
