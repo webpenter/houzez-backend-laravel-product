@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Controllers\Auth\UserController;
+use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\UserProfileController;
+use App\Http\Controllers\Auth\UsersController;
 use App\Http\Controllers\Others\NewsletterSubscribeController;
 use App\Http\Controllers\Others\SavedSearchController;
 use App\Http\Controllers\Property\AppPropertyController;
@@ -18,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
     // Authentication routes
-    Route::controller(UserController::class)->group(function () {
+    Route::controller(AuthController::class)->group(function () {
         Route::post('/register', 'register');
         Route::post('/login', 'login');
     });
@@ -39,7 +40,7 @@ Route::prefix('v1')->group(function () {
     // Dashboard routes
     Route::middleware('auth:sanctum')->group(function () {
         // User-related routes
-        Route::controller(UserController::class)->group(function () {
+        Route::controller(AuthController::class)->group(function () {
             Route::get('/user', 'getUser');
             Route::post('/logout', 'logout');
             Route::post('/change-password', 'changePassword');
@@ -134,7 +135,12 @@ Route::prefix('v1')->group(function () {
 
         // Admin related routes
         Route::middleware('isAdmin')->group(function () {
-            // Newsletter-Subscribe related route
+            // All-Users related routes
+            Route::controller(UsersController::class)->group(function () {
+                Route::get('/get-all-users',  'getAllUsers');
+            });
+
+            // Newsletter-Subscribe related routes
             Route::controller(NewsletterSubscribeController::class)->group(function () {
                 Route::get('/get-all-subscribers',  'getAllSubscribers');
                 Route::post('/delete-subscriber/{subscriber}', 'destroy');
