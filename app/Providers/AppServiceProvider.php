@@ -10,12 +10,14 @@ use App\Repositories\Eloquent\PropertyImageRepository;
 use App\Repositories\Eloquent\PropertyRepository;
 use App\Repositories\Eloquent\StripePlanRepository;
 use App\Repositories\Eloquent\StripeSubscriptionRepository;
+use App\Repositories\Eloquent\UsersRepository;
 use App\Repositories\FavoritePropertyRepositoryInterface;
 use App\Repositories\PropertyAttachmentRepositoryInterface;
 use App\Repositories\PropertyImageRepositoryInterface;
 use App\Repositories\PropertyRepositoryInterface;
 use App\Repositories\StripePlanRepositoryInterface;
 use App\Repositories\StripeSubscriptionRepositoryInterface;
+use App\Repositories\UsersRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -25,6 +27,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        // Auth repositories binding
+        $this->app->bind(UsersRepositoryInterface::class, UsersRepository::class);
+
         // Property repositories binding
         $this->app->bind(PropertyRepositoryInterface::class, PropertyRepository::class);
         $this->app->bind(PropertyImageRepositoryInterface::class, PropertyImageRepository::class);

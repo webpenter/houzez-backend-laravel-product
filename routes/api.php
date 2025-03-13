@@ -139,6 +139,7 @@ Route::prefix('v1')->group(function () {
             Route::controller(UsersController::class)->group(function () {
                 Route::get('/get-all-users',  'getAllUsers');
                 Route::post('/delete-user/{user}',  'deleteUser');
+                Route::post('/change-user-role/{user}/{role}',  'updateUserRole');
             });
 
             // Newsletter-Subscribe related routes
