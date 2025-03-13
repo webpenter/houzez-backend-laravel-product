@@ -138,6 +138,7 @@ Route::prefix('v1')->group(function () {
             // All-Users related routes
             Route::controller(UsersController::class)->group(function () {
                 Route::get('/get-all-users',  'getAllUsers');
+                Route::post('/delete-user/{user}',  'deleteUser');
             });
 
             // Newsletter-Subscribe related routes

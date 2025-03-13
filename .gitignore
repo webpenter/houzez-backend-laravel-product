@@ -21,3 +21,10 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+
+# add-manually
+/public/floorplans/
+/public/property_images/
+/public/profile-picture/
+/public/property_attachments/
+
