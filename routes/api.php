@@ -1,28 +1,25 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\UserController;
+use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\UserProfileController;
-use App\Http\Controllers\BedroomController;
-use App\Http\Controllers\Message\MessageController;
-use App\Http\Controllers\Message\MessageReplyController;
+use App\Http\Controllers\Auth\UsersController;
+use App\Http\Controllers\Others\NewsletterSubscribeController;
+use App\Http\Controllers\Others\SavedSearchController;
+use App\Http\Controllers\Property\AppPropertyController;
+use App\Http\Controllers\Property\FavoritePropertyController;
+use App\Http\Controllers\Property\FloorPlansController;
+use App\Http\Controllers\Property\PropertyAttachmentController;
 use App\Http\Controllers\Property\PropertyController;
 use App\Http\Controllers\Property\PropertyImageController;
 use App\Http\Controllers\Property\SubPropertiesController;
-use App\Http\Controllers\Property\FloorPlansController;
-use App\Http\Controllers\Property\PropertyAttachmentController;
-use App\Http\Controllers\Property\AppPropertyController;
-use App\Http\Controllers\Property\FavoritePropertyController;
-use App\Http\Controllers\Setting\GeneralSettingController;
+use App\Http\Controllers\StripePayment\InvoicesController;
 use App\Http\Controllers\StripePayment\PlanController;
 use App\Http\Controllers\StripePayment\SubscriptionController;
-use App\Http\Controllers\StripePayment\InvoicesController;
-use App\Http\Controllers\NewsletterSubscribe\NewsletterSubscribeController;
-use App\Http\Controllers\Others\SavedSearchController;
+use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
     // Authentication routes
-    Route::controller(UserController::class)->group(function () {
+    Route::controller(AuthController::class)->group(function () {
         Route::post('/register', 'register');
         Route::post('/login', 'login');
     });
@@ -43,7 +40,7 @@ Route::prefix('v1')->group(function () {
     // Dashboard routes
     Route::middleware('auth:sanctum')->group(function () {
         // User-related routes
-        Route::controller(UserController::class)->group(function () {
+        Route::controller(AuthController::class)->group(function () {
             Route::get('/user', 'getUser');
             Route::post('/logout', 'logout');
             Route::post('/change-password', 'changePassword');
@@ -137,19 +134,21 @@ Route::prefix('v1')->group(function () {
 
         });
 
-        Route::prefix('settings')->group(function () {
-            Route::get('/general', [GeneralSettingController::class, 'index']);
-            Route::post('/create', [GeneralSettingController::class, 'createOrUpdateGeneralSettings']);
-        });
+        // Admin related routes
+        Route::middleware('isAdmin')->group(function () {
+            // All-Users related routes
+            Route::controller(UsersController::class)->group(function () {
+                Route::get('/get-all-users',  'getAllUsers');
+                Route::post('/delete-user/{user}',  'deleteUser');
+                Route::post('/change-user-role/{user}/{role}',  'updateUserRole');
+            });
 
-        // bedroom routes
-        // Route::prefix('bedrooms')->group(function () {
-        //     Route::get('/', [BedroomController::class, 'index']); // List all bedrooms
-        //     Route::post('/create', [BedroomController::class, 'store']); // Create a new bedroom
-        //     Route::get('/{bedroom}', [BedroomController::class, 'show']); // Get single bedroom (Model Binding)
-        //     Route::post('/update/{bedroom}', [BedroomController::class, 'update']); // Update bedroom (Model Binding)
-        //     Route::post('/delete/{bedroom}', [BedroomController::class, 'destroy']); // Delete bedroom (Model Binding)
-        // });
+            // Newsletter-Subscribe related routes
+            Route::controller(NewsletterSubscribeController::class)->group(function () {
+                Route::get('/get-all-subscribers',  'getAllSubscribers');
+                Route::post('/delete-subscriber/{subscriber}', 'destroy');
+            });
+        });
     });
 
 });

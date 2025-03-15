@@ -16,6 +16,7 @@ class UserPropertyResource extends JsonResource
     {
         return [
             'id' => $this->id ?? null,
+            'slug' => $this->slug ?? null,
             'title' => $this->title ?? null,
             'address' => $this->address ?? null,
             'type' => $this->type ?? null,
