@@ -7,5 +7,5 @@ use App\Models\GeneralSetting;
 interface GeneralSettingRepositoryInterface
 {
     public function getSettings(): ?GeneralSetting;
-    public function createOrUpdate(array $data): GeneralSetting;
+    public function createOrUpdateGeneralSettings(array $data): GeneralSetting;
 }

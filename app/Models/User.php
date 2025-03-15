@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Cashier\Billable;
-use Laravel\Cashier\Subscription;
+use App\Models\Subscription;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable

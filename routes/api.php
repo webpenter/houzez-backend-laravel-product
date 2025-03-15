@@ -18,6 +18,7 @@ use App\Http\Controllers\StripePayment\PlanController;
 use App\Http\Controllers\StripePayment\SubscriptionController;
 use App\Http\Controllers\StripePayment\InvoicesController;
 use App\Http\Controllers\NewsletterSubscribe\NewsletterSubscribeController;
+use App\Http\Controllers\Others\SavedSearchController;
 
 Route::prefix('v1')->group(function () {
     // Authentication routes
@@ -104,6 +105,13 @@ Route::prefix('v1')->group(function () {
             });
         });
 
+        // Saved-searches related routes
+        Route::prefix('saved-searches')->controller(SavedSearchController::class)->group(function () {
+            Route::get('/get-user', 'getUserSearches');
+            Route::post('/store', 'store');
+            Route::post('/delete/{id}', 'destroy');
+        });
+
         // Stripe-payments related routes
         Route::prefix('stripe-payments')->group(function () {
             // Plans related routes
@@ -126,7 +134,22 @@ Route::prefix('v1')->group(function () {
 
             // Invoices related routes
             Route::get('/invoices',[InvoicesController::class,'invoices']);
+
         });
+
+        Route::prefix('settings')->group(function () {
+            Route::get('/general', [GeneralSettingController::class, 'index']);
+            Route::post('/create', [GeneralSettingController::class, 'createOrUpdateGeneralSettings']);
+        });
+
+        // bedroom routes
+        // Route::prefix('bedrooms')->group(function () {
+        //     Route::get('/', [BedroomController::class, 'index']); // List all bedrooms
+        //     Route::post('/create', [BedroomController::class, 'store']); // Create a new bedroom
+        //     Route::get('/{bedroom}', [BedroomController::class, 'show']); // Get single bedroom (Model Binding)
+        //     Route::post('/update/{bedroom}', [BedroomController::class, 'update']); // Update bedroom (Model Binding)
+        //     Route::post('/delete/{bedroom}', [BedroomController::class, 'destroy']); // Delete bedroom (Model Binding)
+        // });
     });
 
 });
