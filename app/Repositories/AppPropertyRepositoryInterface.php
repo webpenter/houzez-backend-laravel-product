@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\Property;
 use Illuminate\Database\Eloquent\Collection;
 interface AppPropertyRepositoryInterface
 {
@@ -31,4 +32,12 @@ interface AppPropertyRepositoryInterface
         ?int $maxBedrooms,
         ?float $maxPrice
     ): Collection;
+
+    /**
+     * ## Find property by slug.
+     *
+     * @param string $slug
+     * @return Property|null
+     */
+    public function findBySlug(string $slug): ?Property;
 }

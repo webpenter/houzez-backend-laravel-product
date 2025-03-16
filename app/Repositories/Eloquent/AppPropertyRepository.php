@@ -50,4 +50,15 @@ class AppPropertyRepository implements AppPropertyRepositoryInterface
             ->get();
     }
 
+    /**
+     * ## Find property by slug.
+     *
+     * @param string $slug
+     * @return Property|null
+     */
+    public function findBySlug(string $slug): ?Property
+    {
+        return Property::where('slug', $slug)->first();
+    }
+
 }

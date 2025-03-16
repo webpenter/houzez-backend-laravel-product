@@ -31,6 +31,7 @@ Route::prefix('v1')->group(function () {
             Route::get('/get-featured', 'getFeaturedProperties');
             Route::get('/get-searched-and-filtered', 'getSearchedAndFilteredProperties');
             Route::get('/get-all', 'getAllProperties');
+            Route::get('/get-property/{slug}', 'getPropertyData');
         });
 
         // Newsletter-Subscribe related route

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Property;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Property\AppPropertiesCardResource;
 use App\Http\Resources\Property\AppPropertyCardResource;
+use App\Http\Resources\Property\AppPropertyDetailsResource;
 use App\Repositories\AppPropertyRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -95,5 +96,20 @@ class AppPropertyController extends Controller
             'success' => true,
             'properties' => AppPropertiesCardResource::collection($properties),
         ]);
+    }
+
+    /**
+     * ## Retrieve property data by slug.
+     *
+     * @param string $slug
+     * @return JsonResponse
+     */
+    public function getPropertyData(string $slug): JsonResponse
+    {
+        $property = $this->propertyRepository->findBySlug($slug);
+
+        return $property
+            ? new JsonResponse(['property' => new AppPropertyDetailsResource($property)])
+            : response()->json(['message' => 'Property not found'], 404);
     }
 }
