@@ -50,12 +50,12 @@ class AppPropertyDetailsResource extends JsonResource
             'city' => $this->city ?? 'N/A',
             'neighborhood' => $this->neighborhood ?? 'N/A',
             'zip_postal_code' => $this->zip_postal_code ?? 'N/A',
-            'map_street_view' => $this->map_street_view ?? 'N/A',
+            'map_street_view' => $this->map_street_view ?? null,
             'latitude' => $this->latitude ?? '34.0246242',
             'longitude' => $this->longitude ?? '-118.4108102',
-            'video_url' => $this->video_url ?? 'N/A',
-            'virtual_tour' => $this->virtual_tour ?? 'N/A',
-            'contact_information' => $this->contact_information ?? 'N/A',
+            'video_url' => $this->video_url ?? null,
+            'virtual_tour' => $this->virtual_tour ?? null,
+            'contact_information' => $this->contact_information ?? null,
         ];
     }
 }
