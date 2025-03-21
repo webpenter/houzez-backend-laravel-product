@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\UserProfileController;
 use App\Http\Controllers\Auth\UsersController;
+use App\Http\Controllers\BedroomController;
 use App\Http\Controllers\Others\NewsletterSubscribeController;
 use App\Http\Controllers\Others\SavedSearchController;
 use App\Http\Controllers\Property\AppPropertyController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\Property\PropertyAttachmentController;
 use App\Http\Controllers\Property\PropertyController;
 use App\Http\Controllers\Property\PropertyImageController;
 use App\Http\Controllers\Property\SubPropertiesController;
+use App\Http\Controllers\Setting\GeneralSettingController;
 use App\Http\Controllers\StripePayment\InvoicesController;
 use App\Http\Controllers\StripePayment\PlanController;
 use App\Http\Controllers\StripePayment\SubscriptionController;
@@ -147,6 +149,22 @@ Route::prefix('v1')->group(function () {
             Route::controller(NewsletterSubscribeController::class)->group(function () {
                 Route::get('/get-all-subscribers',  'getAllSubscribers');
                 Route::post('/delete-subscriber/{subscriber}', 'destroy');
+            });
+
+
+
+            Route::prefix('settings')->group(function () {
+                Route::get('/general', [GeneralSettingController::class, 'index']);
+                Route::post('/create', [GeneralSettingController::class, 'createOrUpdateGeneralSettings']);
+            });
+    
+            // bedroom routes
+            Route::prefix('bedrooms')->group(function () {
+                Route::get('/', [BedroomController::class, 'index']); // List all bedrooms
+                Route::post('/create', [BedroomController::class, 'store']); // Create a new bedroom
+                Route::get('/{bedroom}', [BedroomController::class, 'show']); // Get single bedroom (Model Binding)
+                Route::post('/update/{bedroom}', [BedroomController::class, 'update']); // Update bedroom (Model Binding)
+                Route::post('/delete/{bedroom}', [BedroomController::class, 'destroy']); // Delete bedroom (Model Binding)
             });
         });
     });
