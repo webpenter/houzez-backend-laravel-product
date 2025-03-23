@@ -106,7 +106,8 @@ Route::prefix('v1')->group(function () {
         // Saved-searches related routes
         Route::prefix('saved-searches')->controller(SavedSearchController::class)->group(function () {
             Route::get('/get-user', 'getUserSearches');
-            Route::post('/store', 'store');
+            Route::post('/store-or-remove', 'storeOrRemoveSearch');
+            Route::post('/is-saved', 'isSearchSaved');
             Route::post('/delete/{id}', 'destroy');
         });
 

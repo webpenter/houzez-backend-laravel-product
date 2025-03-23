@@ -22,18 +22,52 @@ class SavedSearchController extends Controller
     }
 
     /**
-     * Store a new saved search for the authenticated user.
+     * Store or remove a saved search for the authenticated user.
      *
      * @param Request $request
      * @return JsonResponse
      */
-    public function store(Request $request): JsonResponse
+    public function storeOrRemoveSearch(Request $request): JsonResponse
     {
-        $validated = $request->validate(['parameters' => 'required|string']);
+        $validated = $request->validate([
+            'parameters' => 'required|string',
+        ]);
 
-        $search = SavedSearch::create(['user_id' => Auth::id(), 'parameters' => $validated['parameters']]);
+        $userId = Auth::id();
+        $existingSearch = SavedSearch::where('user_id', $userId)
+            ->where('parameters', $validated['parameters'])
+            ->first();
 
-        return response()->json([ 'success' => true, 'data' => $search ], 201);
+        if ($existingSearch) {
+            $existingSearch->delete();
+            return response()->json(['success' => true, 'message' => 'Search removed.'], 204);
+        } else {
+            $search = SavedSearch::create([
+                'user_id' => $userId,
+                'parameters' => $validated['parameters'],
+            ]);
+            return response()->json(['success' => true, 'data' => $search], 201);
+        }
+    }
+
+    /**
+     * Check if a saved search exists for the authenticated user.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function isSearchSaved(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'parameters' => 'required|string',
+        ]);
+
+        $userId = Auth::id();
+        $exists = SavedSearch::where('user_id', $userId)
+            ->where('parameters', $validated['parameters'])
+            ->exists();
+
+        return response()->json(['success' => true, 'isSaved' => $exists]);
     }
 
     /**
