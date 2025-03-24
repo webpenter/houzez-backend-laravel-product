@@ -10,6 +10,7 @@ use App\Repositories\Eloquent\PropertyImageRepository;
 use App\Repositories\Eloquent\PropertyRepository;
 use App\Repositories\Eloquent\StripePlanRepository;
 use App\Repositories\Eloquent\StripeSubscriptionRepository;
+use App\Repositories\Eloquent\TourRequestRepository;
 use App\Repositories\Eloquent\UsersRepository;
 use App\Repositories\FavoritePropertyRepositoryInterface;
 use App\Repositories\PropertyAttachmentRepositoryInterface;
@@ -17,6 +18,7 @@ use App\Repositories\PropertyImageRepositoryInterface;
 use App\Repositories\PropertyRepositoryInterface;
 use App\Repositories\StripePlanRepositoryInterface;
 use App\Repositories\StripeSubscriptionRepositoryInterface;
+use App\Repositories\TourRequestRepositoryInterface;
 use App\Repositories\UsersRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 
@@ -40,6 +42,9 @@ class AppServiceProvider extends ServiceProvider
         // Stripe-payments repositories binding
         $this->app->bind(StripePlanRepositoryInterface::class, StripePlanRepository::class);
         $this->app->bind(StripeSubscriptionRepositoryInterface::class, StripeSubscriptionRepository::class);
+
+        // Tour-requests repositories binding
+        $this->app->bind(TourRequestRepositoryInterface::class, TourRequestRepository::class);
     }
 
     /**

@@ -15,6 +15,7 @@ use App\Http\Controllers\Property\SubPropertiesController;
 use App\Http\Controllers\StripePayment\InvoicesController;
 use App\Http\Controllers\StripePayment\PlanController;
 use App\Http\Controllers\StripePayment\SubscriptionController;
+use App\Http\Controllers\Others\TourRequestController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -109,6 +110,13 @@ Route::prefix('v1')->group(function () {
             Route::post('/store-or-remove', 'storeOrRemoveSearch');
             Route::post('/is-saved', 'isSearchSaved');
             Route::post('/delete/{id}', 'destroy');
+        });
+
+        // Tour-requests related routes
+        Route::prefix('tour-requests')->controller(TourRequestController::class)->group(function () {
+            Route::get('/show', 'showUserMessages');
+            Route::post('/send', 'sendMessage');
+            Route::post('/delete/{message}', 'deleteUserMessage');
         });
 
         // Stripe-payments related routes
