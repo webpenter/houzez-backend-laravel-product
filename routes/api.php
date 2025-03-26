@@ -117,6 +117,9 @@ Route::prefix('v1')->group(function () {
             Route::get('/show', 'showUserMessages');
             Route::post('/send', 'sendMessage');
             Route::post('/delete/{message}', 'deleteUserMessage');
+            Route::get('/details/{message}', 'showUserMessageDetail');
+            Route::post('/reply', 'replyToMessage');
+            Route::get('/{id}/replies', 'getReplies');
         });
 
         // Stripe-payments related routes

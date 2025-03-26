@@ -8,6 +8,13 @@ if (!function_exists('formatDate')) {
     }
 }
 
+if (!function_exists('formatTime')) {
+    function formatTime($date, $format = 'h:i A') {
+        return $date ? \Carbon\Carbon::parse($date)->format($format) : null;
+    }
+}
+
+
 
 if (!function_exists('formatTextWithNumber')) {
     function formatTextWithNumber($number, $text) {

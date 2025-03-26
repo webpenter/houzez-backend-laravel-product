@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TourRequest extends Model
 {
@@ -30,8 +31,15 @@ class TourRequest extends Model
         return $this->belongsTo(Property::class);
     }
 
+
     public function setTourDateTimeAttribute($value)
     {
         $this->attributes['tour_date_time'] = Carbon::parse($value)->format('Y-m-d H:i:s');
     }
+
+    public function replies(): HasMany
+    {
+        return $this->hasMany(MessageReply::class);
+    }
+
 }

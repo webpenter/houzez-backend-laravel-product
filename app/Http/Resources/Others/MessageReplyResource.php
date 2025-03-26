@@ -5,7 +5,7 @@ namespace App\Http\Resources\Others;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class TourRequestResource extends JsonResource
+class MessageReplyResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,13 +16,10 @@ class TourRequestResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'from' => [
+            'tour_request_id' => $this->tour_request_id,
+            'user' => [
                 'image' => $this->user->profile->profile_picture ?? null,
                 'name' => trim(($this->user->profile->first_name ?? '') . ' ' . ($this->user->profile->last_name ?? '')),
-            ],
-            'property' => [
-                'title' => $this->property->title ?? null ,
-                'slug' => $this->property->slug ?? null,
             ],
             'message' => $this->message ?? null,
             'date' => formatDate($this->created_at) ?? null,
