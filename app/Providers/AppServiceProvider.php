@@ -8,6 +8,7 @@ use App\Repositories\Eloquent\FavoritePropertyRepository;
 use App\Repositories\Eloquent\PropertyAttachmentRepository;
 use App\Repositories\Eloquent\PropertyImageRepository;
 use App\Repositories\Eloquent\PropertyRepository;
+use App\Repositories\Eloquent\ReviewRepository;
 use App\Repositories\Eloquent\StripePlanRepository;
 use App\Repositories\Eloquent\StripeSubscriptionRepository;
 use App\Repositories\Eloquent\TourRequestRepository;
@@ -16,6 +17,7 @@ use App\Repositories\FavoritePropertyRepositoryInterface;
 use App\Repositories\PropertyAttachmentRepositoryInterface;
 use App\Repositories\PropertyImageRepositoryInterface;
 use App\Repositories\PropertyRepositoryInterface;
+use App\Repositories\ReviewRepositoryInterface;
 use App\Repositories\StripePlanRepositoryInterface;
 use App\Repositories\StripeSubscriptionRepositoryInterface;
 use App\Repositories\TourRequestRepositoryInterface;
@@ -45,6 +47,9 @@ class AppServiceProvider extends ServiceProvider
 
         // Tour-requests repositories binding
         $this->app->bind(TourRequestRepositoryInterface::class, TourRequestRepository::class);
+
+        // Reviews-system repositories binding
+        $this->app->bind(ReviewRepositoryInterface::class, ReviewRepository::class);
     }
 
     /**

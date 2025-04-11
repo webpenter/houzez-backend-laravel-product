@@ -16,6 +16,7 @@ use App\Http\Controllers\StripePayment\InvoicesController;
 use App\Http\Controllers\StripePayment\PlanController;
 use App\Http\Controllers\StripePayment\SubscriptionController;
 use App\Http\Controllers\Others\TourRequestController;
+use App\Http\Controllers\Others\ReviewController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -37,6 +38,9 @@ Route::prefix('v1')->group(function () {
 
         // Newsletter-Subscribe related route
         Route::post('/subscribe', [NewsletterSubscribeController::class, 'subscribe']);
+
+        // Review-system related route
+        Route::get('/reviews/show/{propertyId}', [ReviewController::class, 'show']);
     });
 
     // Dashboard routes
@@ -121,6 +125,9 @@ Route::prefix('v1')->group(function () {
             Route::post('/reply', 'replyToMessage');
             Route::get('/{id}/replies', 'getReplies');
         });
+
+        // Review-system related route
+        Route::post('/reviews/store', [ReviewController::class, 'store']);
 
         // Stripe-payments related routes
         Route::prefix('stripe-payments')->group(function () {
