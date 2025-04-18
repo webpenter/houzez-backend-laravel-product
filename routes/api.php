@@ -17,6 +17,7 @@ use App\Http\Controllers\StripePayment\PlanController;
 use App\Http\Controllers\StripePayment\SubscriptionController;
 use App\Http\Controllers\Others\TourRequestController;
 use App\Http\Controllers\Others\ReviewController;
+use App\Http\Controllers\Others\BlogController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -41,6 +42,9 @@ Route::prefix('v1')->group(function () {
 
         // Review-system related route
         Route::get('/reviews/show/{propertyId}', [ReviewController::class, 'show']);
+
+        // blogs related route
+        Route::get('/blogs', [BlogController::class,'getAppBlogs']);
     });
 
     // Dashboard routes
@@ -167,6 +171,9 @@ Route::prefix('v1')->group(function () {
                 Route::get('/get-all-subscribers',  'getAllSubscribers');
                 Route::post('/delete-subscriber/{subscriber}', 'destroy');
             });
+
+            // blogs related routes
+            Route::apiResource('blogs', BlogController::class);
         });
     });
 
