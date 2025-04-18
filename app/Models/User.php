@@ -138,4 +138,9 @@ class User extends Authenticatable
         return false;
     }
 
+    public function inquiries()
+    {
+        return $this->hasMany(Inquiry::class);
+    }
+
 }
