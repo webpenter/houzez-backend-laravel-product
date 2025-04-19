@@ -11,6 +11,7 @@ use App\Repositories\Eloquent\PropertyRepository;
 use App\Repositories\Eloquent\ReviewRepository;
 use App\Repositories\Eloquent\StripePlanRepository;
 use App\Repositories\Eloquent\StripeSubscriptionRepository;
+use App\Repositories\Eloquent\TeamRepository;
 use App\Repositories\Eloquent\TourRequestRepository;
 use App\Repositories\Eloquent\UsersRepository;
 use App\Repositories\FavoritePropertyRepositoryInterface;
@@ -20,6 +21,7 @@ use App\Repositories\PropertyRepositoryInterface;
 use App\Repositories\ReviewRepositoryInterface;
 use App\Repositories\StripePlanRepositoryInterface;
 use App\Repositories\StripeSubscriptionRepositoryInterface;
+use App\Repositories\TeamRepositoryInterface;
 use App\Repositories\TourRequestRepositoryInterface;
 use App\Repositories\UsersRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
@@ -50,6 +52,9 @@ class AppServiceProvider extends ServiceProvider
 
         // Reviews-system repositories binding
         $this->app->bind(ReviewRepositoryInterface::class, ReviewRepository::class);
+
+        // Team-system repositories binding
+        $this->app->bind(TeamRepositoryInterface::class, TeamRepository::class);
     }
 
     /**

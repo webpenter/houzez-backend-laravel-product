@@ -18,6 +18,7 @@ use App\Http\Controllers\StripePayment\SubscriptionController;
 use App\Http\Controllers\Others\TourRequestController;
 use App\Http\Controllers\Others\ReviewController;
 use App\Http\Controllers\Others\BlogController;
+use App\Http\Controllers\Others\TeamController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -43,8 +44,11 @@ Route::prefix('v1')->group(function () {
         // Review-system related route
         Route::get('/reviews/show/{propertyId}', [ReviewController::class, 'show']);
 
-        // blogs related route
+        // Blogs related route
         Route::get('/blogs', [BlogController::class,'getAppBlogs']);
+
+        // Teams related route
+        Route::get('/teams', [TeamController::class,'getAppTeams']);
     });
 
     // Dashboard routes
@@ -172,8 +176,11 @@ Route::prefix('v1')->group(function () {
                 Route::post('/delete-subscriber/{subscriber}', 'destroy');
             });
 
-            // blogs related routes
+            // Blogs related routes
             Route::apiResource('blogs', BlogController::class);
+
+            // Teams related routes
+            Route::apiResource('teams', TeamController::class);
         });
     });
 
