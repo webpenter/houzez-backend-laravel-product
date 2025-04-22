@@ -195,6 +195,8 @@ Route::prefix('v1')->group(function () {
         Route::get('/{id}', 'show');
         Route::put('/{id}', 'update');
         Route::delete('/{id}', 'destroy');
+
+        Route::post('/upload-csv', 'uploadCsv');
     });
 
 });
