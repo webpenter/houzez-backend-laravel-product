@@ -13,7 +13,12 @@ use App\Repositories\Eloquent\StripePlanRepository;
 use App\Repositories\Eloquent\StripeSubscriptionRepository;
 use App\Repositories\Eloquent\TourRequestRepository;
 use App\Repositories\Eloquent\UsersRepository;
+use App\Repositories\Eloquent\GeneralSettingRepository;
+use App\Repositories\Eloquent\NavbarButtonRepository;
+
 use App\Repositories\FavoritePropertyRepositoryInterface;
+use App\Repositories\GeneralSettingRepositoryInterface;
+use App\Repositories\NavbarButtonRepositoryInterface;
 use App\Repositories\PropertyAttachmentRepositoryInterface;
 use App\Repositories\PropertyImageRepositoryInterface;
 use App\Repositories\PropertyRepositoryInterface;
@@ -22,6 +27,7 @@ use App\Repositories\StripePlanRepositoryInterface;
 use App\Repositories\StripeSubscriptionRepositoryInterface;
 use App\Repositories\TourRequestRepositoryInterface;
 use App\Repositories\UsersRepositoryInterface;
+
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -50,6 +56,12 @@ class AppServiceProvider extends ServiceProvider
 
         // Reviews-system repositories binding
         $this->app->bind(ReviewRepositoryInterface::class, ReviewRepository::class);
+
+        // General Settings repositories binding
+        $this->app->bind(GeneralSettingRepositoryInterface::class, GeneralSettingRepository::class);
+
+        $this->app->bind(NavbarButtonRepositoryInterface::class, NavbarButtonRepository::class);
+    
     }
 
     /**

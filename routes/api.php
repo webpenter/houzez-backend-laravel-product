@@ -20,12 +20,17 @@ use App\Http\Controllers\Others\ReviewController;
 use App\Http\Controllers\Others\BlogController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InquiryController;
+use App\Http\Controllers\Settings\GeneralSettingController;
+use App\Http\Controllers\Settings\NavbarButtonController;
 
 Route::prefix('v1')->group(function () {
     // Authentication routes
     Route::controller(AuthController::class)->group(function () {
         Route::post('/register', 'register');
         Route::post('/login', 'login');
+    });
+    Route::controller(NavbarButtonController::class)->prefix('navbar')->group(function () {
+        Route::get('/buttons', 'getNavbarButtons');
     });
 
     // App routes
@@ -172,6 +177,21 @@ Route::prefix('v1')->group(function () {
                 Route::get('/get-all-subscribers',  'getAllSubscribers');
                 Route::post('/delete-subscriber/{subscriber}', 'destroy');
             });
+
+            // General Settings related routes
+            Route::prefix('settings')->group(function () {
+                Route::get('/', [GeneralSettingController::class, 'index']);
+                Route::post('/update', [GeneralSettingController::class, 'update']);
+            });
+
+            Route::controller(NavbarButtonController::class)->prefix('navbar')->group(function () {
+
+                Route::get('/buttons/{id}', 'showNavbarButton');
+                Route::post('/buttons', 'storeNavbarButton');
+                Route::post('/buttons/{id}', 'updateNavbarButton');
+                Route::post('/buttons/{id}', 'deleteNavbarButton');
+            });
+
 
             // blogs related routes
             Route::apiResource('blogs', BlogController::class);
