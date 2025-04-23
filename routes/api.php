@@ -22,6 +22,8 @@ use App\Http\Controllers\Others\TeamController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InquiryController;
 
+use App\Http\Controllers\LeadController;
+
 Route::prefix('v1')->group(function () {
     // Authentication routes
     Route::controller(AuthController::class)->group(function () {
@@ -196,5 +198,19 @@ Route::prefix('v1')->group(function () {
         Route::put('/{id}', 'update');
         Route::delete('/{id}', 'destroy');
     });
+
+// Public lead submission route (optional, for unauthenticated users)
+    Route::post('/leads', [LeadController::class, 'store']);
+
+// Lead routes for authenticated users
+    Route::middleware('auth:sanctum')->prefix('leads')->controller(LeadController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::get('/{lead}', 'show');
+        Route::put('/{lead}', 'update');
+        Route::delete('/{lead}', 'destroy');
+    });
+
+
 
 });
