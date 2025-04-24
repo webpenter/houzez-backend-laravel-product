@@ -16,6 +16,15 @@ interface AppPropertyRepositoryInterface
     public function getFeaturedProperties(int $limit): Collection;
 
     /**
+     * ## Get Latest Properties
+     * Fetch the latest properties limited by a given number.
+     *
+     * @param int $limit Number of properties to fetch
+     * @return Collection The collection of latest properties
+     */
+    public function getLatestProperties(int $limit): Collection;
+
+    /**
      * ## Get filtered properties based on search criteria.
      *
      * @param string|null $search The search query to filter properties by title.

@@ -34,6 +34,7 @@ Route::prefix('v1')->group(function () {
         // Properties-related routes
         Route::prefix('properties')->controller(AppPropertyController::class)->group(function () {
             Route::get('/get-featured', 'getFeaturedProperties');
+            Route::get('/get-latest', 'getLatestProperties');
             Route::get('/get-searched-and-filtered', 'getSearchedAndFilteredProperties');
             Route::get('/get-all', 'getAllProperties');
             Route::get('/get-property/{slug}', 'getPropertyData');
