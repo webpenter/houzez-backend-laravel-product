@@ -190,6 +190,7 @@ Route::prefix('v1')->group(function () {
                 Route::post('/buttons', 'storeNavbarButton');
                 Route::post('/buttons/{id}', 'updateNavbarButton');
                 Route::post('/buttons/{id}', 'deleteNavbarButton');
+                Route::post('/buttons/{id}/visibility','updateVisibility');
             });
 
 

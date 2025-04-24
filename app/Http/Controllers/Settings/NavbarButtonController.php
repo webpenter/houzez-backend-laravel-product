@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\StoreNavBarButton;
+use App\Models\NavbarButton;
 use App\Repositories\NavbarButtonRepositoryInterface;
 use Illuminate\Http\Request;
 
@@ -74,6 +75,26 @@ class NavbarButtonController extends Controller
         return response()->json([
             'message' => 'Navbar button updated successfully!',
             'navbar_button' => $navbarButton,
+        ]);
+    }
+
+    /**
+     * Update a navbar button visiablity.
+     */
+    public function updateVisibility(Request $request, $id)
+    {
+        $request->validate([
+            'is_visible' => 'required|boolean',
+        ]);
+
+        $button = NavbarButton::findOrFail($id);
+        $button->is_visible = $request->is_visible;
+        $button->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Visibility updated successfully.',
+            'data' => $button,
         ]);
     }
 
