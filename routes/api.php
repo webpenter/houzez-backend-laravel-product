@@ -22,6 +22,7 @@ use App\Http\Controllers\Others\TeamController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InquiryController;
 use App\Http\Controllers\UserActivity\UserActivityController;
+use App\Http\Controllers\Insight\InsightController;
 
 Route::prefix('v1')->group(function () {
     // Authentication routes
@@ -212,6 +213,13 @@ Route::prefix('v1')->group(function () {
 
         // Admin route to fetch all activities
         Route::middleware('isAdmin')->get('/activities', [UserActivityController::class, 'getAllActivities']);
+    });
+
+
+    Route::prefix('insights')->group(function () {
+        Route::get('/', [InsightController::class, 'getAllInsights']);  // Get all insights data
+        Route::get('/{propertyId}', [InsightController::class, 'getPropertyInsights']);  // Get insights for a specific property
+        Route::post('/track', [InsightController::class, 'trackUserInteraction']);  // Track user interaction
     });
 
 });
