@@ -143,4 +143,9 @@ class User extends Authenticatable
         return $this->hasMany(Inquiry::class);
     }
 
+    public function activities()
+    {
+        return $this->hasMany(UserActivity::class);
+    }
+
 }

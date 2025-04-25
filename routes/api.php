@@ -21,6 +21,7 @@ use App\Http\Controllers\Others\BlogController;
 use App\Http\Controllers\Others\TeamController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InquiryController;
+use App\Http\Controllers\UserActivity\UserActivityController;
 
 Route::prefix('v1')->group(function () {
     // Authentication routes
@@ -197,6 +198,20 @@ Route::prefix('v1')->group(function () {
         Route::delete('/{id}', 'destroy');
 
         Route::post('/upload-csv', 'uploadCsv');
+    });
+
+    Route::middleware('auth:sanctum')->group(function () {
+        // Activity routes
+        Route::prefix('activities')->controller(UserActivityController::class)->group(function () {
+            // Store user activity (e.g., visit, click, etc.)
+            Route::post('/store', 'store');  // For storing user activity (e.g., page visit, click)
+
+            // Get activities for a user (optional, for user or admin)
+            Route::get('/user/{userId}', 'getUserActivities');
+        });
+
+        // Admin route to fetch all activities
+        Route::middleware('isAdmin')->get('/activities', [UserActivityController::class, 'getAllActivities']);
     });
 
 });
