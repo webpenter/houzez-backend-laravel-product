@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Repositories\AppPropertyRepositoryInterface;
+use App\Repositories\DealRepositoryInterface;
 use App\Repositories\Eloquent\AppPropertyRepository;
+use App\Repositories\Eloquent\DealRepository;
 use App\Repositories\Eloquent\FavoritePropertyRepository;
 use App\Repositories\Eloquent\PropertyAttachmentRepository;
 use App\Repositories\Eloquent\PropertyImageRepository;
@@ -55,6 +57,9 @@ class AppServiceProvider extends ServiceProvider
 
         // Team-system repositories binding
         $this->app->bind(TeamRepositoryInterface::class, TeamRepository::class);
+
+        // Board repositories binding
+        $this->app->bind(DealRepositoryInterface::class, DealRepository::class);
     }
 
     /**
