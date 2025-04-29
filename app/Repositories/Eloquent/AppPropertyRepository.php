@@ -25,6 +25,21 @@ class AppPropertyRepository implements AppPropertyRepositoryInterface
     }
 
     /**
+     * ## Get Latest Properties
+     * Retrieves the latest properties, limiting the result.
+     *
+     * @param int $limit The number of properties to return
+     * @return Collection The collection of latest properties
+     */
+    public function getLatestProperties(int $limit): Collection
+    {
+        return Property::where('property_status','published')
+            ->latest()
+            ->take($limit)
+            ->get();
+    }
+
+    /**
      * ## Get filtered properties based on provided criteria.
      *
      * @param string|null $search

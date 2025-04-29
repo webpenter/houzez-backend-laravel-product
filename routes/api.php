@@ -18,6 +18,7 @@ use App\Http\Controllers\StripePayment\SubscriptionController;
 use App\Http\Controllers\Others\TourRequestController;
 use App\Http\Controllers\Others\ReviewController;
 use App\Http\Controllers\Others\BlogController;
+use App\Http\Controllers\Others\TeamController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InquiryController;
 use App\Http\Controllers\Settings\GeneralSettingController;
@@ -38,6 +39,7 @@ Route::prefix('v1')->group(function () {
         // Properties-related routes
         Route::prefix('properties')->controller(AppPropertyController::class)->group(function () {
             Route::get('/get-featured', 'getFeaturedProperties');
+            Route::get('/get-latest', 'getLatestProperties');
             Route::get('/get-searched-and-filtered', 'getSearchedAndFilteredProperties');
             Route::get('/get-all', 'getAllProperties');
             Route::get('/get-property/{slug}', 'getPropertyData');
@@ -49,8 +51,11 @@ Route::prefix('v1')->group(function () {
         // Review-system related route
         Route::get('/reviews/show/{propertyId}', [ReviewController::class, 'show']);
 
-        // blogs related route
+        // Blogs related route
         Route::get('/blogs', [BlogController::class,'getAppBlogs']);
+
+        // Teams related route
+        Route::get('/teams', [TeamController::class,'getAppTeams']);
     });
 
     // Dashboard routes
@@ -196,6 +201,9 @@ Route::prefix('v1')->group(function () {
 
             // blogs related routes
             Route::apiResource('blogs', BlogController::class);
+
+            // Teams related routes
+            Route::apiResource('teams', TeamController::class);
         });
     });
 
@@ -209,6 +217,8 @@ Route::prefix('v1')->group(function () {
         Route::get('/{id}', 'show');
         Route::put('/{id}', 'update');
         Route::delete('/{id}', 'destroy');
+
+        Route::post('/upload-csv', 'uploadCsv');
     });
 
 });

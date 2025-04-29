@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Repositories\AppPropertyRepositoryInterface;
+use App\Repositories\DealRepositoryInterface;
 use App\Repositories\Eloquent\AppPropertyRepository;
+use App\Repositories\Eloquent\DealRepository;
 use App\Repositories\Eloquent\FavoritePropertyRepository;
 use App\Repositories\Eloquent\PropertyAttachmentRepository;
 use App\Repositories\Eloquent\PropertyImageRepository;
@@ -11,6 +13,7 @@ use App\Repositories\Eloquent\PropertyRepository;
 use App\Repositories\Eloquent\ReviewRepository;
 use App\Repositories\Eloquent\StripePlanRepository;
 use App\Repositories\Eloquent\StripeSubscriptionRepository;
+use App\Repositories\Eloquent\TeamRepository;
 use App\Repositories\Eloquent\TourRequestRepository;
 use App\Repositories\Eloquent\UsersRepository;
 use App\Repositories\Eloquent\GeneralSettingRepository;
@@ -25,6 +28,7 @@ use App\Repositories\PropertyRepositoryInterface;
 use App\Repositories\ReviewRepositoryInterface;
 use App\Repositories\StripePlanRepositoryInterface;
 use App\Repositories\StripeSubscriptionRepositoryInterface;
+use App\Repositories\TeamRepositoryInterface;
 use App\Repositories\TourRequestRepositoryInterface;
 use App\Repositories\UsersRepositoryInterface;
 
@@ -60,8 +64,14 @@ class AppServiceProvider extends ServiceProvider
         // General Settings repositories binding
         $this->app->bind(GeneralSettingRepositoryInterface::class, GeneralSettingRepository::class);
 
+        // Navbar repositories binding
         $this->app->bind(NavbarButtonRepositoryInterface::class, NavbarButtonRepository::class);
     
+        // Team-system repositories binding
+        $this->app->bind(TeamRepositoryInterface::class, TeamRepository::class);
+
+        // Board repositories binding
+        $this->app->bind(DealRepositoryInterface::class, DealRepository::class);
     }
 
     /**
