@@ -19,6 +19,7 @@ use App\Http\Controllers\Others\TourRequestController;
 use App\Http\Controllers\Others\ReviewController;
 use App\Http\Controllers\Others\BlogController;
 use App\Http\Controllers\Others\TeamController;
+use App\Http\Controllers\Boards\DealController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InquiryController;
 
@@ -161,6 +162,19 @@ Route::prefix('v1')->group(function () {
 
             // Invoices related routes
             Route::get('/invoices',[InvoicesController::class,'invoices']);
+        });
+
+        // Deals related routes
+        Route::prefix('deals')->controller(DealController::class)->group(function () {
+            Route::get('/', 'index');
+            Route::post('/', 'store');
+            Route::get('/{id}', 'show');
+            Route::put('/{id}', 'update');
+            Route::delete('/{id}', 'destroy');
+
+            Route::get('/group/active', 'active');
+            Route::get('/group/won', 'won');
+            Route::get('/group/lost', 'lost');
         });
 
         // Admin related routes
