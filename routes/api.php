@@ -21,6 +21,7 @@ use App\Http\Controllers\Others\BlogController;
 use App\Http\Controllers\Others\TeamController;
 use App\Http\Controllers\Boards\DealController;
 use App\Http\Controllers\Boards\LeadController;
+use App\Http\Controllers\Boards\EnquiryController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -179,6 +180,14 @@ Route::prefix('v1')->group(function () {
 
         // Leads related routes
         Route::apiResource('leads', LeadController::class);
+
+        // Enquiry related routes
+        Route::prefix('enquiries')->controller(EnquiryController::class)->group(function () {
+            Route::get('/', 'index');
+            Route::post('/', 'store');
+            Route::get('/{id}',  'show');
+            Route::delete('/{id}', 'destroy');
+        });
 
         // Admin related routes
         Route::middleware('isAdmin')->group(function () {
