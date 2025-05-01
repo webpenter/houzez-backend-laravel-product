@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Lead;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -11,7 +11,7 @@ class LeadRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,10 +23,11 @@ class LeadRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'email' => 'required|email',
-            'phone' => 'required|string|max:15',
-            'message' => 'nullable|string',
-//            'property_id' => 'required|exists:properties,id',
+            'email' => 'required|email|unique:leads,email',
+            'phone' => 'required|string|max:20',
+            'type' => 'required|string',
+            'agent' => 'required|string',
+            'status' => 'in:new,contacted,closed',
         ];
     }
 }

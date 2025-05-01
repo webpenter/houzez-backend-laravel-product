@@ -7,6 +7,7 @@ use App\Repositories\DealRepositoryInterface;
 use App\Repositories\Eloquent\AppPropertyRepository;
 use App\Repositories\Eloquent\DealRepository;
 use App\Repositories\Eloquent\FavoritePropertyRepository;
+use App\Repositories\Eloquent\LeadRepository;
 use App\Repositories\Eloquent\PropertyAttachmentRepository;
 use App\Repositories\Eloquent\PropertyImageRepository;
 use App\Repositories\Eloquent\PropertyRepository;
@@ -17,6 +18,7 @@ use App\Repositories\Eloquent\TeamRepository;
 use App\Repositories\Eloquent\TourRequestRepository;
 use App\Repositories\Eloquent\UsersRepository;
 use App\Repositories\FavoritePropertyRepositoryInterface;
+use App\Repositories\LeadRepositoryInterface;
 use App\Repositories\PropertyAttachmentRepositoryInterface;
 use App\Repositories\PropertyImageRepositoryInterface;
 use App\Repositories\PropertyRepositoryInterface;
@@ -60,6 +62,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Board repositories binding
         $this->app->bind(DealRepositoryInterface::class, DealRepository::class);
+        $this->app->bind(LeadRepositoryInterface::class, LeadRepository::class);
     }
 
     /**
