@@ -22,6 +22,7 @@ use App\Http\Controllers\Others\TeamController;
 use App\Http\Controllers\Boards\DealController;
 use App\Http\Controllers\Boards\LeadController;
 use App\Http\Controllers\Boards\EnquiryController;
+use App\Http\Controllers\Boards\ActivityController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -187,6 +188,11 @@ Route::prefix('v1')->group(function () {
             Route::post('/', 'store');
             Route::get('/{id}',  'show');
             Route::delete('/{id}', 'destroy');
+        });
+
+        // Activity related routes
+        Route::prefix('activities')->controller(ActivityController::class)->group(function () {
+            Route::get('/reviews', 'myReviews');
         });
 
         // Admin related routes
