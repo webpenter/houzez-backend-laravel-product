@@ -3,15 +3,24 @@
 namespace App\Http\Controllers\Boards;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Activity\ReviewResource;
-use App\Models\Review;
+use App\Repositories\ActivityRepositoryInterface;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class ActivityController extends Controller
 {
     use ResponseTrait;
+
+    protected ActivityRepositoryInterface $activityRepo;
+
+    /**
+     * Inject ActivityRepositoryInterface
+     */
+    public function __construct(ActivityRepositoryInterface $activityRepo)
+    {
+        $this->activityRepo = $activityRepo;
+    }
+
     /**
      * Get all reviews of the logged-in user.
      *
@@ -19,14 +28,40 @@ class ActivityController extends Controller
      */
     public function myReviews(): JsonResponse
     {
-        $userId = auth()->id();
+        $reviews = $this->activityRepo->getUserReviews();
+        return $this->successResponse($reviews, 'User reviews fetched successfully.');
+    }
 
-        $reviews = Review::where('user_id', $userId)
-            ->with('property')
-            ->latest()
-            ->take(10)
-            ->get();
+    /**
+     * Get leads summary with counts and percentage changes.
+     *
+     * @return JsonResponse
+     */
+    public function getLeadsSummary(): JsonResponse
+    {
+        $summary = $this->activityRepo->getLeadsSummary();
+        return $this->successResponse($summary, 'Leads summary retrieved.');
+    }
 
-        return $this->successResponse(ReviewResource::collection($reviews), 'User reviews fetched successfully.');
+    /**
+     * Get deals summary.
+     *
+     * @return JsonResponse
+     */
+    public function getDealsSummary(): JsonResponse
+    {
+        $summary = $this->activityRepo->getDealsSummary();
+        return $this->successResponse($summary, 'Deals summary retrieved.');
+    }
+
+    /**
+     * Get enquiries summary.
+     *
+     * @return JsonResponse
+     */
+    public function getEnquiriesSummary(): JsonResponse
+    {
+        $summary = $this->activityRepo->getEnquiriesSummary();
+        return $this->successResponse($summary, 'Enquiries summary retrieved.');
     }
 }

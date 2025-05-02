@@ -193,6 +193,9 @@ Route::prefix('v1')->group(function () {
         // Activity related routes
         Route::prefix('activities')->controller(ActivityController::class)->group(function () {
             Route::get('/reviews', 'myReviews');
+            Route::get('/leads-summary', 'getLeadsSummary');
+            Route::get('/deals-summary', 'getDealsSummary');
+            Route::get('/enquiries-summary', 'getEnquiriesSummary');
         });
 
         // Admin related routes

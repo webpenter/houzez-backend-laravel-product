@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Repositories\ActivityRepositoryInterface;
 use App\Repositories\AppPropertyRepositoryInterface;
 use App\Repositories\DealRepositoryInterface;
+use App\Repositories\Eloquent\ActivityRepository;
 use App\Repositories\Eloquent\AppPropertyRepository;
 use App\Repositories\Eloquent\DealRepository;
 use App\Repositories\Eloquent\EnquiryRepository;
@@ -63,6 +65,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(TeamRepositoryInterface::class, TeamRepository::class);
 
         // Board repositories binding
+        $this->app->bind(ActivityRepositoryInterface::class, ActivityRepository::class);
         $this->app->bind(DealRepositoryInterface::class, DealRepository::class);
         $this->app->bind(LeadRepositoryInterface::class, LeadRepository::class);
         $this->app->bind(EnquiryRepositoryInterface::class, EnquiryRepository::class);
