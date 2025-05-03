@@ -35,7 +35,7 @@ class AppPropertyController extends Controller
     public function getFeaturedProperties(): JsonResponse
     {
         $properties = $this->propertyRepository->getFeaturedProperties(6);
-
+        
         return new JsonResponse([
             'success' => true,
             'properties' => AppPropertyCardResource::collection($properties),

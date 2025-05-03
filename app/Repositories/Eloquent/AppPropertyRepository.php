@@ -17,11 +17,12 @@ class AppPropertyRepository implements AppPropertyRepositoryInterface
      */
     public function getFeaturedProperties(int $limit): Collection
     {
-        return Property::where('is_featured', 1)
-            ->where('property_status','published')
-            ->latest()
-            ->take($limit)
-            ->get();
+        return Property::with('user') // Eager load user relationship
+        ->where('is_featured', 1)
+        ->where('property_status', 'published')
+        ->latest()
+        ->take($limit)
+        ->get();
     }
 
     /**
