@@ -10,6 +10,7 @@ use App\Repositories\Eloquent\AppPropertyRepository;
 use App\Repositories\Eloquent\DealRepository;
 use App\Repositories\Eloquent\EnquiryRepository;
 use App\Repositories\Eloquent\FavoritePropertyRepository;
+use App\Repositories\Eloquent\InsightRepository;
 use App\Repositories\Eloquent\LeadRepository;
 use App\Repositories\Eloquent\PropertyAttachmentRepository;
 use App\Repositories\Eloquent\PropertyImageRepository;
@@ -22,6 +23,7 @@ use App\Repositories\Eloquent\TourRequestRepository;
 use App\Repositories\Eloquent\UsersRepository;
 use App\Repositories\EnquiryRepositoryInterface;
 use App\Repositories\FavoritePropertyRepositoryInterface;
+use App\Repositories\InsightRepositoryInterface;
 use App\Repositories\LeadRepositoryInterface;
 use App\Repositories\PropertyAttachmentRepositoryInterface;
 use App\Repositories\PropertyImageRepositoryInterface;
@@ -63,6 +65,9 @@ class AppServiceProvider extends ServiceProvider
 
         // Team-system repositories binding
         $this->app->bind(TeamRepositoryInterface::class, TeamRepository::class);
+
+        // Insight repositories binding
+        $this->app->bind(InsightRepositoryInterface::class, InsightRepository::class);
 
         // Board repositories binding
         $this->app->bind(ActivityRepositoryInterface::class, ActivityRepository::class);

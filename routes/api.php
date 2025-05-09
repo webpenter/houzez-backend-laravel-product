@@ -23,6 +23,7 @@ use App\Http\Controllers\Boards\DealController;
 use App\Http\Controllers\Boards\LeadController;
 use App\Http\Controllers\Boards\EnquiryController;
 use App\Http\Controllers\Boards\ActivityController;
+use App\Http\Controllers\Insights\InsightController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -54,6 +55,8 @@ Route::prefix('v1')->group(function () {
 
         // App/Teams related route
         Route::get('/teams', [TeamController::class,'getAppTeams']);
+
+        Route::get('/property/{slug}', [InsightController::class, 'propertyViews']);
     });
 
     /* ---------------- User's Dashboard routes (with auth) --------------- */
@@ -196,6 +199,18 @@ Route::prefix('v1')->group(function () {
             Route::get('/leads-summary', 'getLeadsSummary');
             Route::get('/deals-summary', 'getDealsSummary');
             Route::get('/enquiries-summary', 'getEnquiriesSummary');
+        });
+
+        // Insights related routes
+        Route::prefix('insights')->controller(InsightController::class)->group(function () {
+            Route::get('/properties', 'getInsightProperties');
+            Route::get('/get-property-views/{id}', 'getPropertyViews');
+            Route::get('/get-property-unique-views/{id}', 'getPropertyUniqueViews');
+            Route::get('/get-chart-stats/{property}', 'getChartStats');
+            Route::get('/get-devices-stats/{property}', 'getDeviceStats');
+            Route::get('/get-countries-stats/{property}', 'getCountriesStats');
+            Route::get('/get-platform-stats/{property}', 'getPlatformStats');
+            Route::get('/get-browser-stats/{property}', 'getBrowsersStats');
         });
 
         // Admin related routes
