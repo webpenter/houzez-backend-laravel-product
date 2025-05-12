@@ -88,6 +88,7 @@ Route::prefix('v1')->group(function () {
                 Route::get('/edit/{property}', 'edit');
                 Route::post('/delete/{property}', 'destroy');
                 Route::post('/duplicate/{property}', 'duplicate');
+                Route::get('/change-status/{property}/{status}', 'changeStatus')->middleware('isAdmin');
             });
 
             // Property-images related routes

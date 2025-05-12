@@ -65,4 +65,13 @@ interface PropertyRepositoryInterface
      * @throws \Exception If the property is not found.
      */
     public function duplicateProperty(int $id): Property;
+
+    /**
+     * ## Change the status of a property.
+     *
+     * @param Property $property
+     * @param string $status
+     * @return bool
+     */
+    public function updateStatus(Property $property, string $status): bool;
 }
