@@ -2,12 +2,15 @@
 
 namespace App\Repositories\Eloquent;
 
+use App\Mail\PropertyCreatedMail;
+use App\Mail\PropertyStatusUpdatedMail;
 use App\Models\Property;
 use App\Models\PropertyImage;
 use App\Models\User;
 use App\Repositories\PropertyRepositoryInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class PropertyRepository implements PropertyRepositoryInterface
 {
@@ -95,6 +98,8 @@ class PropertyRepository implements PropertyRepositoryInterface
             }
 
             $property->update($data);
+
+            Mail::to($property->user->email)->send(new PropertyCreatedMail($property));
         } else {
             $property = Property::create($data);
         }
@@ -204,6 +209,9 @@ class PropertyRepository implements PropertyRepositoryInterface
     public function updateStatus(Property $property, string $status): bool
     {
         $property->property_status = $status;
+
+        Mail::to($property->user->email)->send(new PropertyStatusUpdatedMail($property));
+
         return $property->save();
     }
 }
