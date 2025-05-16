@@ -4,6 +4,10 @@ namespace App\Http\Resources\Property;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\Property\PropertyAttachmentResource;
+use App\Http\Resources\Property\SubPropertyResource;
+use App\Http\Resources\Property\FloorPlanResource;
+use App\Models\FloorPlan;
 
 class AppPropertyDetailsResource extends JsonResource
 {
@@ -56,6 +60,10 @@ class AppPropertyDetailsResource extends JsonResource
             'video_url' => $this->video_url ?? null,
             'virtual_tour' => $this->virtual_tour ?? null,
             'contact_information' => $this->contact_information ?? null,
+            'attachments' => PropertyAttachmentResource::collection($this->attachments) ?? [],
+            'sub_properties' => SubPropertyResource::collection($this->subProperties ?? []),
+            'floorplan' => FloorPlanResource::collection($this->floorplans ?? []),
+            'updated_at' => $this->updated_at ? $this->updated_at->format('Y-m-d H:i:s') : null,
         ];
     }
 }

@@ -136,4 +136,16 @@ class Property extends Model
     {
         return $this->hasMany(FloorPlan::class, 'property_id');
     }
+    
+    /**
+     * Define a one-to-many relationship with the PropertyAttachment model.
+     * This indicates that a property can have multiple attachments.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+
+    public function attachments()
+    {
+        return $this->hasMany(PropertyAttachment::class, 'property_id');
+    }
 }
