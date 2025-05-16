@@ -63,6 +63,7 @@ class AppPropertyDetailsResource extends JsonResource
             'attachments' => PropertyAttachmentResource::collection($this->attachments) ?? [],
             'sub_properties' => SubPropertyResource::collection($this->subProperties ?? []),
             'floorplan' => FloorPlanResource::collection($this->floorplans ?? []),
+            // 'floorplan' => FloorPlanResource::collection($this->floorplans ?? []),
             'updated_at' => $this->updated_at ? $this->updated_at->format('Y-m-d H:i:s') : null,
         ];
     }
