@@ -74,7 +74,7 @@ class AppPropertyRepository implements AppPropertyRepositoryInterface
      */
     public function findBySlug(string $slug): ?Property
     {
-        return Property::with(['images', 'user', 'attachments', 'floorPlans', 'subProperties'])
+        return Property::with(['images', 'user', 'attachments', 'floorPlans', 'agents', 'subProperties'])
         ->where('slug', $slug)
         ->first();
     }

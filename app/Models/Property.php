@@ -148,4 +148,14 @@ class Property extends Model
     {
         return $this->hasMany(PropertyAttachment::class, 'property_id');
     }
+    /**
+     * Define a many-to-many relationship with the User model for agents.
+     * This indicates that a property can be associated with multiple agents.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function agents()
+    {
+        return $this->belongsToMany(User::class, 'property_agent', 'property_id', 'agent_id')->withTimestamps();
+    }
 }

@@ -143,4 +143,9 @@ class User extends Authenticatable
         return $this->hasMany(Inquiry::class);
     }
 
+    public function assignedProperties()
+    {
+        return $this->belongsToMany(Property::class, 'property_agent', 'agent_id', 'property_id')->withTimestamps();
+    }
+
 }

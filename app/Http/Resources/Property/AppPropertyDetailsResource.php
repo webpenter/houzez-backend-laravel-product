@@ -7,7 +7,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Resources\Property\PropertyAttachmentResource;
 use App\Http\Resources\Property\SubPropertyResource;
 use App\Http\Resources\Property\FloorPlanResource;
-use App\Models\FloorPlan;
+use App\Http\Resources\Property\PropertyAgentResource;
+
 
 class AppPropertyDetailsResource extends JsonResource
 {
@@ -62,8 +63,8 @@ class AppPropertyDetailsResource extends JsonResource
             'contact_information' => $this->contact_information ?? null,
             'attachments' => PropertyAttachmentResource::collection($this->attachments) ?? [],
             'sub_properties' => SubPropertyResource::collection($this->subProperties ?? []),
-            'floorplan' => FloorPlanResource::collection($this->floorplans ?? []),
-            // 'floorplan' => FloorPlanResource::collection($this->floorplans ?? []),
+            'floorplans' => FloorPlanResource::collection($this->floorplans ?? []),
+            'agents' => PropertyAgentResource::collection($this->whenLoaded('agents')),
             'updated_at' => $this->updated_at ? $this->updated_at->format('Y-m-d H:i:s') : null,
         ];
     }
