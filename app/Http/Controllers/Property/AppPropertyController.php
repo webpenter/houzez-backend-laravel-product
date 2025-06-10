@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Property;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Property\AppPropertiesCardResource;
 use App\Http\Resources\Property\AppPropertyCardResource;
+use App\Http\Resources\Property\AppPropertyDetailsResource;
 use App\Repositories\AppPropertyRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -27,13 +28,29 @@ class AppPropertyController extends Controller
 
     /**
      * ## Get Featured Properties
-     * Fetches the latest 3 featured properties and returns them as a JSON response.
+     * Fetches the latest 6 featured properties and returns them as a JSON response.
      *
      * @return JsonResponse A JSON response containing the featured properties
      */
     public function getFeaturedProperties(): JsonResponse
     {
         $properties = $this->propertyRepository->getFeaturedProperties(6);
+
+        return new JsonResponse([
+            'success' => true,
+            'properties' => AppPropertyCardResource::collection($properties),
+        ]);
+    }
+
+    /**
+     * ## Get Latest Properties
+     * Fetches the latest 6 properties and returns them as a JSON response.
+     *
+     * @return JsonResponse A JSON response containing the latest properties
+     */
+    public function getLatestProperties(): JsonResponse
+    {
+        $properties = $this->propertyRepository->getLatestProperties(6);
 
         return new JsonResponse([
             'success' => true,
@@ -95,5 +112,20 @@ class AppPropertyController extends Controller
             'success' => true,
             'properties' => AppPropertiesCardResource::collection($properties),
         ]);
+    }
+
+    /**
+     * ## Retrieve property data by slug.
+     *
+     * @param string $slug
+     * @return JsonResponse
+     */
+    public function getPropertyData(string $slug): JsonResponse
+    {
+        $property = $this->propertyRepository->findBySlug($slug);
+
+        return $property
+            ? new JsonResponse(['property' => new AppPropertyDetailsResource($property)])
+            : response()->json(['message' => 'Property not found'], 404);
     }
 }

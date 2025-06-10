@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\Property;
 use Illuminate\Database\Eloquent\Collection;
 interface AppPropertyRepositoryInterface
 {
@@ -13,6 +14,15 @@ interface AppPropertyRepositoryInterface
      * @return Collection The collection of featured properties
      */
     public function getFeaturedProperties(int $limit): Collection;
+
+    /**
+     * ## Get Latest Properties
+     * Fetch the latest properties limited by a given number.
+     *
+     * @param int $limit Number of properties to fetch
+     * @return Collection The collection of latest properties
+     */
+    public function getLatestProperties(int $limit): Collection;
 
     /**
      * ## Get filtered properties based on search criteria.
@@ -31,4 +41,12 @@ interface AppPropertyRepositoryInterface
         ?int $maxBedrooms,
         ?float $maxPrice
     ): Collection;
+
+    /**
+     * ## Find property by slug.
+     *
+     * @param string $slug
+     * @return Property|null
+     */
+    public function findBySlug(string $slug): ?Property;
 }

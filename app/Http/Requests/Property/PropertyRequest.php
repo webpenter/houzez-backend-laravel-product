@@ -66,7 +66,7 @@ class PropertyRequest extends FormRequest
             'longitude' => 'nullable|numeric|between:-180,180',
 
             // Step-6 (video_url)
-            'video_url' => 'nullable|url|max:500',
+            'video_url' => 'nullable|string',
 
             // Step-7 (virtual_tour)
             'virtual_tour' => 'nullable|string',

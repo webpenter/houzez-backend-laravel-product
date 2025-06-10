@@ -17,29 +17,51 @@ use App\Http\Controllers\Setting\GeneralSettingController;
 use App\Http\Controllers\StripePayment\InvoicesController;
 use App\Http\Controllers\StripePayment\PlanController;
 use App\Http\Controllers\StripePayment\SubscriptionController;
+use App\Http\Controllers\Others\TourRequestController;
+use App\Http\Controllers\Others\ReviewController;
+use App\Http\Controllers\Others\BlogController;
+use App\Http\Controllers\Others\TeamController;
+use App\Http\Controllers\Boards\DealController;
+use App\Http\Controllers\Boards\LeadController;
+use App\Http\Controllers\Boards\EnquiryController;
+use App\Http\Controllers\Boards\ActivityController;
+use App\Http\Controllers\Insights\InsightController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
-    // Authentication routes
+    /* --------------- Login/register routes (without auth) --------------- */
     Route::controller(AuthController::class)->group(function () {
         Route::post('/register', 'register');
         Route::post('/login', 'login');
     });
 
-    // App routes
+    /* --------------- App/Client-Side routes (without auth) -------------- */
     Route::prefix('app')->group(function () {
-        // Properties-related routes
+        // App/Properties-related routes
         Route::prefix('properties')->controller(AppPropertyController::class)->group(function () {
             Route::get('/get-featured', 'getFeaturedProperties');
+            Route::get('/get-latest', 'getLatestProperties');
             Route::get('/get-searched-and-filtered', 'getSearchedAndFilteredProperties');
             Route::get('/get-all', 'getAllProperties');
+            Route::get('/get-property/{slug}', 'getPropertyData');
         });
 
-        // Newsletter-Subscribe related route
+        // App/Newsletter-Subscribe related route
         Route::post('/subscribe', [NewsletterSubscribeController::class, 'subscribe']);
+
+        // App/Review-system related route
+        Route::get('/reviews/show/{propertyId}', [ReviewController::class, 'show']);
+
+        // App/Blogs related route
+        Route::get('/blogs', [BlogController::class,'getAppBlogs']);
+
+        // App/Teams related route
+        Route::get('/teams', [TeamController::class,'getAppTeams']);
+
+        Route::get('/property/{slug}', [InsightController::class, 'propertyViews']);
     });
 
-    // Dashboard routes
+    /* ---------------- User's Dashboard routes (with auth) --------------- */
     Route::middleware('auth:sanctum')->group(function () {
         // User-related routes
         Route::controller(AuthController::class)->group(function () {
@@ -68,6 +90,7 @@ Route::prefix('v1')->group(function () {
                 Route::get('/edit/{property}', 'edit');
                 Route::post('/delete/{property}', 'destroy');
                 Route::post('/duplicate/{property}', 'duplicate');
+                Route::post('/change-status/{property}/{status}', 'changeStatus')->middleware('isAdmin');
             });
 
             // Property-images related routes
@@ -107,9 +130,23 @@ Route::prefix('v1')->group(function () {
         // Saved-searches related routes
         Route::prefix('saved-searches')->controller(SavedSearchController::class)->group(function () {
             Route::get('/get-user', 'getUserSearches');
-            Route::post('/store', 'store');
+            Route::post('/store-or-remove', 'storeOrRemoveSearch');
+            Route::post('/is-saved', 'isSearchSaved');
             Route::post('/delete/{id}', 'destroy');
         });
+
+        // Tour-requests related routes
+        Route::prefix('tour-requests')->controller(TourRequestController::class)->group(function () {
+            Route::get('/show', 'showUserMessages');
+            Route::post('/send', 'sendMessage');
+            Route::post('/delete/{message}', 'deleteUserMessage');
+            Route::get('/details/{message}', 'showUserMessageDetail');
+            Route::post('/reply', 'replyToMessage');
+            Route::get('/{id}/replies', 'getReplies');
+        });
+
+        // Review-system related route
+        Route::post('/reviews/store', [ReviewController::class, 'store']);
 
         // Stripe-payments related routes
         Route::prefix('stripe-payments')->group(function () {
@@ -133,7 +170,50 @@ Route::prefix('v1')->group(function () {
 
             // Invoices related routes
             Route::get('/invoices',[InvoicesController::class,'invoices']);
+        });
 
+        // Deals related routes
+        Route::prefix('deals')->controller(DealController::class)->group(function () {
+            Route::get('/', 'index');
+            Route::post('/', 'store');
+            Route::get('/{id}', 'show');
+            Route::put('/{id}', 'update');
+            Route::delete('/{id}', 'destroy');
+
+            Route::get('/group/active', 'active');
+            Route::get('/group/won', 'won');
+            Route::get('/group/lost', 'lost');
+        });
+
+        // Leads related routes
+        Route::apiResource('leads', LeadController::class);
+
+        // Enquiry related routes
+        Route::prefix('enquiries')->controller(EnquiryController::class)->group(function () {
+            Route::get('/', 'index');
+            Route::post('/', 'store');
+            Route::get('/{id}',  'show');
+            Route::delete('/{id}', 'destroy');
+        });
+
+        // Activity related routes
+        Route::prefix('activities')->controller(ActivityController::class)->group(function () {
+            Route::get('/reviews', 'myReviews');
+            Route::get('/leads-summary', 'getLeadsSummary');
+            Route::get('/deals-summary', 'getDealsSummary');
+            Route::get('/enquiries-summary', 'getEnquiriesSummary');
+        });
+
+        // Insights related routes
+        Route::prefix('insights')->controller(InsightController::class)->group(function () {
+            Route::get('/properties', 'getInsightProperties');
+            Route::get('/get-property-views/{id}', 'getPropertyViews');
+            Route::get('/get-property-unique-views/{id}', 'getPropertyUniqueViews');
+            Route::get('/get-chart-stats/{property}', 'getChartStats');
+            Route::get('/get-devices-stats/{property}', 'getDeviceStats');
+            Route::get('/get-countries-stats/{property}', 'getCountriesStats');
+            Route::get('/get-platform-stats/{property}', 'getPlatformStats');
+            Route::get('/get-browser-stats/{property}', 'getBrowsersStats');
         });
 
         // Admin related routes
@@ -151,22 +231,11 @@ Route::prefix('v1')->group(function () {
                 Route::post('/delete-subscriber/{subscriber}', 'destroy');
             });
 
+            // Blogs related routes
+            Route::apiResource('blogs', BlogController::class);
 
-
-            Route::prefix('settings')->group(function () {
-                Route::get('/general', [GeneralSettingController::class, 'index']);
-                Route::post('/create', [GeneralSettingController::class, 'createOrUpdateGeneralSettings']);
-            });
-    
-            // bedroom routes
-            Route::prefix('bedrooms')->group(function () {
-                Route::get('/', [BedroomController::class, 'index']); // List all bedrooms
-                Route::post('/create', [BedroomController::class, 'store']); // Create a new bedroom
-                Route::get('/{bedroom}', [BedroomController::class, 'show']); // Get single bedroom (Model Binding)
-                Route::post('/update/{bedroom}', [BedroomController::class, 'update']); // Update bedroom (Model Binding)
-                Route::post('/delete/{bedroom}', [BedroomController::class, 'destroy']); // Delete bedroom (Model Binding)
-            });
+            // Teams related routes
+            Route::apiResource('teams', TeamController::class);
         });
     });
-
 });

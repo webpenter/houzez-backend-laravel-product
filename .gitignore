@@ -26,5 +26,6 @@ yarn-error.log
 /public/floorplans/
 /public/property_images/
 /public/profile-picture/
-/public/property_attachments/
+/public/property_attachments
+/public/blog-images
 

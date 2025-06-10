@@ -25,6 +25,21 @@ class AppPropertyRepository implements AppPropertyRepositoryInterface
     }
 
     /**
+     * ## Get Latest Properties
+     * Retrieves the latest properties, limiting the result.
+     *
+     * @param int $limit The number of properties to return
+     * @return Collection The collection of latest properties
+     */
+    public function getLatestProperties(int $limit): Collection
+    {
+        return Property::where('property_status','published')
+            ->latest()
+            ->take($limit)
+            ->get();
+    }
+
+    /**
      * ## Get filtered properties based on provided criteria.
      *
      * @param string|null $search
@@ -48,6 +63,17 @@ class AppPropertyRepository implements AppPropertyRepositoryInterface
             ->when($maxBedrooms && $maxBedrooms !== 'any', fn($query) => $query->where('bedrooms', '<=', $maxBedrooms))
             ->when($maxPrice && $maxPrice !== 'any', fn($query) => $query->where('price', '<=', $maxPrice))
             ->get();
+    }
+
+    /**
+     * ## Find property by slug.
+     *
+     * @param string $slug
+     * @return Property|null
+     */
+    public function findBySlug(string $slug): ?Property
+    {
+        return Property::where('slug', $slug)->first();
     }
 
 }

@@ -4,37 +4,27 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class MessageReply extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'message_id',
-        'reply_content',
-    ];
+    protected $fillable = ['tour_request_id', 'user_id', 'message'];
 
     /**
-     * Get the message that the reply is associated with.
+     * Relationship: Reply belongs to a Tour Request
      */
-    public function message()
+    public function tourRequest(): BelongsTo
     {
-        return $this->belongsTo(Message::class);
+        return $this->belongsTo(TourRequest::class);
     }
 
     /**
-     * Get the sender (receiver of the original message) of the reply.
+     * Relationship: Reply belongs to a User
      */
-    public function sender()
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'sender_id', 'receiver_id'); // Using message receiver_id
-    }
-
-    /**
-     * Get the receiver (sender of the original message) of the reply.
-     */
-    public function receiver()
-    {
-        return $this->belongsTo(User::class, 'receiver_id', 'sender_id'); // Using message sender_id
+        return $this->belongsTo(User::class);
     }
 }
