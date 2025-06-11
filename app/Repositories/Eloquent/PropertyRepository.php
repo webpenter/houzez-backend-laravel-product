@@ -99,9 +99,9 @@ class PropertyRepository implements PropertyRepositoryInterface
 
             $property->update($data);
 
-            Mail::to($property->user->email)->send(new PropertyCreatedMail($property));
         } else {
             $property = Property::create($data);
+            Mail::to($property->user->email)->send(new PropertyCreatedMail($property));
         }
 
         return $property;
