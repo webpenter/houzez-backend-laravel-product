@@ -22,7 +22,20 @@ class AppPropertiesCardResource extends JsonResource
             'bathrooms' => $this->bathrooms ?? null,
             'area_size' => $this->area_size ?? null,
             'price' => $this->price ?? null,
+            'second_price' => $this->second_price ?? null,
+            'address' => $this->address ?? null,
+            'country' => $this->country ?? null,
+            'county_state' => $this->county_state ?? null,
+            'city' => $this->city ?? null,
+            'label' => $this->label ?? null,
+            'is_featured' => $this->is_featured ?? null,
             'thumbnail' => $this->images->where('is_thumbnail','1')->pluck('image_path')->first() ?? null,
+
+            'created_ago' => $this->created_at ? $this->created_at->diffForHumans() : null,
+            'user' => [
+            'user_id' => $this->user->id,
+            'user_name' => $this->user->name,
+            ],
         ];
     }
 }
