@@ -35,7 +35,7 @@ class AppPropertyController extends Controller
     public function getFeaturedProperties(): JsonResponse
     {
         $properties = $this->propertyRepository->getFeaturedProperties(6);
-        
+
         return new JsonResponse([
             'success' => true,
             'properties' => AppPropertyCardResource::collection($properties),
@@ -68,7 +68,7 @@ class AppPropertyController extends Controller
     {
         $search = $request->get('search');
         $propertyTypes = $request->get('propertyTypes');
-        $city = $request->get('city');
+        $city = $request->has('city') ? (array) $request->get('city') : null;
         $maxBedrooms = $request->get('maxBedrooms');
         $maxPrice = $request->get('maxPrice');
 
@@ -96,7 +96,7 @@ class AppPropertyController extends Controller
     {
         $search = $request->get('search');
         $propertyTypes = $request->get('propertyTypes');
-        $city = $request->get('city');
+        $city = $request->has('city') ? (array) $request->get('city') : null;
         $maxBedrooms = $request->get('maxBedrooms');
         $maxPrice = $request->get('maxPrice');
 

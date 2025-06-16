@@ -37,7 +37,7 @@ interface AppPropertyRepositoryInterface
     public function getFilteredProperties(
         ?string $search,
         ?array $propertyTypes,
-        ?string $city,
+        ?array $city,
         ?int $maxBedrooms,
         ?float $maxPrice
     ): Collection;

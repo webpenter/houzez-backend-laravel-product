@@ -53,14 +53,14 @@ class AppPropertyRepository implements AppPropertyRepositoryInterface
     public function getFilteredProperties(
         ?string $search,
         ?array $propertyTypes,
-        ?string $city,
+        ?array $city,
         ?int $maxBedrooms,
         ?float $maxPrice
     ): Collection {
         return Property::where('property_status', 'published')
             ->when($search, fn($query) => $query->where('title', 'like', "%$search%"))
             ->when(!empty($propertyTypes), fn($query) => $query->whereIn('type', $propertyTypes))
-            ->when($city, fn($query) => $query->where('city', $city))
+            ->when(!empty($city), fn($query) => $query->whereIn('city', $city))
             ->when($maxBedrooms && $maxBedrooms !== 'any', fn($query) => $query->where('bedrooms', '<=', $maxBedrooms))
             ->when($maxPrice && $maxPrice !== 'any', fn($query) => $query->where('price', '<=', $maxPrice))
             ->get();
