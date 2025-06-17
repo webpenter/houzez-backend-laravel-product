@@ -37,6 +37,7 @@ class Property extends Model
         'contact_information',
         'private_note',
         'property_status', 'is_paid', 'is_featured',
+        'views', 'unique_views',
     ];
 
     /**
@@ -136,7 +137,8 @@ class Property extends Model
     {
         return $this->hasMany(FloorPlan::class, 'property_id');
     }
-    
+
+
     /**
      * Define a one-to-many relationship with the PropertyAttachment model.
      * This indicates that a property can have multiple attachments.
@@ -158,4 +160,17 @@ class Property extends Model
     {
         return $this->belongsToMany(User::class, 'property_agent', 'property_id', 'agent_id')->withTimestamps();
     }
+
+
+    /**
+     * Define a one-to-many relationship with the PropertyVisit model.
+     * This means a property can have multiple visits.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function visits()
+    {
+        return $this->hasMany(PropertyVisit::class);
+    }
+
 }

@@ -19,13 +19,18 @@ use App\Http\Controllers\Others\TourRequestController;
 use App\Http\Controllers\Others\ReviewController;
 use App\Http\Controllers\Others\BlogController;
 use App\Http\Controllers\Others\TeamController;
+use App\Http\Controllers\Boards\DealController;
+use App\Http\Controllers\Boards\LeadController;
+use App\Http\Controllers\Boards\EnquiryController;
+use App\Http\Controllers\Boards\ActivityController;
+use App\Http\Controllers\Insights\InsightController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InquiryController;
 use App\Http\Controllers\Settings\GeneralSettingController;
 use App\Http\Controllers\Settings\NavbarButtonController;
 
 Route::prefix('v1')->group(function () {
-    // Authentication routes
+    /* --------------- Login/register routes (without auth) --------------- */
     Route::controller(AuthController::class)->group(function () {
         Route::post('/register', 'register');
         Route::post('/login', 'login');
@@ -34,9 +39,9 @@ Route::prefix('v1')->group(function () {
         Route::get('/buttons', 'getNavbarButtons');
     });
 
-    // App routes
+    /* --------------- App/Client-Side routes (without auth) -------------- */
     Route::prefix('app')->group(function () {
-        // Properties-related routes
+        // App/Properties-related routes
         Route::prefix('properties')->controller(AppPropertyController::class)->group(function () {
             Route::get('/get-featured', 'getFeaturedProperties');
             Route::get('/get-latest', 'getLatestProperties');
@@ -45,20 +50,22 @@ Route::prefix('v1')->group(function () {
             Route::get('/get-property/{slug}', 'getPropertyData');
         });
 
-        // Newsletter-Subscribe related route
+        // App/Newsletter-Subscribe related route
         Route::post('/subscribe', [NewsletterSubscribeController::class, 'subscribe']);
 
-        // Review-system related route
+        // App/Review-system related route
         Route::get('/reviews/show/{propertyId}', [ReviewController::class, 'show']);
 
-        // Blogs related route
+        // App/Blogs related route
         Route::get('/blogs', [BlogController::class,'getAppBlogs']);
 
-        // Teams related route
+        // App/Teams related route
         Route::get('/teams', [TeamController::class,'getAppTeams']);
+
+        Route::get('/property/{slug}', [InsightController::class, 'propertyViews']);
     });
 
-    // Dashboard routes
+    /* ---------------- User's Dashboard routes (with auth) --------------- */
     Route::middleware('auth:sanctum')->group(function () {
         // User-related routes
         Route::controller(AuthController::class)->group(function () {
@@ -87,6 +94,7 @@ Route::prefix('v1')->group(function () {
                 Route::get('/edit/{property}', 'edit');
                 Route::post('/delete/{property}', 'destroy');
                 Route::post('/duplicate/{property}', 'duplicate');
+                Route::get('/change-status/{property}/{status}', 'changeStatus')->middleware('isAdmin');
             });
 
             // Property-images related routes
@@ -168,6 +176,50 @@ Route::prefix('v1')->group(function () {
             Route::get('/invoices',[InvoicesController::class,'invoices']);
         });
 
+        // Deals related routes
+        Route::prefix('deals')->controller(DealController::class)->group(function () {
+            Route::get('/', 'index');
+            Route::post('/', 'store');
+            Route::get('/{id}', 'show');
+            Route::put('/{id}', 'update');
+            Route::delete('/{id}', 'destroy');
+
+            Route::get('/group/active', 'active');
+            Route::get('/group/won', 'won');
+            Route::get('/group/lost', 'lost');
+        });
+
+        // Leads related routes
+        Route::apiResource('leads', LeadController::class);
+
+        // Enquiry related routes
+        Route::prefix('enquiries')->controller(EnquiryController::class)->group(function () {
+            Route::get('/', 'index');
+            Route::post('/', 'store');
+            Route::get('/{id}',  'show');
+            Route::delete('/{id}', 'destroy');
+        });
+
+        // Activity related routes
+        Route::prefix('activities')->controller(ActivityController::class)->group(function () {
+            Route::get('/reviews', 'myReviews');
+            Route::get('/leads-summary', 'getLeadsSummary');
+            Route::get('/deals-summary', 'getDealsSummary');
+            Route::get('/enquiries-summary', 'getEnquiriesSummary');
+        });
+
+        // Insights related routes
+        Route::prefix('insights')->controller(InsightController::class)->group(function () {
+            Route::get('/properties', 'getInsightProperties');
+            Route::get('/get-property-views/{id}', 'getPropertyViews');
+            Route::get('/get-property-unique-views/{id}', 'getPropertyUniqueViews');
+            Route::get('/get-chart-stats/{property}', 'getChartStats');
+            Route::get('/get-devices-stats/{property}', 'getDeviceStats');
+            Route::get('/get-countries-stats/{property}', 'getCountriesStats');
+            Route::get('/get-platform-stats/{property}', 'getPlatformStats');
+            Route::get('/get-browser-stats/{property}', 'getBrowsersStats');
+        });
+
         // Admin related routes
         Route::middleware('isAdmin')->group(function () {
             // All-Users related routes
@@ -206,19 +258,4 @@ Route::prefix('v1')->group(function () {
             Route::apiResource('teams', TeamController::class);
         });
     });
-
-    // Public inquiry submission route (optional, if you need unauthenticated access)
-    Route::post('/inquiries', [InquiryController::class, 'store']);
-
-    // Inquiry routes for authenticated users
-    Route::middleware('auth:sanctum')->prefix('inquiries')->controller(InquiryController::class)->group(function () {
-        Route::get('/', 'index');
-        Route::post('/', 'store');
-        Route::get('/{id}', 'show');
-        Route::put('/{id}', 'update');
-        Route::delete('/{id}', 'destroy');
-
-        Route::post('/upload-csv', 'uploadCsv');
-    });
-
 });

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Property;
 
+use App\Enums\PropertyStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Property\PropertyRequest;
 use App\Http\Resources\Property\UserPropertyResource;
@@ -11,8 +12,6 @@ use App\Repositories\PropertyRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\ValidationException;
-use PHPUnit\Exception;
 
 class PropertyController extends Controller
 {
@@ -154,6 +153,39 @@ class PropertyController extends Controller
                 'error' => $e->getMessage()
             ], $e->getCode() ?: 400);
         }
+    }
+
+    /**
+     * ## Change the status of a property.
+     *
+     * @param Property $property
+     * @param string $status
+     * @return JsonResponse
+     */
+    public function changeStatus(Property $property, string $status): JsonResponse
+    {
+        $validStatuses = array_column(PropertyStatusEnum::cases(), 'value');
+
+        if (!in_array($status, $validStatuses)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid status provided.',
+            ], 422);
+        }
+
+        $updated = $this->propertyRepository->updateStatus($property, $status);
+
+        if ($updated) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Property status updated successfully.',
+            ], 200);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to update property status.',
+        ], 500);
     }
 
 }

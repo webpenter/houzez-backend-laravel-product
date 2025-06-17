@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Enquiry;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class LeadRequest extends FormRequest
+class StoreEnquiryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,11 +22,11 @@ class LeadRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'email' => 'required|email',
-            'phone' => 'required|string|max:15',
-            'message' => 'nullable|string',
-//            'property_id' => 'required|exists:properties,id',
+            'name'   => 'required|string|max:255',
+            'email'  => 'required|email',
+            'phone'  => 'required|string|max:20',
+            'type'   => 'required|string|max:100',
+            'source' => 'required|string|max:100',
         ];
     }
 }

@@ -2,11 +2,16 @@
 
 namespace App\Providers;
 
+use App\Repositories\ActivityRepositoryInterface;
 use App\Repositories\AppPropertyRepositoryInterface;
 use App\Repositories\DealRepositoryInterface;
+use App\Repositories\Eloquent\ActivityRepository;
 use App\Repositories\Eloquent\AppPropertyRepository;
 use App\Repositories\Eloquent\DealRepository;
+use App\Repositories\Eloquent\EnquiryRepository;
 use App\Repositories\Eloquent\FavoritePropertyRepository;
+use App\Repositories\Eloquent\InsightRepository;
+use App\Repositories\Eloquent\LeadRepository;
 use App\Repositories\Eloquent\PropertyAttachmentRepository;
 use App\Repositories\Eloquent\PropertyImageRepository;
 use App\Repositories\Eloquent\PropertyRepository;
@@ -22,6 +27,10 @@ use App\Repositories\Eloquent\NavbarButtonRepository;
 use App\Repositories\FavoritePropertyRepositoryInterface;
 use App\Repositories\GeneralSettingRepositoryInterface;
 use App\Repositories\NavbarButtonRepositoryInterface;
+use App\Repositories\EnquiryRepositoryInterface;
+use App\Repositories\FavoritePropertyRepositoryInterface;
+use App\Repositories\InsightRepositoryInterface;
+use App\Repositories\LeadRepositoryInterface;
 use App\Repositories\PropertyAttachmentRepositoryInterface;
 use App\Repositories\PropertyImageRepositoryInterface;
 use App\Repositories\PropertyRepositoryInterface;
@@ -66,12 +75,18 @@ class AppServiceProvider extends ServiceProvider
 
         // Navbar repositories binding
         $this->app->bind(NavbarButtonRepositoryInterface::class, NavbarButtonRepository::class);
-    
+
         // Team-system repositories binding
         $this->app->bind(TeamRepositoryInterface::class, TeamRepository::class);
 
+        // Insight repositories binding
+        $this->app->bind(InsightRepositoryInterface::class, InsightRepository::class);
+
         // Board repositories binding
+        $this->app->bind(ActivityRepositoryInterface::class, ActivityRepository::class);
         $this->app->bind(DealRepositoryInterface::class, DealRepository::class);
+        $this->app->bind(LeadRepositoryInterface::class, LeadRepository::class);
+        $this->app->bind(EnquiryRepositoryInterface::class, EnquiryRepository::class);
     }
 
     /**

@@ -2,6 +2,19 @@
 
 use Carbon\Carbon;
 
+if (!function_exists('timeAgoFormat')) {
+    /**
+     * Format the given date into a human-readable difference (e.g., '2 minutes ago').
+     *
+     * @param string|null $date
+     * @return string|null
+     */
+    function timeAgoFormat($date): ?string {
+        return $date ? \Carbon\Carbon::parse($date)->diffForHumans() : null;
+    }
+}
+
+
 if (!function_exists('formatDate')) {
     function formatDate($date, $format = 'F j, Y') {
         return $date ? \Carbon\Carbon::parse($date)->format($format) : null;
