@@ -28,7 +28,6 @@ use App\Repositories\FavoritePropertyRepositoryInterface;
 use App\Repositories\GeneralSettingRepositoryInterface;
 use App\Repositories\NavbarButtonRepositoryInterface;
 use App\Repositories\EnquiryRepositoryInterface;
-use App\Repositories\FavoritePropertyRepositoryInterface;
 use App\Repositories\InsightRepositoryInterface;
 use App\Repositories\LeadRepositoryInterface;
 use App\Repositories\PropertyAttachmentRepositoryInterface;
