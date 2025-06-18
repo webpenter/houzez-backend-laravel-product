@@ -76,4 +76,16 @@ class AppPropertyRepository implements AppPropertyRepositoryInterface
         return Property::where('slug', $slug)->first();
     }
 
+
+    /**
+     * ## Find property by slug in Demo01.
+     *
+     * @param string $slug
+     * @return Property|null
+     */
+    public function findBySlugDemo01(string $slug): ?Property
+    {
+        return Property::where('slug', $slug)->first();
+    }
+
 }

@@ -49,4 +49,14 @@ interface AppPropertyRepositoryInterface
      * @return Property|null
      */
     public function findBySlug(string $slug): ?Property;
+
+
+
+    /**
+     * ## Find property by slug in Demo01.
+     *
+     * @param string $slug
+     * @return Property|null
+     */
+    public function findBySlugDemo01(string $slug): ?Property;
 }

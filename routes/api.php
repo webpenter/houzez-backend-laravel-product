@@ -66,7 +66,7 @@ Route::prefix('v1')->group(function () {
             Route::get('/get-latest', 'getLatestPropertiesDemo01');
             Route::get('/get-searched-and-filtered', 'getSearchedAndFilteredProperties');
             Route::get('/get-all', 'getAllProperties');
-            Route::get('/get-property/{slug}', 'getPropertyData');
+            Route::get('/get-property/{slug}', 'getPropertyDataDemo01');
         });
 
     });
