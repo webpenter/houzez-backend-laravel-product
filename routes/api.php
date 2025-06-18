@@ -59,6 +59,18 @@ Route::prefix('v1')->group(function () {
         Route::get('/property/{slug}', [InsightController::class, 'propertyViews']);
     });
 
+    Route::prefix('demo01')->group(function () {
+        // App/Demo01/Properties-related routes
+        Route::prefix('properties')->controller(AppPropertyController::class)->group(function () {
+            Route::get('/get-featured', 'getFeaturedPropertiesDemo01');
+            Route::get('/get-latest', 'getLatestPropertiesDemo01');
+            Route::get('/get-searched-and-filtered', 'getSearchedAndFilteredProperties');
+            Route::get('/get-all', 'getAllProperties');
+            Route::get('/get-property/{slug}', 'getPropertyData');
+        });
+
+    });
+
     /* ---------------- User's Dashboard routes (with auth) --------------- */
     Route::middleware('auth:sanctum')->group(function () {
         // User-related routes

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Property;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Property\AppPropertiesCardResource;
 use App\Http\Resources\Property\AppPropertyCardResource;
+use App\Http\Resources\Demos\Demo01\Property\AppPropertyCardDemo01Resource;
 use App\Http\Resources\Property\AppPropertyDetailsResource;
 use App\Repositories\AppPropertyRepositoryInterface;
 use Illuminate\Http\JsonResponse;
@@ -127,5 +128,53 @@ class AppPropertyController extends Controller
         return $property
             ? new JsonResponse(['property' => new AppPropertyDetailsResource($property)])
             : response()->json(['message' => 'Property not found'], 404);
+    }
+
+
+
+    /**
+     * ====================================================================================
+     * ====================================================================================
+     *
+     * Demo01 - Property Display APIs
+     *
+     * ====================================================================================
+     * ====================================================================================
+     *
+     * This section contains all the API methods specifically built for the Demo01 version
+     * of the frontend, including featured properties, latest listings, and more.
+     */
+
+
+    /**
+     * ## Get Featured Properties
+     * Fetches the latest 6 featured properties and returns them as a JSON response.
+     *
+     * @return JsonResponse A JSON response containing the featured properties
+     */
+    public function getFeaturedPropertiesDemo01(): JsonResponse
+    {
+        $properties = $this->propertyRepository->getFeaturedProperties(6);
+
+        return new JsonResponse([
+            'success' => true,
+            'properties' => AppPropertyCardDemo01Resource::collection($properties),
+        ]);
+    }
+
+    /**
+     * ## Get Latest Properties
+     * Fetches the latest 6 properties and returns them as a JSON response.
+     *
+     * @return JsonResponse A JSON response containing the latest properties
+     */
+    public function getLatestPropertiesDemo01(): JsonResponse
+    {
+        $properties = $this->propertyRepository->getLatestProperties(6);
+
+        return new JsonResponse([
+            'success' => true,
+            'properties' => AppPropertyCardDemo01Resource::collection($properties),
+        ]);
     }
 }
