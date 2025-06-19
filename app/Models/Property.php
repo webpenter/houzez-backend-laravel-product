@@ -139,6 +139,28 @@ class Property extends Model
     }
 
     /**
+     * Define a one-to-many relationship with the PropertyAttachment model.
+     * This indicates that a property can have multiple attachments.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+
+    public function attachments()
+    {
+        return $this->hasMany(PropertyAttachment::class, 'property_id');
+    }
+    /**
+     * Define a many-to-many relationship with the User model for agents.
+     * This indicates that a property can be associated with multiple agents.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function agents()
+    {
+        return $this->belongsToMany(User::class, 'property_agent', 'property_id', 'agent_id')->withTimestamps();
+    }
+
+    /**
      * Define a one-to-many relationship with the PropertyVisit model.
      * This means a property can have multiple visits.
      *

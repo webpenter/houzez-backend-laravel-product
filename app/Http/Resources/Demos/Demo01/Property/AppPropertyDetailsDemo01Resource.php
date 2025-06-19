@@ -4,6 +4,10 @@ namespace App\Http\Resources\Demos\Demo01\Property;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\Demos\Demo01\Property\PropertyAttachmentDemo01Resource;
+use App\Http\Resources\Demos\Demo01\Property\PropertyAgentResource;
+use App\Http\Resources\Demos\Demo01\Property\SubPropertyDemo01Resource;
+use App\Http\Resources\Demos\Demo01\Property\FloorPlanDemo01Resource;
 
 class AppPropertyDetailsDemo01Resource extends JsonResource
 {
@@ -56,10 +60,10 @@ class AppPropertyDetailsDemo01Resource extends JsonResource
             'video_url' => $this->video_url ?? null,
             'virtual_tour' => $this->virtual_tour ?? null,
             'contact_information' => $this->contact_information ?? null,
-            // 'attachments' => PropertyAttachmentResource::collection($this->attachments) ?? [],
-            // 'sub_properties' => SubPropertyResource::collection($this->subProperties ?? []),
-            // 'floorplans' => FloorPlanResource::collection($this->floorplans ?? []),
-            // 'agents' => PropertyAgentResource::collection($this->whenLoaded('agents')),
+            'attachments' => PropertyAttachmentDemo01Resource::collection($this->attachments) ?? [],
+            'sub_properties' => SubPropertyDemo01Resource::collection($this->subProperties ?? []),
+            'floorplans' => FloorPlanDemo01Resource::collection($this->floorplans ?? []),
+            'agents' => PropertyAgentDemo01Resource::collection($this->whenLoaded('agents')),
             'updated_at' => $this->updated_at ? $this->updated_at->format('Y-m-d H:i:s') : null,
         ];
     }
