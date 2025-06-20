@@ -59,4 +59,23 @@ interface AppPropertyRepositoryInterface
      * @return Property|null
      */
     public function findBySlugDemo01(string $slug): ?Property;
+
+
+    /**
+     * ## Get filtered properties based on search criteria.
+     *
+     * @param string|null $search The search query to filter properties by title.
+     * @param array|null $propertyTypes The array of property types to filter.
+     * @param string|null $city The city to filter properties by.
+     * @param int|null $maxBedrooms The maximum number of bedrooms to filter.
+     * @param float|null $maxPrice The maximum price to filter.
+     * @return Collection A collection of filtered properties.
+     */
+    public function getFilteredPropertiesDemo01(
+        ?string $search,
+        ?array $propertyTypes,
+        ?array $city,
+        ?int $maxBedrooms,
+        ?float $maxPrice
+    ): Collection;
 }

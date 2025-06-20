@@ -193,4 +193,60 @@ class AppPropertyController extends Controller
             ? new JsonResponse(['property' => new AppPropertyDetailsDemo01Resource($property)])
             : response()->json(['message' => 'Property not found'], 404);
     }
+
+    /**
+     * ## Get searched and filtered properties.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getSearchedAndFilteredPropertiesDemo01(Request $request): JsonResponse
+    {
+        $search = $request->get('search');
+        $propertyTypes = $request->get('propertyTypes');
+        $cities = $request->get('cities');
+        $maxBedrooms = $request->get('maxBedrooms');
+        $maxPrice = $request->get('maxPrice');
+
+        $properties = $this->propertyRepository->getFilteredPropertiesDemo01(
+            $search,
+            !empty($propertyTypes) ? (array) $propertyTypes : null,
+            !empty($propertyCities) ? (array) $propertyCities : null,
+            $maxBedrooms !== 'any' ? (int) $maxBedrooms : null,
+            $maxPrice !== 'any' ? (float) $maxPrice : null
+        );
+
+        return new JsonResponse([
+            'success' => true,
+            'properties' => AppPropertyCardDemo01Resource::collection($properties),
+        ]);
+    }
+
+    /**
+     * ## Fetch all properties based on filters from the request.
+     *
+     * @param Request $request The incoming request containing filter parameters.
+     * @return JsonResponse The response containing the filtered properties.
+     */
+    public function getAllPropertiesDemo01(Request $request): JsonResponse
+    {
+        $search = $request->get('search');
+        $propertyTypes = $request->get('propertyTypes');
+        $cities = $request->get('city');
+        $maxBedrooms = $request->get('maxBedrooms');
+        $maxPrice = $request->get('maxPrice');
+
+        $properties = $this->propertyRepository->getFilteredPropertiesDemo01(
+            $search,
+            !empty($propertyTypes) ? (array) $propertyTypes : null,
+            !empty($propertyCities) ? (array) $propertyCities : null,
+            $maxBedrooms !== 'any' ? (int) $maxBedrooms : null,
+            $maxPrice !== 'any' ? (float) $maxPrice : null
+        );
+
+        return new JsonResponse([
+            'success' => true,
+            'properties' => AppPropertyCardDemo01Resource::collection($properties),
+        ]);
+    }
 }

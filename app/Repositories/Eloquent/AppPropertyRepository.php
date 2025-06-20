@@ -88,4 +88,29 @@ class AppPropertyRepository implements AppPropertyRepositoryInterface
         return Property::where('slug', $slug)->first();
     }
 
+    /**
+     * ## Get filtered properties based on provided criteria.
+     *
+     * @param string|null $search
+     * @param array|null $propertyTypes
+     * @param string|null $city
+     * @param int|null $maxBedrooms
+     * @param float|null $maxPrice
+     * @return Collection
+     */
+    public function getFilteredPropertiesDemo01(
+        ?string $search,
+        ?array $propertyTypes,
+        ?array $cities,
+        ?int $maxBedrooms,
+        ?float $maxPrice
+    ): Collection {
+        return Property::where('property_status', 'published')
+            ->when($search, fn($query) => $query->where('title', 'like', "%$search%"))
+            ->when(!empty($propertyTypes), fn($query) => $query->whereIn('type', $propertyTypes))
+            ->when(!empty($propertyCities), fn($query) => $query->whereIn('city', $propertyCites))
+            ->when($maxBedrooms && $maxBedrooms !== 'any', fn($query) => $query->where('bedrooms', '<=', $maxBedrooms))
+            ->when($maxPrice && $maxPrice !== 'any', fn($query) => $query->where('price', '<=', $maxPrice))
+            ->get();
+    }
 }
