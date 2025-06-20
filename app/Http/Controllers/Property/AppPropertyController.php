@@ -207,13 +207,15 @@ class AppPropertyController extends Controller
         $cities = $request->get('cities');
         $maxBedrooms = $request->get('maxBedrooms');
         $maxPrice = $request->get('maxPrice');
+        $status = $request->get('status');
 
         $properties = $this->propertyRepository->getFilteredPropertiesDemo01(
             $search,
             !empty($propertyTypes) ? (array) $propertyTypes : null,
-            !empty($propertyCities) ? (array) $propertyCities : null,
+            !empty($cities) ? (array) $cities : null,
             $maxBedrooms !== 'any' ? (int) $maxBedrooms : null,
-            $maxPrice !== 'any' ? (float) $maxPrice : null
+            $maxPrice !== 'any' ? (float) $maxPrice : null,
+            $status !== '' ? $status : null
         );
 
         return new JsonResponse([
@@ -235,13 +237,16 @@ class AppPropertyController extends Controller
         $cities = $request->get('city');
         $maxBedrooms = $request->get('maxBedrooms');
         $maxPrice = $request->get('maxPrice');
+        $status = $request->get('status');
+
 
         $properties = $this->propertyRepository->getFilteredPropertiesDemo01(
             $search,
             !empty($propertyTypes) ? (array) $propertyTypes : null,
-            !empty($propertyCities) ? (array) $propertyCities : null,
+            !empty($cities) ? (array) $cities : null,
             $maxBedrooms !== 'any' ? (int) $maxBedrooms : null,
-            $maxPrice !== 'any' ? (float) $maxPrice : null
+            $maxPrice !== 'any' ? (float) $maxPrice : null,
+            $status !== '' ? $status : null
         );
 
         return new JsonResponse([

@@ -32,6 +32,7 @@ class AppPropertyCardDemo01Resource extends JsonResource
             'city' => $this->city ?? null,
             'label' => $this->label ?? null,
             'type' => $this->type ?? null,
+            'status' => $this->status ?? null,
             'is_featured' => $this->is_featured ?? null,
             'thumbnail' => $this->images->where('is_thumbnail','1')->pluck('image_path')->first() ?? null,
 

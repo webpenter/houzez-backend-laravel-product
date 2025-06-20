@@ -76,6 +76,7 @@ interface AppPropertyRepositoryInterface
         ?array $propertyTypes,
         ?array $city,
         ?int $maxBedrooms,
-        ?float $maxPrice
+        ?float $maxPrice,
+        ?string $status
     ): Collection;
 }

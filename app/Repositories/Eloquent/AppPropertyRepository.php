@@ -103,14 +103,16 @@ class AppPropertyRepository implements AppPropertyRepositoryInterface
         ?array $propertyTypes,
         ?array $cities,
         ?int $maxBedrooms,
-        ?float $maxPrice
+        ?float $maxPrice,
+        ?string $status
     ): Collection {
         return Property::where('property_status', 'published')
             ->when($search, fn($query) => $query->where('title', 'like', "%$search%"))
             ->when(!empty($propertyTypes), fn($query) => $query->whereIn('type', $propertyTypes))
-            ->when(!empty($propertyCities), fn($query) => $query->whereIn('city', $propertyCites))
+            ->when(!empty($cities), fn($query) => $query->whereIn('city', $cites))
             ->when($maxBedrooms && $maxBedrooms !== 'any', fn($query) => $query->where('bedrooms', '<=', $maxBedrooms))
             ->when($maxPrice && $maxPrice !== 'any', fn($query) => $query->where('price', '<=', $maxPrice))
+            ->when($status, fn($query) => $query->where('status', $status)) 
             ->get();
     }
 }
