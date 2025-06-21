@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Others;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Team\AppTeamResource;
+use App\Http\Resources\Team\AppTeamResourceDemo01;
 use App\Traits\ResponseTrait;
 use App\Http\Requests\Team\StoreTeamRequest;
 use App\Http\Requests\Team\UpdateTeamRequest;
@@ -90,5 +91,16 @@ class TeamController extends Controller
     {
         $teams = $this->teamRepo->app();
         return $this->successResponse(AppTeamResource::collection($teams));
+    }
+
+    /**
+     * Get latest 3 team members.
+     *
+     * @return JsonResponse
+     */
+    public function getAppTeamsDemo01(): JsonResponse
+    {
+        $teams = $this->teamRepo->app()->sortByDesc('created_at')->take(3);
+        return $this->successResponse(AppTeamResourceDemo01::collection($teams));
     }
 }
