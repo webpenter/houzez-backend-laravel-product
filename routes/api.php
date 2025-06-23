@@ -69,6 +69,8 @@ Route::prefix('v1')->group(function () {
             Route::get('/get-property/{slug}', 'getPropertyDataDemo01');
         });
 
+        // App/Teams related route
+        Route::get('/teams', [TeamController::class,'getAppTeamsDemo01']);
     });
 
     /* ---------------- User's Dashboard routes (with auth) --------------- */
