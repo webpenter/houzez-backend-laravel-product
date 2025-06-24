@@ -254,4 +254,22 @@ class AppPropertyController extends Controller
             'properties' => AppPropertyCardDemo01Resource::collection($properties),
         ]);
     }
+
+    /**
+     * ## Get Property Type Data
+     * Returns all published properties of a specific type as a JSON response.
+     *
+     * @param string $type The type of property
+     * @return JsonResponse JSON response with filtered properties
+     */
+    public function getPropertyTypeDataDemo01(string $type): JsonResponse
+    {
+        $properties = $this->propertyRepository->getPropertiesByType($type);
+
+        return new JsonResponse([
+            'success' => true,
+            'properties' => AppPropertyCardDemo01Resource::collection($properties),
+        ]);
+    }
+
 }

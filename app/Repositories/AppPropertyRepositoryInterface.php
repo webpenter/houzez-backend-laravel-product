@@ -79,4 +79,14 @@ interface AppPropertyRepositoryInterface
         ?float $maxPrice,
         ?string $status
     ): Collection;
+
+    /**
+     * ## Get Properties by Type
+     * Fetch properties by a specific type.
+     *
+     * @param string $type
+     * @return Collection
+     */
+    public function getPropertiesByType(string $type): Collection;
+
 }

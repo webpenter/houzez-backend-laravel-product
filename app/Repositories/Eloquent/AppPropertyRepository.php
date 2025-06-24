@@ -115,4 +115,20 @@ class AppPropertyRepository implements AppPropertyRepositoryInterface
             ->when($status, fn($query) => $query->where('status', $status))
             ->get();
     }
+
+    /**
+     * ## Get Properties by Type
+     * Retrieves all published properties by given type.
+     *
+     * @param string $type The property type
+     * @return Collection The collection of properties of given type
+     */
+    public function getPropertiesByType(string $type): Collection
+    {
+        return Property::where('property_status', 'published')
+            ->where('type', $type)
+            ->latest()
+            ->get();
+    }
+
 }
