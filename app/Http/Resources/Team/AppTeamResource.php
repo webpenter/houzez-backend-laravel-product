@@ -20,6 +20,8 @@ class AppTeamResource extends JsonResource
             'designation' => $this->designation,
             'image' => $this->image,
             'phone' => $this->phone,
+            'email' => $this->email,
+            'address' => $this->address,
         ];
     }
 }
