@@ -20,6 +20,7 @@ class AppPropertyCardDemo01Resource extends JsonResource
             'slug' => $this->slug ?? null,
             'bedrooms' => $this->bedrooms ?? null,
             'bathrooms' => $this->bathrooms ?? null,
+            'garages' => $this->garages ?? null,
             'area_size' => $this->area_size ?? null,
             'price' => $this->price ?? null,
             'price_prefix' => $this->price_prefix ?? null,
