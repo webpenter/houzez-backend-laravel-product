@@ -68,8 +68,13 @@ Route::prefix('v1')->group(function () {
             Route::get('/get-all', 'getAllPropertiesDemo01');
             Route::get('/get-property/{slug}', 'getPropertyDataDemo01');
             Route::get('/get-property-type/{type}','getPropertyTypeDataDemo01');
-            Route::get('/recently-viewed/{slug}','recentViews');
 
+        });
+
+         // Insights related routes
+        Route::prefix('insights')->controller(InsightController::class)->group(function () {
+            Route::get('/store-recent-view/{slug}','storeRecentView');
+            Route::get('/get-recent-views','getRecentViews');
         });
 
         // App/Teams related route

@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Repositories\InsightRepositoryInterface;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\JsonResponse;
+use App\Models\Property;
+use App\Http\Resources\Demos\Demo01\Property\AppPropertyCardDemo01Resource;
+
 use GeoIP;
 
 class InsightController extends Controller
@@ -115,5 +118,18 @@ class InsightController extends Controller
     {
         $data = $this->insightRepo->getBrowsersStats($id);
         return $this->successResponse($data,'Browser statistics retrieved successfully.');
+    }
+
+
+    public function storeRecentView(string $slug): JsonResponse
+    {
+        return $this->insightRepo->storeRecentView($slug);
+    }
+
+
+    public function getRecentViews(): JsonResponse
+    {
+       
+        return $this->insightRepo->getRecentViews();
     }
 }

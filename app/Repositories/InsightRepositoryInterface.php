@@ -15,4 +15,6 @@ interface InsightRepositoryInterface
     public function getCountriesStats(int $id): JsonResponse;
     public function getPlatformStats(int $id): JsonResponse;
     public function getBrowsersStats(int $id): array;
+    public function storeRecentView(string $slug): JsonResponse;
+    public function getRecentViews(): JsonResponse;
 }

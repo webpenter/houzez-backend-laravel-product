@@ -11,6 +11,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Request;
 use Jenssegers\Agent\Agent;
 use Illuminate\Support\Facades\DB;
+use App\Http\Resources\Demos\Demo01\Property\AppPropertyCardDemo01Resource;
+
 
 class InsightRepository implements InsightRepositoryInterface
 {
@@ -275,5 +277,52 @@ class InsightRepository implements InsightRepositoryInterface
                 'views' => $views,
             ];
         })->values()->toArray();
+    }
+
+     /**
+     * Store a recently viewed property in session.
+     */
+    public function storeRecentView(string $slug): JsonResponse
+    {
+        $property = Property::where('slug', $slug)->firstOrFail();
+
+        $recent = session()->get('recent_properties', []);
+
+        // Remove if already exists
+        $recent = array_filter($recent, fn($id) => $id != $property->id);
+
+        // Append current property ID
+        $recent[] = $property->id;
+
+        // Keep last 5 only
+        $recent = array_slice($recent, -5);
+
+        // Store in session
+        session(['recent_properties' => array_values($recent)]);
+
+        \Log::info('📌 Recently viewed updated:', $recent);
+
+        return $this->successResponse(null, 'Property view stored successfully');
+    }
+
+    /**
+     * Get recently viewed properties from session.
+     */
+    public function getRecentViews(): JsonResponse
+    {
+        $recent = session()->get('recent_properties', [1,2,3]);
+
+        if (empty($recent)) {
+            return $this->successResponse([], 'No recently viewed properties');
+        }
+
+        $properties = Property::whereIn('id', $recent)
+            ->orderByRaw('FIELD(id, ' . implode(',', $recent) . ')')
+            ->get();
+
+        return $this->successResponse(
+            AppPropertyCardDemo01Resource::collection($properties),
+            'Recently viewed properties fetched successfully.'
+        );
     }
 }

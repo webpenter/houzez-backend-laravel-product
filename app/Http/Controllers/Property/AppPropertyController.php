@@ -273,37 +273,4 @@ class AppPropertyController extends Controller
             'properties' => AppPropertyCardDemo01Resource::collection($properties),
         ]);
     }
-
-public function recentViews(string $slug): JsonResponse
-{
-    $property = Property::where('slug', $slug)->firstOrFail();
-
-    $recent = session()->get('recent_properties', []);
-
-    // Remove current property if it exists
-    $recent = array_values(array_filter($recent, fn($id) => $id != $property->id));
-
-    // Add current property to end
-    $recent[] = $property->id;
-
-    // Keep only last 5
-    $recent = array_slice($recent, -5);
-
-    // Store back in session
-    session(['recent_properties' => $recent]);
-
-    // Fetch properties in same order
-    $properties = Property::whereIn('id', $recent)
-        ->orderByRaw('FIELD(id, ' . implode(',', $recent) . ')')
-        ->get();
-
-    // Log session
-    \Log::info('📦 Session recent_properties:', $recent);
-
-    return response()->json([
-        'success' => true,
-        'properties' => $properties,
-        'recent' => $recent,
-    ]);
-}
 }
