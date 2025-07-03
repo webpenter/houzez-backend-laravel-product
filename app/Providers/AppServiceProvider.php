@@ -21,6 +21,7 @@ use App\Repositories\Eloquent\StripeSubscriptionRepository;
 use App\Repositories\Eloquent\TeamRepository;
 use App\Repositories\Eloquent\TourRequestRepository;
 use App\Repositories\Eloquent\UsersRepository;
+use App\Repositories\Eloquent\AgentRepository;
 use App\Repositories\EnquiryRepositoryInterface;
 use App\Repositories\FavoritePropertyRepositoryInterface;
 use App\Repositories\InsightRepositoryInterface;
@@ -34,6 +35,8 @@ use App\Repositories\StripeSubscriptionRepositoryInterface;
 use App\Repositories\TeamRepositoryInterface;
 use App\Repositories\TourRequestRepositoryInterface;
 use App\Repositories\UsersRepositoryInterface;
+use App\Repositories\AgentRepositoryInterface;
+
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -74,6 +77,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(DealRepositoryInterface::class, DealRepository::class);
         $this->app->bind(LeadRepositoryInterface::class, LeadRepository::class);
         $this->app->bind(EnquiryRepositoryInterface::class, EnquiryRepository::class);
+
+        // Agent repositories binding
+        $this->app->bind(AgentRepositoryInterface::class, AgentRepository::class);
     }
 
     /**

@@ -24,6 +24,8 @@ use App\Http\Controllers\Boards\LeadController;
 use App\Http\Controllers\Boards\EnquiryController;
 use App\Http\Controllers\Boards\ActivityController;
 use App\Http\Controllers\Insights\InsightController;
+use App\Http\Controllers\Agent\AgentController;
+
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -71,10 +73,19 @@ Route::prefix('v1')->group(function () {
 
         });
 
-         // Insights related routes
+        // Insights related routes
         Route::prefix('insights')->controller(InsightController::class)->group(function () {
             Route::get('/store-recent-view/{slug}','storeRecentView');
             Route::get('/get-recent-views','getRecentViews');
+        });
+
+        // Agents related routes
+        Route::prefix('agent')->controller(AgentController::class)->group(function () {
+            Route::get('/{username}','show');
+        });
+        // Agents related routes
+        Route::prefix('agents')->controller(AgentController::class)->group(function () {
+            Route::get('','index');
         });
 
         // App/Teams related route
