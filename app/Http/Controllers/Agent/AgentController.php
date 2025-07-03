@@ -38,6 +38,7 @@ class AgentController extends Controller
     {
         $agent = $this->agentRepository->findByUsername($username);
 
+        $agent = $agent ? $agent->load(['profile']) : null;
         return $agent
             ? response()->json(['success' => true, 'data' => $agent])
             : response()->json(['success' => false, 'message' => 'Agent not found'], 404);
