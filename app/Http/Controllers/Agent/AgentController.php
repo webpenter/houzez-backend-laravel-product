@@ -25,6 +25,8 @@ class AgentController extends Controller
     {
         $agents = $this->agentRepository->all();
 
+        $agents = $agents ? $agents->load(['profile']) : null;
+
         return response()->json([
             'success' => true,
             'data' => $agents
