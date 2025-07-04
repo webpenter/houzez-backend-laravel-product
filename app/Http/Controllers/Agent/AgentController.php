@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Agent;
 use App\Http\Controllers\Controller;
 use App\Repositories\AgentRepositoryInterface;
 use Illuminate\Http\JsonResponse;
+use App\Http\Resources\Agent\AgentsResource;
 
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -29,7 +30,7 @@ class AgentController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $agents
+            'data' => AgentsResource::collection($agents) 
         ]);
     }
 
