@@ -36,11 +36,10 @@ class AppPropertyCardDemo01Resource extends JsonResource
             'status' => $this->status ?? null,
             'is_featured' => $this->is_featured ?? null,
             'thumbnail' => $this->images->where('is_thumbnail','1')->pluck('image_path')->first() ?? null,
-
             'created_ago' => $this->created_at ? $this->created_at->diffForHumans() : null,
             'user' => [
-            'user_id' => $this->user->id,
-            'user_name' => $this->user->name,
+                'user_id' => $this->user->id,
+                'user_name' => trim(($this->user->profile->first_name ?? '') . ' ' . ($this->user->profile->last_name ?? '')),
             ],
         ];
     }
