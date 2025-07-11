@@ -39,7 +39,8 @@ class AppPropertyCardDemo01Resource extends JsonResource
             'created_ago' => $this->created_at ? $this->created_at->diffForHumans() : null,
             'user' => [
                 'user_id' => $this->user->id,
-                'user_name' => trim(($this->user->profile->first_name ?? '') . ' ' . ($this->user->profile->last_name ?? '')),
+                'name' => trim(($this->user->profile->first_name ?? '') . ' ' . ($this->user->profile->last_name ?? '')),
+                'username' => $this->user->username,
             ],
         ];
     }

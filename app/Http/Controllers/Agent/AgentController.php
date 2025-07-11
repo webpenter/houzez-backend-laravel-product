@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Repositories\AgentRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use App\Http\Resources\Agent\AgentsResource;
+use App\Http\Resources\Agent\AgentWithPropertiesResource;
 
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -30,7 +31,7 @@ class AgentController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => AgentsResource::collection($agents) 
+            'data' => AgentsResource::collection($agents)
         ]);
     }
 
@@ -41,9 +42,11 @@ class AgentController extends Controller
     {
         $agent = $this->agentRepository->findByUsername($username);
 
-        $agent = $agent ? $agent->load(['profile']) : null;
+        $agent = $agent ? $agent->load(['profile', 'properties']) : null;
+
         return $agent
-            ? response()->json(['success' => true, 'data' => $agent])
+            ? response()->json(['success' => true, 'data' => new AgentWithPropertiesResource($agent)])
             : response()->json(['success' => false, 'message' => 'Agent not found'], 404);
     }
+
 }

@@ -4,8 +4,9 @@ namespace App\Http\Resources\Agent;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\Demos\Demo01\Property\AppPropertyCardDemo01Resource;
 
-class AgentsResource extends JsonResource
+class AgentWithPropertiesResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -20,10 +21,15 @@ class AgentsResource extends JsonResource
             'username' => $this->username,
             'name' => trim(($this->profile->first_name ?? '') . ' ' . ($this->profile->last_name ?? '')),
             'email' => $this->email ?? null,
+            'about_me' => $this->profile->about_me ?? null,
+            'license' => $this->profile->license ?? null,
             'position' => $this->profile->position ?? null,
             'phone' => $this->profile->phone ?? null,
             'mobile' => $this->profile->mobile ?? null,
             'fax_number' => $this->profile->fax_number ?? null,
+            'tax_number' => $this->profile->tax_number ?? null,
+            'service_areas' => $this->profile->service_areas ?? null,
+            'specialties' => $this->profile->specialties ?? null,
             'facebook' => $this->profile->facebook ?? null,
             'instagram' => $this->profile->instagram ?? null,
             'twitter' => $this->profile->twitter ?? null,
@@ -33,6 +39,7 @@ class AgentsResource extends JsonResource
             'pinterest' => $this->profile->pinterest ?? null,
             'vimeo' => $this->profile->vimeo ?? null,
             'skype' => $this->profile->skype ?? null,
+            'properties' => AppPropertyCardDemo01Resource::collection($this->properties),
         ];
     }
 }
