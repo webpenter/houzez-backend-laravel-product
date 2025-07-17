@@ -22,6 +22,7 @@ class AgentWithPropertiesResource extends JsonResource
             'name' => trim(($this->profile->first_name ?? '') . ' ' . ($this->profile->last_name ?? '')),
             'email' => $this->email ?? null,
             'about_me' => $this->profile->about_me ?? null,
+            'address' => $this->profile->address ?? null,
             'license' => $this->profile->license ?? null,
             'position' => $this->profile->position ?? null,
             'phone' => $this->profile->phone ?? null,
