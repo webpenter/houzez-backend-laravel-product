@@ -11,15 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('reviews', function (Blueprint $table) {
+        Schema::create('agent_reviews', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('property_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('email');
+            $table->unsignedBigInteger('agent_id');
+            $table->unsignedBigInteger('user_id');
             $table->string('title');
             $table->integer('rating');
             $table->text('comment');
-            $table->timestamps(); 
+            $table->timestamps();
+
+            $table->foreign('agent_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
@@ -28,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('reviews');
+        Schema::dropIfExists('agent_reviews');
     }
 };

@@ -25,7 +25,9 @@ use App\Http\Controllers\Boards\EnquiryController;
 use App\Http\Controllers\Boards\ActivityController;
 use App\Http\Controllers\Insights\InsightController;
 use App\Http\Controllers\Agent\AgentController;
+use App\Http\Controllers\Agency\AgencyController;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -79,14 +81,16 @@ Route::prefix('v1')->group(function () {
             Route::get('/get-recent-views','getRecentViews');
         });
 
-        // Agents related routes
-        Route::prefix('agent')->controller(AgentController::class)->group(function () {
-            Route::get('/{username}','show');
-        });
-        // Agents related routes
+         // Agents related routes
         Route::prefix('agents')->controller(AgentController::class)->group(function () {
             Route::get('','index');
         });
+
+        // Agent related routes
+        Route::prefix('agent')->controller(AgentController::class)->group(function () {
+            Route::get('/{username}','show');
+        });
+
 
         // App/Teams related route
         Route::get('/teams', [TeamController::class,'getAppTeamsDemo01']);

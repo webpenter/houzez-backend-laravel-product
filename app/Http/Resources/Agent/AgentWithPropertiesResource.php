@@ -19,6 +19,7 @@ class AgentWithPropertiesResource extends JsonResource
             'id' => $this->id,
             'profile' => $this->profile->profile_picture ?? null,
             'username' => $this->username,
+            'is_verified' => $this->is_verified, // Include is_verified status
             'name' => trim(($this->profile->first_name ?? '') . ' ' . ($this->profile->last_name ?? '')),
             'email' => $this->email ?? null,
             'about_me' => $this->profile->about_me ?? null,
@@ -40,7 +41,24 @@ class AgentWithPropertiesResource extends JsonResource
             'pinterest' => $this->profile->pinterest ?? null,
             'vimeo' => $this->profile->vimeo ?? null,
             'skype' => $this->profile->skype ?? null,
+            'website' => $this->profile->website ?? null,
+            'languages' => $this->profile->languages ?? null,
             'properties' => AppPropertyCardDemo01Resource::collection($this->properties),
+            'agencies' => $this->agencies->map(function ($agency) {
+                return [
+                    'id' => $agency->id,
+                    'name' => $agency->name,
+                ];
+            }),
+            'agent_reviews' => $this->agentReviews->map(function ($review) {
+                return [
+                    'id' => $review->id,
+                    'name' => $review->title,
+                    'rating' => $review->rating,
+                    'review' => $review->comment,
+                    'created_at' => $review->created_at->toDateTimeString(),
+                ];
+        }),
         ];
     }
 }

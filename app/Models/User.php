@@ -35,6 +35,7 @@ class User extends Authenticatable
         'password',
         'is_admin',
         'role',
+        'agency_id', // Added for agency association
     ];
 
     /**
@@ -59,6 +60,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'is_admin' => 'boolean',
             'role' => 'string',
+            'agency_id' => 'integer', // Cast agency_id to integer
         ];
     }
 
@@ -147,5 +149,22 @@ class User extends Authenticatable
     public function assignedProperties()
     {
         return $this->belongsToMany(Property::class, 'property_agent', 'agent_id', 'property_id')->withTimestamps();
+    }
+
+    // Agencies that this user (agent) belongs to
+    public function agencies()
+    {
+        return $this->belongsToMany(User::class, 'agency_agent', 'agent_id', 'agency_id');
+    }
+
+    // Agents that belong to this user (agency)
+    public function agents()
+    {
+        return $this->belongsToMany(User::class, 'agency_agent', 'agency_id', 'agent_id');
+    }
+
+    public function agentReviews()
+    {
+        return $this->hasMany(AgentReview::class, 'agent_id');
     }
 }

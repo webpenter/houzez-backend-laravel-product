@@ -42,7 +42,7 @@ class AgentController extends Controller
     {
         $agent = $this->agentRepository->findByUsername($username);
 
-        $agent = $agent ? $agent->load(['profile', 'properties']) : null;
+        $agent = $agent ? $agent->load(['profile', 'properties','agencies', 'agentReviews']) : null;
 
         return $agent
             ? response()->json(['success' => true, 'data' => new AgentWithPropertiesResource($agent)])
