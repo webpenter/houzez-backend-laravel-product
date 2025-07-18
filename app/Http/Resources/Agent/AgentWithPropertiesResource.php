@@ -50,15 +50,6 @@ class AgentWithPropertiesResource extends JsonResource
                     'name' => $agency->name,
                 ];
             }),
-            'agent_reviews' => $this->agentReviews->map(function ($review) {
-                return [
-                    'id' => $review->id,
-                    'name' => $review->title,
-                    'rating' => $review->rating,
-                    'review' => $review->comment,
-                    'created_at' => $review->created_at->toDateTimeString(),
-                ];
-        }),
         ];
     }
 }

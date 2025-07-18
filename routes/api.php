@@ -89,6 +89,7 @@ Route::prefix('v1')->group(function () {
         // Agent related routes
         Route::prefix('agent')->controller(AgentController::class)->group(function () {
             Route::get('/{username}','show');
+            Route::get('/reviews/{agentId}','showReviews');
         });
 
 
@@ -182,6 +183,7 @@ Route::prefix('v1')->group(function () {
 
         // Review-system related route
         Route::post('/reviews/store', [ReviewController::class, 'store']);
+        Route::post('/agent/reviews/store', [AgentController::class, 'store']);
 
         // Stripe-payments related routes
         Route::prefix('stripe-payments')->group(function () {

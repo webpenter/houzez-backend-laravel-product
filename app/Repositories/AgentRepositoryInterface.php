@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\User;
+use App\Models\AgentReview;
 use Illuminate\Database\Eloquent\Collection;
 
 interface AgentRepositoryInterface
@@ -21,4 +22,10 @@ interface AgentRepositoryInterface
      * @return User|null
      */
     public function findByUsername(string $username): ?User;
+
+    public function getReviewsByAgent(int $agentId);
+
+    public function create(array $data): AgentReview;
+
+
 }
