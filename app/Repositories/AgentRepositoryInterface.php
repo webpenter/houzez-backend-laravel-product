@@ -27,5 +27,14 @@ interface AgentRepositoryInterface
 
     public function createReview(array $data): AgentReview;
 
+    /**
+     * Find a user by username and include property statistics.
+     *
+     * @param string $username The username to search for
+     * 
+     * @return User|null Returns the User model with appended statistical data or null if not found
+     */
+    public function findByUsernameWithStats(string $username): ?User;
+
 
 }

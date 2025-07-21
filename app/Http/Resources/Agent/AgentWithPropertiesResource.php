@@ -50,6 +50,9 @@ class AgentWithPropertiesResource extends JsonResource
                     'agency_name' => trim(($agency->profile->first_name ?? '') . ' ' . ($agency->profile->last_name ?? '')),
                 ];
             }),
+            'top_types' => $this->top_types ?? [],
+            'status_summary' => $this->status_summary ?? [],
+            'top_cities' => $this->top_cities ?? [],
         ];
     }
 }

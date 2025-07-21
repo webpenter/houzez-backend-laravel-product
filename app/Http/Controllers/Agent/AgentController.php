@@ -40,7 +40,7 @@ class AgentController extends Controller
      */
     public function show(string $username): JsonResponse
     {
-        $agent = $this->agentRepository->findByUsername($username);
+        $agent = $this->agentRepository->findByUsernameWithStats($username);
 
         return new JsonResponse(
             $agent
