@@ -29,11 +29,9 @@ class AgentController extends Controller
     {
         $agents = $this->agentRepository->all();
 
-        $agents = $agents ? $agents->load(['profile']) : null;
-
-        return response()->json([
+        return new JsonResponse([
             'success' => true,
-            'data' => AgentsResource::collection($agents)
+            'data' => AgentsResource::collection($agents),
         ]);
     }
 
@@ -44,11 +42,12 @@ class AgentController extends Controller
     {
         $agent = $this->agentRepository->findByUsername($username);
 
-        $agent = $agent ? $agent->load(['profile', 'properties','agencies']) : null;
-
-        return $agent
-            ? response()->json(['success' => true, 'data' => new AgentWithPropertiesResource($agent)])
-            : response()->json(['success' => false, 'message' => 'Agent not found'], 404);
+        return new JsonResponse(
+            $agent
+                ? ['success' => true, 'data' => new AgentWithPropertiesResource($agent)]
+                : ['success' => false, 'message' => 'Agent not found'],
+            $agent ? 200 : 404
+        );
     }
 
     /**
@@ -58,7 +57,10 @@ class AgentController extends Controller
     public function showReviews(int $agentId): JsonResponse
     {
         $reviews = $this->agentRepository->getReviewsByAgent($agentId);
-        return response()->json(AgentReviewsResource::collection($reviews));
+        return new JsonResponse([
+            'success' => true,
+            'data' => AgentReviewsResource::collection($reviews),
+        ], 200);
     }
 
      /**
@@ -67,15 +69,12 @@ class AgentController extends Controller
      */
     public function store(StoreAgentReviewRequest $request): JsonResponse
     {
-        $review = $this->agentRepository->create([
-            'agent_id' => $request->agent_id,
-            'user_id' => auth()->id(),
-            'title' => $request->title,
-            'rating' => $request->rating,
-            'comment' => $request->comment,
-        ]);
+        $review = $this->agentRepository->createReview($request);
 
-        return response()->json(new AgentReviewsResource($review), 201);
+        return new JsonResponse([
+            'success' => true,
+            'data' => new AgentReviewsResource($review),
+        ], 201);
     }
 
 }

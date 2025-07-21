@@ -11,14 +11,18 @@ class AgentRepository implements AgentRepositoryInterface
 {
     public function all(): Collection
     {
-        return User::where('role', 'agent')->get();
+        return User::with('profile')
+            ->where('role', 'agent')
+             ->withAvg('agentReviews', 'rating') 
+            ->get();
     }
 
     public function findByUsername(string $username): ?User
     {
-        return User::where('role', 'agent')
-                    ->where('username', $username)
-                    ->first();
+        return User::with(['profile', 'properties', 'agencies'])
+            ->where('role', 'agent')
+            ->where('username', $username)
+            ->first();
     }
 
     /**
@@ -32,9 +36,15 @@ class AgentRepository implements AgentRepositoryInterface
     /**
      * Create a new review.
      */
-    public function create(array $data): AgentReview
-    {
-        return AgentReview::create($data);
-    }
+    public function createReview(array $data): AgentReview
+{
+    return AgentReview::create([
+        'agent_id' => $request->agent_id,
+        'user_id' => auth()->id(),
+        'title' => $request->title,
+        'rating' => $request->rating,
+        'comment' => $request->comment,
+    ]);
+}
 
 }

@@ -20,6 +20,7 @@ class AgentsResource extends JsonResource
             'username' => $this->username,
             'name' => trim(($this->profile->first_name ?? '') . ' ' . ($this->profile->last_name ?? '')),
             'email' => $this->email ?? null,
+            'is_verified' => $this->is_verified ?? null,
             'position' => $this->profile->position ?? null,
             'phone' => $this->profile->phone ?? null,
             'mobile' => $this->profile->mobile ?? null,
@@ -33,6 +34,7 @@ class AgentsResource extends JsonResource
             'pinterest' => $this->profile->pinterest ?? null,
             'vimeo' => $this->profile->vimeo ?? null,
             'skype' => $this->profile->skype ?? null,
+            'average_rating' => round($this->agent_reviews_avg_rating, 1), // default to 0 if needed
         ];
     }
 }

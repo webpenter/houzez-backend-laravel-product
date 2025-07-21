@@ -25,7 +25,7 @@ interface AgentRepositoryInterface
 
     public function getReviewsByAgent(int $agentId);
 
-    public function create(array $data): AgentReview;
+    public function createReview(array $data): AgentReview;
 
 
 }
