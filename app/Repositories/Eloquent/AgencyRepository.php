@@ -6,48 +6,48 @@ use App\Models\User;
 use App\Models\AgentReview;
 use App\Models\Property;
 use Illuminate\Support\Facades\DB;
-use App\Repositories\AgentRepositoryInterface;
+use App\Repositories\AgencyRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
 
-class AgentRepository implements AgentRepositoryInterface
+class AgencyRepository implements AgencyRepositoryInterface
 {
     public function all(): Collection
     {
-        return User::with('profile','agencies')
-            ->where('role', 'agent')
-             ->withAvg('agentReviews', 'rating')
+        return User::with('profile')
+            ->where('role', 'agency')
+            //  ->withAvg('agentReviews', 'rating')
             ->get();
     }
 
-    public function findByUsername(string $username): ?User
-    {
-        return User::with(['profile', 'properties', 'agencies'])
-            ->where('role', 'agent')
-            ->where('username', $username)
-            ->first();
-    }
+    // public function findByUsername(string $username): ?User
+    // {
+    //     return User::with(['profile', 'properties', 'agencies'])
+    //         ->where('role', 'agent')
+    //         ->where('username', $username)
+    //         ->first();
+    // }
 
     /**
      * Get all reviews for a specific agent.
      */
-    public function getReviewsByAgent(int $agentId)
-    {
-        return AgentReview::where('agent_id', $agentId)->latest()->get();
-    }
+    // public function getReviewsByAgent(int $agentId)
+    // {
+    //     return AgentReview::where('agent_id', $agentId)->latest()->get();
+    // }
 
     /**
      * Create a new review.
      */
-    public function createReview(array $data): AgentReview
-    {
-        return AgentReview::create([
-            'agent_id' => $request->agent_id,
-            'user_id' => auth()->id(),
-            'title' => $request->title,
-            'rating' => $request->rating,
-            'comment' => $request->comment,
-        ]);
-    }
+    // public function createReview(array $data): AgentReview
+    // {
+    //     return AgentReview::create([
+    //         'agent_id' => $request->agent_id,
+    //         'user_id' => auth()->id(),
+    //         'title' => $request->title,
+    //         'rating' => $request->rating,
+    //         'comment' => $request->comment,
+    //     ]);
+    // }
 
     /**
      * Find a user by username and include property statistics.

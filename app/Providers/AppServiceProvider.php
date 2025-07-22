@@ -22,6 +22,7 @@ use App\Repositories\Eloquent\TeamRepository;
 use App\Repositories\Eloquent\TourRequestRepository;
 use App\Repositories\Eloquent\UsersRepository;
 use App\Repositories\Eloquent\AgentRepository;
+use App\Repositories\Eloquent\AgencyRepository;
 use App\Repositories\EnquiryRepositoryInterface;
 use App\Repositories\FavoritePropertyRepositoryInterface;
 use App\Repositories\InsightRepositoryInterface;
@@ -36,6 +37,7 @@ use App\Repositories\TeamRepositoryInterface;
 use App\Repositories\TourRequestRepositoryInterface;
 use App\Repositories\UsersRepositoryInterface;
 use App\Repositories\AgentRepositoryInterface;
+use App\Repositories\AgencyRepositoryInterface;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -80,6 +82,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Agent repositories binding
         $this->app->bind(AgentRepositoryInterface::class, AgentRepository::class);
+        $this->app->bind(AgencyRepositoryInterface::class, AgencyRepository::class);
     }
 
     /**

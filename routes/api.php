@@ -93,6 +93,11 @@ Route::prefix('v1')->group(function () {
         });
 
 
+        // Agencies related routes
+        Route::prefix('agencies')->controller(AgencyController::class)->group(function () {
+            Route::get('','index');
+        });
+
         // App/Teams related route
         Route::get('/teams', [TeamController::class,'getAppTeamsDemo01']);
     });

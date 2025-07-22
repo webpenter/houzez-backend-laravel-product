@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Resources\Agent;
+namespace App\Http\Resources\Agency;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class AgentsResource extends JsonResource
+class AgenciesResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,7 +14,7 @@ class AgentsResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return [
+            return [
             'id' => $this->id,
             'profile' => $this->profile->profile_picture ?? null,
             'username' => $this->username,
@@ -23,6 +23,7 @@ class AgentsResource extends JsonResource
             'is_verified' => $this->is_verified ?? null,
             'position' => $this->profile->position ?? null,
             'phone' => $this->profile->phone ?? null,
+            'address' => $this->profile->address ?? null,
             'mobile' => $this->profile->mobile ?? null,
             'fax_number' => $this->profile->fax_number ?? null,
             'facebook' => $this->profile->facebook ?? null,
@@ -35,13 +36,6 @@ class AgentsResource extends JsonResource
             'vimeo' => $this->profile->vimeo ?? null,
             'skype' => $this->profile->skype ?? null,
             'average_rating' => round($this->agent_reviews_avg_rating, 1), // default to 0 if needed
-            'agencies' => $this->agencies->map(function ($agency) {
-                return [
-                    'id' => $agency->id,
-                    'username' => $agency->username,
-                    'agency_name' => trim(($agency->profile->first_name ?? '') . ' ' . ($agency->profile->last_name ?? '')),
-                ];
-            }),
         ];
     }
 }

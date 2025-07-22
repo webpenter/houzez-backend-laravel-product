@@ -47,6 +47,7 @@ class AgentWithPropertiesResource extends JsonResource
             'agencies' => $this->agencies->map(function ($agency) {
                 return [
                     'id' => $agency->id,
+                    'username' => $agency->username,
                     'agency_name' => trim(($agency->profile->first_name ?? '') . ' ' . ($agency->profile->last_name ?? '')),
                 ];
             }),
