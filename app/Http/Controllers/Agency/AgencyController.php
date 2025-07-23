@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Repositories\AgencyRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use App\Http\Resources\Agency\AgenciesResource;
-// use App\Http\Resources\Agencies\AgentWithPropertiesResource;
-// use App\Http\Resources\Agencies\AgentReviewsResource;
+use App\Http\Resources\Agency\AgencyWithPropertiesResource;
+use App\Http\Resources\Agency\AgencyReviewsResource;
 // use App\Http\Requests\Others\StoreAgentReviewRequest;
 
 use Illuminate\Http\Request;
@@ -44,8 +44,8 @@ class AgencyController extends Controller
 
         return new JsonResponse(
             $agency
-                ? ['success' => true, 'data' => new AgentWithPropertiesResource($agency)]
-                : ['success' => false, 'message' => 'Agent not found'],
+                ? ['success' => true, 'data' => new AgencyWithPropertiesResource($agency)]
+                : ['success' => false, 'message' => 'Agency not found'],
             $agency ? 200 : 404
         );
     }
@@ -54,27 +54,27 @@ class AgencyController extends Controller
      * Fetch reviews for a specific agent.
      * @return JsonResponse
      */
-    // public function showReviews(int $agentId): JsonResponse
-    // {
-    //     $reviews = $this->agentRepository->getReviewsByAgent($agentId);
-    //     return new JsonResponse([
-    //         'success' => true,
-    //         'data' => AgentReviewsResource::collection($reviews),
-    //     ], 200);
-    // }
+    public function showReviews(int $agencyId): JsonResponse
+    {
+        $reviews = $this->agencyRepository->getReviewsByAgency($agencyId);
+        return new JsonResponse([
+            'success' => true,
+            'data' => AgencyReviewsResource::collection($reviews),
+        ], 200);
+    }
 
      /**
      * Store a new review.
      * @return JsonResponse
      */
-    // public function store(StoreAgentReviewRequest $request): JsonResponse
-    // {
-    //     $review = $this->agentRepository->createReview($request);
+    public function store(StoreAgentReviewRequest $request): JsonResponse
+    {
+        $review = $this->agentRepository->createReview($request);
 
-    //     return new JsonResponse([
-    //         'success' => true,
-    //         'data' => new AgentReviewsResource($review),
-    //     ], 201);
-    // }
+        return new JsonResponse([
+            'success' => true,
+            'data' => new AgentReviewsResource($review),
+        ], 201);
+    }
 
 }

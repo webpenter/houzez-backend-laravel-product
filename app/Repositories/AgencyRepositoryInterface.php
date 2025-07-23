@@ -22,7 +22,7 @@ interface AgencyRepositoryInterface
      * @return User|null
      */
 
-    // public function getReviewsByAgent(int $agentId);
+    public function getReviewsByAgency(int $agencyId);
 
     // public function createReview(array $data): AgentReview;
 

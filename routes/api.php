@@ -98,6 +98,12 @@ Route::prefix('v1')->group(function () {
             Route::get('','index');
         });
 
+        // Agent related routes
+        Route::prefix('agency')->controller(AgencyController::class)->group(function () {
+            Route::get('/{username}','show');
+            Route::get('/reviews/{agencyId}','showReviews');
+        });
+
         // App/Teams related route
         Route::get('/teams', [TeamController::class,'getAppTeamsDemo01']);
     });

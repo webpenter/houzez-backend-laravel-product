@@ -167,4 +167,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(AgentReview::class, 'agent_id');
     }
+
+    public function agencyReviews()
+    {
+        return $this->hasMany(AgencyReview::class, 'agency_id');
+    }
 }

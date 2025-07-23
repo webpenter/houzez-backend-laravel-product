@@ -3,7 +3,7 @@
 namespace App\Repositories\Eloquent;
 
 use App\Models\User;
-use App\Models\AgentReview;
+use App\Models\AgencyReview;
 use App\Models\Property;
 use Illuminate\Support\Facades\DB;
 use App\Repositories\AgencyRepositoryInterface;
@@ -28,12 +28,12 @@ class AgencyRepository implements AgencyRepositoryInterface
     // }
 
     /**
-     * Get all reviews for a specific agent.
+     * Get all reviews for a specific agency.
      */
-    // public function getReviewsByAgent(int $agentId)
-    // {
-    //     return AgentReview::where('agent_id', $agentId)->latest()->get();
-    // }
+    public function getReviewsByAgency(int $agencyId)
+    {
+        return AgencyReview::where('agency_id', $agencyId)->latest()->get();
+    }
 
     /**
      * Create a new review.
