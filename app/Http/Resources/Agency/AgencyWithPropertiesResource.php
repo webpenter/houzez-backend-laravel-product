@@ -5,6 +5,7 @@ namespace App\Http\Resources\Agency;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Resources\Demos\Demo01\Property\AppPropertyCardDemo01Resource;
+use App\Http\Resources\Agent\AgentsResource;
 
 
 class AgencyWithPropertiesResource extends JsonResource
@@ -45,6 +46,7 @@ class AgencyWithPropertiesResource extends JsonResource
             'website' => $this->profile->website ?? null,
             'languages' => $this->profile->languages ?? null,
             'properties' => AppPropertyCardDemo01Resource::collection($this->properties),
+            'agents' => AgentsResource::collection($this->agents),
             'top_types' => $this->top_types ?? [],
             'status_summary' => $this->status_summary ?? [],
             'top_cities' => $this->top_cities ?? [],

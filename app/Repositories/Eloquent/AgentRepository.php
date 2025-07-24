@@ -19,14 +19,7 @@ class AgentRepository implements AgentRepositoryInterface
             ->get();
     }
 
-    public function findByUsername(string $username): ?User
-    {
-        return User::with(['profile', 'properties', 'agencies'])
-            ->where('role', 'agent')
-            ->where('username', $username)
-            ->first();
-    }
-
+    
     /**
      * Get all reviews for a specific agent.
      */

@@ -21,7 +21,7 @@ interface AgentRepositoryInterface
      * @param string $username
      * @return User|null
      */
-    public function findByUsername(string $username): ?User;
+    // public function findByUsername(string $username): ?User;
 
     public function getReviewsByAgent(int $agentId);
 
@@ -31,7 +31,7 @@ interface AgentRepositoryInterface
      * Find a user by username and include property statistics.
      *
      * @param string $username The username to search for
-     * 
+     *
      * @return User|null Returns the User model with appended statistical data or null if not found
      */
     public function findByUsernameWithStats(string $username): ?User;

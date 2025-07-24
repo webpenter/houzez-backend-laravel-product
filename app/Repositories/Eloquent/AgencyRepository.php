@@ -65,7 +65,7 @@ class AgencyRepository implements AgencyRepositoryInterface
         $total = Property::where('user_id', $user->id)->count();
 
         $topTypes = $typeCounts->map(function ($item) use ($total) {
-            return [
+            return [    
                 'type' => $item->type,
                 'count' => $item->count,
                 'percentage' => $total > 0 ? round(($item->count / $total) * 100) : 0,
