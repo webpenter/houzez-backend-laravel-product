@@ -19,13 +19,6 @@ class AgencyRepository implements AgencyRepositoryInterface
             ->get();
     }
 
-    // public function findByUsername(string $username): ?User
-    // {
-    //     return User::with(['profile', 'properties', 'agencies'])
-    //         ->where('role', 'agent')
-    //         ->where('username', $username)
-    //         ->first();
-    // }
 
     /**
      * Get all reviews for a specific agency.
@@ -38,16 +31,16 @@ class AgencyRepository implements AgencyRepositoryInterface
     /**
      * Create a new review.
      */
-    // public function createReview(array $data): AgentReview
-    // {
-    //     return AgentReview::create([
-    //         'agent_id' => $request->agent_id,
-    //         'user_id' => auth()->id(),
-    //         'title' => $request->title,
-    //         'rating' => $request->rating,
-    //         'comment' => $request->comment,
-    //     ]);
-    // }
+    public function createReview(array $data): AgencyReview
+    {
+        return AgencyReview::create([
+            'agency_id' => $data['agency_id'],
+            'user_id'   => auth()->id(),
+            'title'     => $data['title'],
+            'rating'    => $data['rating'],
+            'comment'   => $data['comment'],
+        ]);
+    }
 
     /**
      * Find a user by username and include property statistics.

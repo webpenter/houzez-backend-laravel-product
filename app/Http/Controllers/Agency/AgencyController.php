@@ -8,7 +8,7 @@ use Illuminate\Http\JsonResponse;
 use App\Http\Resources\Agency\AgenciesResource;
 use App\Http\Resources\Agency\AgencyWithPropertiesResource;
 use App\Http\Resources\Agency\AgencyReviewsResource;
-// use App\Http\Requests\Others\StoreAgentReviewRequest;
+use App\Http\Requests\Others\StoreAgencyReviewRequest;
 
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -67,13 +67,13 @@ class AgencyController extends Controller
      * Store a new review.
      * @return JsonResponse
      */
-    public function store(StoreAgentReviewRequest $request): JsonResponse
+    public function store(StoreAgencyReviewRequest $request): JsonResponse
     {
-        $review = $this->agentRepository->createReview($request);
+        $review = $this->agencyRepository->createReview($request->validated());
 
         return new JsonResponse([
             'success' => true,
-            'data' => new AgentReviewsResource($review),
+            'data' => new AgencyReviewsResource($review),
         ], 201);
     }
 

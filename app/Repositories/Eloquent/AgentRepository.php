@@ -41,11 +41,11 @@ class AgentRepository implements AgentRepositoryInterface
     public function createReview(array $data): AgentReview
     {
         return AgentReview::create([
-            'agent_id' => $request->agent_id,
-            'user_id' => auth()->id(),
-            'title' => $request->title,
-            'rating' => $request->rating,
-            'comment' => $request->comment,
+            'agent_id' => $data['agent_id'],
+            'user_id'   => auth()->id(),
+            'title'     => $data['title'],
+            'rating'    => $data['rating'],
+            'comment'   => $data['comment'],
         ]);
     }
 

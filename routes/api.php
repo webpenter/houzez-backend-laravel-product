@@ -195,6 +195,7 @@ Route::prefix('v1')->group(function () {
         // Review-system related route
         Route::post('/reviews/store', [ReviewController::class, 'store']);
         Route::post('/agent/reviews/store', [AgentController::class, 'store']);
+        Route::post('/agency/reviews/store', [AgencyController::class, 'store']);
 
         // Stripe-payments related routes
         Route::prefix('stripe-payments')->group(function () {

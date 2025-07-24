@@ -69,7 +69,7 @@ class AgentController extends Controller
      */
     public function store(StoreAgentReviewRequest $request): JsonResponse
     {
-        $review = $this->agentRepository->createReview($request);
+        $review = $this->agentRepository->createReview($request->validated());
 
         return new JsonResponse([
             'success' => true,
