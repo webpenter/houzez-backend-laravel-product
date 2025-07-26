@@ -1,7 +1,0 @@
-# Documentation: PropertyRepositoryInterface.php
-
-Original file: `app/Repositories\PropertyRepositoryInterface.php`
-
-# Documentation Generation Error
-
-There was an error generating documentation for this file: Unexpected API response format
