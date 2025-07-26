@@ -102,6 +102,7 @@ Route::prefix('v1')->group(function () {
         Route::prefix('agency')->controller(AgencyController::class)->group(function () {
             Route::get('/{username}','show');
             Route::get('/reviews/{agencyId}','showReviews');
+            Route::get('/{user:username}/properties','getAllAgencyProperties');
         });
 
         // App/Teams related route

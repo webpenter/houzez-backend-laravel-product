@@ -171,4 +171,14 @@ class Property extends Model
         return $this->hasMany(PropertyVisit::class);
     }
 
+    public function creator()
+{
+    return $this->belongsTo(User::class, 'user_id'); // agency or agent who created
+}
+
+public function assignedAgent()
+{
+    return $this->belongsTo(User::class, 'assigned_agent_id');
+}
+
 }

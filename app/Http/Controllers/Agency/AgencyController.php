@@ -7,11 +7,13 @@ use App\Repositories\AgencyRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use App\Http\Resources\Agency\AgenciesResource;
 use App\Http\Resources\Agency\AgencyWithPropertiesResource;
+use App\Http\Resources\Demos\Demo01\Property\AppPropertyCardDemo01Resource;
 use App\Http\Resources\Agency\AgencyReviewsResource;
 use App\Http\Requests\Others\StoreAgencyReviewRequest;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Property;
 
 class AgencyController extends Controller
 {
@@ -75,6 +77,36 @@ class AgencyController extends Controller
             'success' => true,
             'data' => new AgencyReviewsResource($review),
         ], 201);
+    }
+
+    public function getAllAgencyProperties(User $user)
+    {
+
+    // Ensure this user is an agency
+    if ($user->role !== 'agency') {
+        return response()->json(['message' => 'User is not an agency'], 403);
+    }
+
+    // Fetch all agents assigned to the agency
+    $agentIds = \DB::table('agency_agent')
+        ->where('agency_id', $user->id)
+        ->pluck('agent_id')
+        ->toArray();
+
+    // Combine agency + agent IDs
+    $userIds = array_merge([$user->id], $agentIds);
+
+    // Get all related properties with eager loading
+    $properties = Property::with(['user.profile', 'assignedAgent.profile'])
+        ->whereIn('user_id', $userIds)
+        ->get();
+
+    return new JsonResponse([
+            'success' => true,
+            'agency' => $user->username,
+            'total_properties' => $properties->count(),
+            'data' => AppPropertyCardDemo01Resource::collection($properties),
+        ], 200);
     }
 
 }

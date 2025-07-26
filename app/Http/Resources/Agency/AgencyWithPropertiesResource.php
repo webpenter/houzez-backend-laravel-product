@@ -45,7 +45,6 @@ class AgencyWithPropertiesResource extends JsonResource
             'skype' => $this->profile->skype ?? null,
             'website' => $this->profile->website ?? null,
             'languages' => $this->profile->languages ?? null,
-            'properties' => AppPropertyCardDemo01Resource::collection($this->properties),
             'agents' => AgentsResource::collection($this->agents),
             'top_types' => $this->top_types ?? [],
             'status_summary' => $this->status_summary ?? [],

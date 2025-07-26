@@ -53,6 +53,7 @@ class AgencyRepository implements AgencyRepositoryInterface
     {
         $user = User::where('username', $username)->first();
 
+        // If user not found, return null
         if (!$user) return null;
 
         $typeCounts = Property::where('user_id', $user->id)
@@ -62,10 +63,11 @@ class AgencyRepository implements AgencyRepositoryInterface
             ->limit(4)
             ->get();
 
+
         $total = Property::where('user_id', $user->id)->count();
 
         $topTypes = $typeCounts->map(function ($item) use ($total) {
-            return [    
+            return [
                 'type' => $item->type,
                 'count' => $item->count,
                 'percentage' => $total > 0 ? round(($item->count / $total) * 100) : 0,
