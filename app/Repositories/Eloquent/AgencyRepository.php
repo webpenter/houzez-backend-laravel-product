@@ -15,7 +15,7 @@ class AgencyRepository implements AgencyRepositoryInterface
     {
         return User::with('profile')
             ->where('role', 'agency')
-            //  ->withAvg('agentReviews', 'rating')
+             ->withAvg('agencyReviews', 'rating')
             ->get();
     }
 

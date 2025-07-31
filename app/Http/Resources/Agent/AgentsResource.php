@@ -23,6 +23,7 @@ class AgentsResource extends JsonResource
             'is_verified' => $this->is_verified ?? null,
             'position' => $this->profile->position ?? null,
             'phone' => $this->profile->phone ?? null,
+            'address' => $this->profile->address ?? null,
             'mobile' => $this->profile->mobile ?? null,
             'fax_number' => $this->profile->fax_number ?? null,
             'facebook' => $this->profile->facebook ?? null,

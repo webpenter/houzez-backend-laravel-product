@@ -35,7 +35,7 @@ class AgenciesResource extends JsonResource
             'pinterest' => $this->profile->pinterest ?? null,
             'vimeo' => $this->profile->vimeo ?? null,
             'skype' => $this->profile->skype ?? null,
-            'average_rating' => round($this->agent_reviews_avg_rating, 1), // default to 0 if needed
+            'average_rating' => round($this->agency_reviews_avg_rating, 1), // default to 0 if needed
         ];
     }
 }
