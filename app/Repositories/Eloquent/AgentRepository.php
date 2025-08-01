@@ -106,4 +106,34 @@ class AgentRepository implements AgentRepositoryInterface
     }
 
 
+    /**
+     * Search for agents by name and address.
+     *
+     * Eager loads related profile and agencies data and calculates the average 
+     * agent rating from `agentReviews`. Filters agents by name (full name match) 
+     * and address if provided.
+     *
+     * @param string|null $name     Optional agent full name (first + last).
+     * @param string|null $address  Optional agent address or city.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection  A collection of filtered agents.
+     */
+    public function search(?string $name, ?string $address): Collection
+    {
+        return User::with('profile', 'agencies')
+            ->where('role', 'agent')
+            ->withAvg('agentReviews', 'rating')
+            ->when($name, function ($query) use ($name) {
+                $query->whereHas('profile', function ($q) use ($name) {
+                    $q->whereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%{$name}%"]);
+                });
+            })
+            ->when($address, function ($query) use ($address) {
+                $query->whereHas('profile', function ($q) use ($address) {
+                    $q->where('address', 'LIKE', "%{$address}%");
+                });
+            })
+            ->get();
+    }
+
 }

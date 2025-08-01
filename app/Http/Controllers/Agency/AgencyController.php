@@ -10,6 +10,7 @@ use App\Http\Resources\Agency\AgencyWithPropertiesResource;
 use App\Http\Resources\Demos\Demo01\Property\AppPropertyCardDemo01Resource;
 use App\Http\Resources\Agency\AgencyReviewsResource;
 use App\Http\Requests\Others\StoreAgencyReviewRequest;
+use App\Http\Requests\Others\SearchRequest;
 
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -24,6 +25,7 @@ class AgencyController extends Controller
         $this->agencyRepository = $agencyRepository;
     }
 
+
     /**
      * ## Get all agents
      */
@@ -36,6 +38,7 @@ class AgencyController extends Controller
             'data' => AgenciesResource::collection($agencies),
         ]);
     }
+
 
     /**
      * ## Get agent by username
@@ -52,6 +55,7 @@ class AgencyController extends Controller
         );
     }
 
+
     /**
      * Fetch reviews for a specific agent.
      * @return JsonResponse
@@ -64,6 +68,7 @@ class AgencyController extends Controller
             'data' => AgencyReviewsResource::collection($reviews),
         ], 200);
     }
+
 
      /**
      * Store a new review.
@@ -79,65 +84,55 @@ class AgencyController extends Controller
         ], 201);
     }
 
-    public function getAllAgencyProperties(User $user)
+    
+    /**
+     * Get all properties for an agency (including its agents).
+     *
+     * This method validates that the user is an agency, fetches its assigned agents,
+     * retrieves all properties listed by the agency or its agents, and returns the result.
+     *
+     * @param \App\Models\User $user  The agency user (via route model binding).
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getAllAgencyProperties(User $user): JsonResponse
     {
+        try {
+            // Fetch properties from repository
+            $properties = $this->agencyRepository->getAllProperties($user);
 
-    // Ensure this user is an agency
-    if ($user->role !== 'agency') {
-        return response()->json(['message' => 'User is not an agency'], 403);
-    }
+            return new JsonResponse([
+                'success' => true,
+                'agency' => $user->username,
+                'total_properties' => $properties->count(),
+                'data' => AppPropertyCardDemo01Resource::collection($properties),
+            ], 200);
 
-    // Fetch all agents assigned to the agency
-    $agentIds = \DB::table('agency_agent')
-        ->where('agency_id', $user->id)
-        ->pluck('agent_id')
-        ->toArray();
-
-    // Combine agency + agent IDs
-    $userIds = array_merge([$user->id], $agentIds);
-
-    // Get all related properties with eager loading
-    $properties = Property::with(['user.profile', 'assignedAgent.profile'])
-        ->whereIn('user_id', $userIds)
-        ->get();
-
-    return new JsonResponse([
-            'success' => true,
-            'agency' => $user->username,
-            'total_properties' => $properties->count(),
-            'data' => AppPropertyCardDemo01Resource::collection($properties),
-        ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 403);
+        }
     }
     
-    public function searchAgency(Request $request)
+
+   /**
+     * Search agencies by name and address.
+     *
+     */
+    public function searchAgency(SearchRequest $request): JsonResponse
     {
-        // Validate search parameters
-        $validated = $request->validate([
-            'name' => 'nullable|string',
-            'address' => 'nullable|string',
-        ]);
+        // Call repository method to fetch filtered agencies
+        $agencies = $this->agencyRepository->search(
+            $request->name,
+            $request->address
+        );
 
-        $name = $request->name;
-        $address = $request->address;
-
-        // Eager load profiles and fetch only agents
-        $agencies = User::with('profile')
-            ->where('role', 'agency')
-            ->when($name, function ($query) use ($name) {
-                $query->whereHas('profile', function ($q) use ($name) {
-                    $q->whereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%{$name}%"]);
-                });
-            })
-            ->when($address, function ($query) use ($address) {
-                $query->whereHas('profile', function ($q) use ($address) {
-                    $q->where('address', 'LIKE', "%{$address}%");
-                });
-            })
-            ->get();
-
-        return response()->json([
+        // Return response with agencies resource collection
+        return new JsonResponse([
             'success' => true,
-            'data' => $agencies
+            'data' => AgenciesResource::collection($agencies),
         ]);
     }
 

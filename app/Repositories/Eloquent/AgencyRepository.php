@@ -108,4 +108,56 @@ class AgencyRepository implements AgencyRepositoryInterface
     }
 
 
+    public function getAllProperties(User $user): Collection
+    {
+        // Ensure user is an agency
+        if ($user->role !== 'agency') {
+            throw new \Exception('User is not an agency');
+        }
+
+        // Fetch agent IDs assigned to this agency
+        $agentIds = DB::table('agency_agent')
+            ->where('agency_id', $user->id)
+            ->pluck('agent_id')
+            ->toArray();
+
+        // Merge agency ID + agent IDs
+        $userIds = array_merge([$user->id], $agentIds);
+
+        // Fetch all properties related to this agency and its agents
+        return Property::with(['user.profile', 'assignedAgent.profile'])
+            ->whereIn('user_id', $userIds)
+            ->get();
+    }
+
+
+    /**
+     * Search agencies by name and address.
+     *
+     * Eager loads related `profile` and `agencies` data, and calculates 
+     * average rating from `agentReviews`. Filters results by agency name 
+     * and address if provided.
+     *
+     * @param string|null $name     Optional agency owner full name.
+     * @param string|null $address  Optional agency address.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function search(?string $name, ?string $address): Collection
+    {
+        return User::with('profile', 'agencies')
+            ->where('role', 'agency')
+            ->withAvg('agentReviews', 'rating')
+            ->when($name, function ($query) use ($name) {
+                $query->whereHas('profile', function ($q) use ($name) {
+                    $q->whereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%{$name}%"]);
+                });
+            })
+            ->when($address, function ($query) use ($address) {
+                $query->whereHas('profile', function ($q) use ($address) {
+                    $q->where('address', 'LIKE', "%{$address}%");
+                });
+            })
+            ->get();
+    }
 }

@@ -9,6 +9,7 @@ use App\Http\Resources\Agent\AgentsResource;
 use App\Http\Resources\Agent\AgentWithPropertiesResource;
 use App\Http\Resources\Agent\AgentReviewsResource;
 use App\Http\Requests\Others\StoreAgentReviewRequest;
+use App\Http\Requests\Others\SearchRequest;
 
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -35,6 +36,7 @@ class AgentController extends Controller
         ]);
     }
 
+    
     /**
      * ## Get agent by username
      */
@@ -50,6 +52,7 @@ class AgentController extends Controller
         );
     }
 
+
     /**
      * Fetch reviews for a specific agent.
      * @return JsonResponse
@@ -62,6 +65,7 @@ class AgentController extends Controller
             'data' => AgentReviewsResource::collection($reviews),
         ], 200);
     }
+
 
      /**
      * Store a new review.
@@ -77,35 +81,20 @@ class AgentController extends Controller
         ], 201);
     }
 
-    public function searchAgent(Request $request)
+
+    /**
+     * Search agents by name and address
+     */
+    public function searchAgent(SearchRequest $request): JsonResponse
     {
-        // Validate search parameters
-        $validated = $request->validate([
-            'name' => 'nullable|string',
-            'address' => 'nullable|string',
-        ]);
+        $agents = $this->agentRepository->search(
+            $request->name,
+            $request->address
+        );
 
-        $name = $request->name;
-        $address = $request->address;
-
-        // Eager load profiles and fetch only agents
-        $agents = User::with('profile')
-            ->where('role', 'agent')
-            ->when($name, function ($query) use ($name) {
-                $query->whereHas('profile', function ($q) use ($name) {
-                    $q->whereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%{$name}%"]);
-                });
-            })
-            ->when($address, function ($query) use ($address) {
-                $query->whereHas('profile', function ($q) use ($address) {
-                    $q->where('address', 'LIKE', "%{$address}%");
-                });
-            })
-            ->get();
-
-        return response()->json([
+        return new JsonResponse([
             'success' => true,
-            'data' => $agents
+            'data' => AgentsResource::collection($agents),
         ]);
     }   
 }
