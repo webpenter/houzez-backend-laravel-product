@@ -108,5 +108,37 @@ class AgencyController extends Controller
             'data' => AppPropertyCardDemo01Resource::collection($properties),
         ], 200);
     }
+    
+    public function searchAgency(Request $request)
+    {
+        // Validate search parameters
+        $validated = $request->validate([
+            'name' => 'nullable|string',
+            'address' => 'nullable|string',
+        ]);
+
+        $name = $request->name;
+        $address = $request->address;
+
+        // Eager load profiles and fetch only agents
+        $agencies = User::with('profile')
+            ->where('role', 'agency')
+            ->when($name, function ($query) use ($name) {
+                $query->whereHas('profile', function ($q) use ($name) {
+                    $q->whereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%{$name}%"]);
+                });
+            })
+            ->when($address, function ($query) use ($address) {
+                $query->whereHas('profile', function ($q) use ($address) {
+                    $q->where('address', 'LIKE', "%{$address}%");
+                });
+            })
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $agencies
+        ]);
+    }
 
 }

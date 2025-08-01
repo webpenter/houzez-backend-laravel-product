@@ -84,6 +84,7 @@ Route::prefix('v1')->group(function () {
          // Agents related routes
         Route::prefix('agents')->controller(AgentController::class)->group(function () {
             Route::get('','index');
+            Route::get('/search','searchAgent');
         });
 
         // Agent related routes
@@ -96,6 +97,8 @@ Route::prefix('v1')->group(function () {
         // Agencies related routes
         Route::prefix('agencies')->controller(AgencyController::class)->group(function () {
             Route::get('','index');
+            Route::get('/search','searchAgency');
+
         });
 
         // Agent related routes
