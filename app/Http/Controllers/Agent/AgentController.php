@@ -36,7 +36,7 @@ class AgentController extends Controller
         ]);
     }
 
-    
+
     /**
      * ## Get agent by username
      */

@@ -273,4 +273,28 @@ class AppPropertyController extends Controller
             'properties' => AppPropertyCardDemo01Resource::collection($properties),
         ]);
     }
+
+    /**
+     * Auto-search based on input characters.
+     */
+   public function autoSearch(Request $request)
+{
+    $query = $request->get('query');
+    $cities = $request->get('cities'); // ✅ Array of selected cities
+
+    $results = Property::with(['images' => function ($q) {
+            $q->where('is_thumbnail', 1); // ✅ Load only thumbnail image
+        }])
+        ->when($query, function ($q) use ($query) {
+            $q->where('title', 'LIKE', "%{$query}%");
+        })
+        ->when($cities, function ($q) use ($cities) {
+            $q->whereIn('city', $cities); // ✅ Filter by selected cities
+        })
+        ->limit(10)
+        ->get();
+
+    return response()->json($results);
+}
+
 }
