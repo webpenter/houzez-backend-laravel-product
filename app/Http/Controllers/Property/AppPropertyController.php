@@ -275,26 +275,20 @@ class AppPropertyController extends Controller
     }
 
     /**
-     * Auto-search based on input characters.
+     * Auto-search properties based on input characters.
      */
-   public function autoSearch(Request $request)
-{
-    $query = $request->get('query');
-    $cities = $request->get('cities'); // ✅ Array of selected cities
+    public function autoSearch(Request $request): JsonResponse
+    {
+        $query = $request->get('query');
+        $cities = $request->get('cities'); // ✅ Array of selected cities
 
-    $results = Property::with(['images' => function ($q) {
-            $q->where('is_thumbnail', 1); // ✅ Load only thumbnail image
-        }])
-        ->when($query, function ($q) use ($query) {
-            $q->where('title', 'LIKE', "%{$query}%");
-        })
-        ->when($cities, function ($q) use ($cities) {
-            $q->whereIn('city', $cities); // ✅ Filter by selected cities
-        })
-        ->limit(10)
-        ->get();
+        // ✅ Use repository method to fetch filtered properties
+        $properties = $this->propertyRepository->autoSearchProperties($query, $cities);
 
-    return response()->json($results);
-}
+        return new JsonResponse([
+            'success' => true,
+            'properties' => AppPropertyCardDemo01Resource::collection($properties),
+        ]);
+    }
 
 }

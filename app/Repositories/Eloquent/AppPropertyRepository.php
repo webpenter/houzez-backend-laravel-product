@@ -137,4 +137,20 @@ class AppPropertyRepository implements AppPropertyRepositoryInterface
             ->get();
     }
 
+    public function autoSearchProperties(?string $query, ?array $cities): Collection
+    {
+        return Property::with(['images' => function ($q) {
+                    $q->where('is_thumbnail', 1); // ✅ Load only thumbnail image
+                }])
+                ->when($query, function ($q) use ($query) {
+                    $q->where('title', 'LIKE', "%{$query}%");
+                })
+                ->when($cities, function ($q) use ($cities) {
+                    $q->whereIn('city', $cities); // ✅ Filter by selected cities
+                })
+                ->limit(10)
+                ->get();
+    }
+
+
 }

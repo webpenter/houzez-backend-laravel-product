@@ -89,4 +89,14 @@ interface AppPropertyRepositoryInterface
      */
     public function getPropertiesByType(string $type): Collection;
 
+    /**
+     * ## Auto Search Properties
+     * Fetch properties based on search query and selected cities.
+     *
+     * @param string|null $query
+     * @param array|null $cities
+     * @return \Illuminate\Support\Collection
+     */
+    public function autoSearchProperties(?string $query, ?array $cities): Collection;
+
 }
