@@ -11,8 +11,6 @@ use App\Http\Resources\Agent\AgentReviewsResource;
 use App\Http\Requests\Others\StoreAgentReviewRequest;
 use App\Http\Requests\Others\SearchRequest;
 
-use Illuminate\Http\Request;
-use App\Models\User;
 
 class AgentController extends Controller
 {
@@ -96,5 +94,5 @@ class AgentController extends Controller
             'success' => true,
             'data' => AgentsResource::collection($agents),
         ]);
-    }   
+    }
 }

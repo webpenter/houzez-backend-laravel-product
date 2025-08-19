@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Setting;
 use App\Repositories\ActivityRepositoryInterface;
 use App\Repositories\AppPropertyRepositoryInterface;
 use App\Repositories\DealRepositoryInterface;
@@ -38,7 +39,8 @@ use App\Repositories\TourRequestRepositoryInterface;
 use App\Repositories\UsersRepositoryInterface;
 use App\Repositories\AgentRepositoryInterface;
 use App\Repositories\AgencyRepositoryInterface;
-
+use App\Repositories\Eloquent\SettingRepository;
+use App\Repositories\SettingRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -80,9 +82,12 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(LeadRepositoryInterface::class, LeadRepository::class);
         $this->app->bind(EnquiryRepositoryInterface::class, EnquiryRepository::class);
 
-        // Agent repositories binding
+        // Agent & Agency repositories binding
         $this->app->bind(AgentRepositoryInterface::class, AgentRepository::class);
         $this->app->bind(AgencyRepositoryInterface::class, AgencyRepository::class);
+
+        // Settings repositories binding
+        $this->app->bind(SettingRepositoryInterface::class, SettingRepository::class);
     }
 
     /**

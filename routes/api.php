@@ -26,7 +26,7 @@ use App\Http\Controllers\Boards\ActivityController;
 use App\Http\Controllers\Insights\InsightController;
 use App\Http\Controllers\Agent\AgentController;
 use App\Http\Controllers\Agency\AgencyController;
-
+use App\Http\Controllers\Settings\SettingController;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Route;
 
@@ -122,6 +122,13 @@ Route::prefix('v1')->group(function () {
             Route::post('/logout', 'logout');
             Route::post('/change-password', 'changePassword');
             Route::delete('/delete-account', 'deleteAccount');
+        });
+
+        Route::controller(SettingController::class)->group(function () {
+            Route::get('/settings', 'index');
+            Route::post('/settings', 'store');
+            Route::get('/settings/{key}', 'show');
+            Route::get('/settings/social-links', 'show');
         });
 
         // Profile-related routes
