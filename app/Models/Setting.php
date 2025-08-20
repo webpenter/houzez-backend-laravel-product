@@ -13,9 +13,21 @@ class Setting extends Model
         'is_visible',
     ];
 
-    // Casts for boolean and json types
     protected $casts = [
         'is_visible' => 'boolean',
-        'value' => 'array', // if you store JSON values sometimes
     ];
+
+    // Accessor: if type is JSON, cast to array
+    public function getValueAttribute($value)
+    {
+        return $this->type === 'json' ? json_decode($value, true) : $value;
+    }
+
+    // Mutator: if array is passed for json type
+    public function setValueAttribute($value)
+    {
+        $this->attributes['value'] = is_array($value)
+            ? json_encode($value)
+            : $value;
+    }
 }

@@ -124,11 +124,13 @@ Route::prefix('v1')->group(function () {
             Route::delete('/delete-account', 'deleteAccount');
         });
 
-        Route::controller(SettingController::class)->group(function () {
-            Route::get('/settings', 'index');
-            Route::post('/settings', 'store');
-            Route::get('/settings/{key}', 'show');
-            Route::get('/settings/social-links', 'show');
+        Route::prefix('settings')->group(function () {
+            Route::get('get-logo', [SettingController::class, 'getLogo']);
+            Route::post('update-logo', [SettingController::class, 'updateLogo']);
+            Route::get('get-banner', [SettingController::class, 'getBanner']);
+            Route::post('update-banner', [SettingController::class, 'updateBanner']);
+            Route::get('social-media', [SettingController::class, 'getSocialMedia']);
+            Route::post('update-social-media', [SettingController::class, 'updateSocialMedia']);
         });
 
         // Profile-related routes

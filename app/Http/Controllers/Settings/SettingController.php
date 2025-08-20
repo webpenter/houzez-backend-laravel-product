@@ -4,73 +4,124 @@ namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\SettingRequest;
+use App\Models\Setting;
 use App\Repositories\SettingRepositoryInterface;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request; // ✅ correct
 
 class SettingController extends Controller
 {
-    protected $settings;
-
-    public function __construct(SettingRepositoryInterface $settings)
-    {
-        $this->settings = $settings;
-    }
-
     /**
-     * Get all settings
+     * Fetch logo from settings table
      */
-    public function index(): JsonResponse
+    public function getLogo()
     {
-        return new JsonResponse([
-            'success' => true,
-            'message' => 'All settings retrieved successfully',
-            'data'    => $this->settings->all(),
+        $logo = Setting::where('key', 'logo')->value('value');
+
+        return response()->json([
+            'logo' => $logo ? url($logo) : null
         ], 200);
     }
 
     /**
-     * Store or update a setting
+     * Update logo in settings table
      */
-    public function store(SettingRequest $request): JsonResponse
+    public function updateLogo(Request $request)
     {
-        $setting = $this->settings->updateOrCreate($request->validated());
-
-        return new JsonResponse([
-            'success' => true,
-            'message' => 'Setting saved successfully',
-            'data'    => $setting,
-        ], 201);
-    }
-
-    /**
-     * Show a specific setting
-     */
-    public function show(string $key): JsonResponse
-    {
-        $setting = $this->settings->get($key);
-
-        if (!$setting) {
-            return new JsonResponse([
-                'success' => false,
-                'message' => 'Setting not found',
-            ], 404);
-        }
-
-        return new JsonResponse([
-            'success' => true,
-            'message' => 'Setting retrieved successfully',
-            'data'    => $setting,
-        ], 200);
-    }
-
-    public function socialLinks()
-    {
-        $links = $this->settings->getVisibleSocialLinks();
-
-        return new JsonResponse([
-            'success' => true,
-            'message' => 'Social links retrieved successfully',
-            'data'    => $links,
+        $request->validate([
+            'logo' => 'required|image|mimes:jpg,jpeg,png,gif|max:2048',
         ]);
+
+        // Save file
+        $fileName = 'logo-' . time() . '.' . $request->logo->extension();
+        $request->logo->move(public_path('site-images'), $fileName);
+        $filePath = 'site-images/' . $fileName;
+
+        // Update or create setting
+        $setting = Setting::updateOrCreate(
+            ['key' => 'logo'],
+            [
+                'value' => $filePath,
+                'type' => 'image',
+                'is_visible' => true
+            ]
+        );
+
+        return response()->json([
+            'message' => 'Logo updated successfully',
+            'logo'    => url($setting->value),
+        ], 200);
     }
+
+    /**
+     * Fetch banner image from settings table
+     */
+    public function getBanner()
+    {
+        $banner = Setting::where('key', 'banner')->value('value');
+
+        return response()->json([
+            'banner' => $banner ? url($banner) : null
+        ], 200);
     }
+
+    /**
+     * Update banner image in settings table
+     */
+    public function updateBanner(Request $request)
+    {
+        $request->validate([
+            'banner' => 'required|image|mimes:jpg,jpeg,png,gif|max:4096',
+        ]);
+
+        // Save file
+        $fileName = 'banner-' . time() . '.' . $request->banner->extension();
+        $request->banner->move(public_path('site-images'), $fileName);
+        $filePath = 'site-images/' . $fileName;
+
+        // Update or create setting
+        $setting = Setting::updateOrCreate(
+            ['key' => 'banner'],
+            [
+                'value' => $filePath,
+                'type' => 'image',
+                'is_visible' => true
+            ]
+        );
+
+        return response()->json([
+            'message' => 'Banner updated successfully',
+            'banner'  => url($setting->value),
+        ], 200);
+    }
+
+    public function getSocialMedia()
+{
+    $keys = [
+        'facebook', 'twitter', 'linkedin', 'instagram',
+        'google_plus', 'youtube', 'pinterest', 'vimeo',
+        'skype', 'website'
+    ];
+
+    $settings = Setting::whereIn('key', $keys)->pluck('value', 'key');
+    return response()->json(['social_media' => $settings]);
+}
+
+public function updateSocialMedia(Request $request)
+{
+    $data = $request->only([
+        'facebook', 'twitter', 'linkedin', 'instagram',
+        'google_plus', 'youtube', 'pinterest', 'vimeo',
+        'skype', 'website'
+    ]);
+
+    foreach ($data as $key => $value) {
+        Setting::updateOrCreate(
+            ['key' => $key],
+            ['value' => $value, 'type' => 'url', 'is_visible' => true]
+        );
+    }
+
+    return response()->json(['message' => 'Social Media updated successfully!']);
+}
+}
