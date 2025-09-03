@@ -95,7 +95,7 @@ class SettingController extends Controller
         ], 200);
     }
 
-    public function getSocialMedia()
+public function getSocialMedia()
 {
     $keys = [
         'facebook', 'twitter', 'linkedin', 'instagram',
@@ -103,25 +103,49 @@ class SettingController extends Controller
         'skype', 'website'
     ];
 
-    $settings = Setting::whereIn('key', $keys)->pluck('value', 'key');
-    return response()->json(['social_media' => $settings]);
+    $settings = Setting::whereIn('key', $keys)->get();
+
+    $socialMedia = [];
+    foreach ($keys as $key) {
+        $setting = $settings->firstWhere('key', $key);
+        $socialMedia[$key] = [
+            'value' => $setting->value ?? '',
+            'is_visible' => (bool) ($setting->is_visible ?? true)
+        ];
+    }
+
+    return response()->json(['social_media' => $socialMedia]);
 }
 
 public function updateSocialMedia(Request $request)
 {
-    $data = $request->only([
-        'facebook', 'twitter', 'linkedin', 'instagram',
-        'google_plus', 'youtube', 'pinterest', 'vimeo',
-        'skype', 'website'
-    ]);
+    $data = $request->all(); // payload is directly coming, not inside 'social_media'
 
-    foreach ($data as $key => $value) {
+    // Define allowed social media keys (only these will be updated)
+    $allowedKeys = [
+        'facebook', 'twitter', 'linkedin', 'instagram',
+        'google_plus', 'pinterest', 'skype', 'vimeo',
+        'website', 'youtube'
+    ];
+
+    foreach ($data as $key => $item) {
+        // Skip non-social media keys
+        if (!in_array($key, $allowedKeys)) {
+            continue;
+        }
+
         Setting::updateOrCreate(
             ['key' => $key],
-            ['value' => $value, 'type' => 'url', 'is_visible' => true]
+            [
+                'value'      => $item['value'] ?? '',
+                'type'       => 'url', // keep type fixed for social media
+                'is_visible' => isset($item['is_visible']) ? (bool) $item['is_visible'] : true
+            ]
         );
     }
 
     return response()->json(['message' => 'Social Media updated successfully!']);
 }
+
+
 }
