@@ -94,10 +94,22 @@ class FavoritePropertyController extends Controller
     {
         $userId = Auth::id();
 
-        $this->favoritePropertyRepository->removeFromFavorites($userId, $favoritePropertyId);
+        if (!$userId) {
+            return new JsonResponse([
+                'message' => 'Unauthorized: User not authenticated',
+            ], 401);
+        }
+
+        $deleted = $this->favoritePropertyRepository->removeFromFavorites($userId, (int) $favoritePropertyId);
+
+        if ($deleted) {
+            return new JsonResponse([
+                'message' => 'Property removed from favorites',
+            ], 200);
+        }
 
         return new JsonResponse([
-            'message' => 'Property removed from favorites',
-        ]);
+            'message' => 'Favorite not found or could not be removed',
+        ], 404);
     }
 }

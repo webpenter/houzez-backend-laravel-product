@@ -13,6 +13,7 @@
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
         "league/csv": "^9.23",
+        "predis/predis": "*",
         "stripe/stripe-php": "^16.5",
         "torann/geoip": "^3.0"
     },

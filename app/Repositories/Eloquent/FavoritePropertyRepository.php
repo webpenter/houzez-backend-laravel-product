@@ -47,13 +47,13 @@ class FavoritePropertyRepository implements FavoritePropertyRepositoryInterface
      * @param int $propertyId
      * @return bool
      */
-    public function removeFromFavorites(int $userId, int $propertyId): bool
-    {
-        return FavoriteProperty::query()
-                ->whereUserId($userId)
-                ->whereId($propertyId)
-                ->delete() > 0;
-    }
+public function removeFromFavorites(int $userId, int $propertyId): bool
+{
+    return FavoriteProperty::query()
+            ->where('user_id', $userId)
+            ->where('property_id', $propertyId)
+            ->delete();
+}
 
     /**
      * Remove an already exists property from favorites
