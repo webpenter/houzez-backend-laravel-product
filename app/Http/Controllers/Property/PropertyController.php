@@ -65,7 +65,7 @@ class PropertyController extends Controller
     {
         try {
             $data = $request->validated();
-            $property = $this->propertyRepository->createOrUpdate($data, $id);
+            $property = $this->propertyRepository->createOrUpdate($data, $id ? (int) $id : null);
 
             return new JsonResponse([
                 'message' => $id ? 'Property updated successfully.' : 'Property created successfully.',

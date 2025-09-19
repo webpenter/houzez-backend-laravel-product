@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\Property;
 use App\Models\Setting;
+use App\Observers\property\PropertyObserver;
 use App\Repositories\ActivityRepositoryInterface;
 use App\Repositories\AppPropertyRepositoryInterface;
 use App\Repositories\DealRepositoryInterface;
@@ -95,6 +97,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Property::observe(PropertyObserver::class);
     }
 }
