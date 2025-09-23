@@ -193,7 +193,7 @@ Route::prefix('v1')->group(function () {
         Route::prefix('saved-searches')->controller(SavedSearchController::class)->group(function () {
             Route::get('/get-user', 'getUserSearches');
             Route::post('/store-or-remove', 'storeOrRemoveSearch');
-            Route::post('/is-saved', 'isSearchSaved');
+            Route::get('/is-saved', 'isSearchSaved');
             Route::post('/delete/{id}', 'destroy');
         });
 
