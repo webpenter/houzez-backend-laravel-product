@@ -12,7 +12,7 @@ class PropertyFactory extends Factory
 
     public function definition(): array
     {
-        $title = $this->faker->unique()->sentence(4); // Unique title to help with slugs
+        $title = $this->faker->unique()->sentence(2); // Unique title to help with slugs
 
         return [
             'title' => $title,
@@ -22,8 +22,8 @@ class PropertyFactory extends Factory
             'status' => $this->faker->randomElement(['for_sale', 'for_rent', 'sold', 'rented']),
             'label' => $this->faker->randomElement(['featured', 'new', 'hot', 'sold', null]),
             'price' => $this->faker->randomFloat(2, 50000, 5000000),
-            'second_price' => $this->faker->optional(0.5)->randomFloat(2, 10000, 1000000),
-            'after_price' => $this->faker->optional(0.3)->randomElement(['/month', '/year', null]),
+            'second_price' => $this->faker->randomFloat(2, 10000, 1000000),
+            'after_price' => $this->faker->randomElement(['/month', '/year', null]),
             'price_prefix' => $this->faker->randomElement(['$', '€', '£']),
             'user_id' => User::inRandomOrder()->first()->id ?? 1, // Requires at least one user; seed users first if needed
             'bedrooms' => $this->faker->numberBetween(1, 6),

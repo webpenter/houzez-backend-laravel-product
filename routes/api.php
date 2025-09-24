@@ -73,8 +73,6 @@ Route::prefix('v1')->group(function () {
             Route::get('/get-property/{slug}', 'getPropertyDataDemo01');
             Route::get('/get-property-type/{type}','getPropertyTypeDataDemo01');
             Route::get('/get-auto-searched', 'autoSearch');
-
-
         });
 
         // Insights related routes
@@ -114,6 +112,12 @@ Route::prefix('v1')->group(function () {
         Route::get('/teams', [TeamController::class,'getAppTeamsDemo01']);
     });
 
+    Route::prefix('settings')->controller(SettingController::class)->group(function () {
+        Route::get('/get-logo', 'getLogo');
+        Route::get('/get-banner', 'getBanner');
+        Route::get('/social-media', 'getSocialMedia');
+    });
+
     /* ---------------- User's Dashboard routes (with auth) --------------- */
     Route::middleware('auth:sanctum')->group(function () {
         // User-related routes
@@ -125,11 +129,11 @@ Route::prefix('v1')->group(function () {
         });
 
         Route::prefix('settings')->group(function () {
-            Route::get('get-logo', [SettingController::class, 'getLogo']);
+            // Route::get('get-logo', [SettingController::class, 'getLogo']);
             Route::post('update-logo', [SettingController::class, 'updateLogo']);
-            Route::get('get-banner', [SettingController::class, 'getBanner']);
+            // Route::get('get-banner', [SettingController::class, 'getBanner']);
             Route::post('update-banner', [SettingController::class, 'updateBanner']);
-            Route::get('social-media', [SettingController::class, 'getSocialMedia']);
+            // Route::get('social-media', [SettingController::class, 'getSocialMedia']);
             Route::post('update-social-media', [SettingController::class, 'updateSocialMedia']);
         });
 
