@@ -68,11 +68,10 @@ class DealController extends Controller
      */
     public function update(UpdateDealRequest $request, int $id): JsonResponse
     {
-        dd('dd');
 
         $data = $request->validated();
         $data['user_id'] = Auth::id();
-        
+
         $deal = $this->dealRepo->update($id, $data);
         return $this->successResponse(new DealResource($deal), 'Deal updated successfully');
     }
