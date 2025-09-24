@@ -56,4 +56,26 @@ class UsersController extends Controller
         $result = $this->userRepository->updateUserRole($userId, $role);
         return new JsonResponse($result['message'], $result['status']);
     }
+
+    /**
+     * Retrieve all users with role 'agent'.
+     *
+     * @return JsonResponse
+     */
+    public function getAllAgents(): JsonResponse
+    {
+        $agents = $this->userRepository->getAllAgents();
+        return new JsonResponse(UsersResource::collection($agents));
+    }
+
+    /**
+     * Get all agency users only.
+     *
+     * @return JsonResponse
+     */
+    public function getAgencyUsers(): JsonResponse
+    {
+        $users = $this->userRepository->getAgencyUsers();
+        return new JsonResponse(UsersResource::collection($users));
+    }
 }

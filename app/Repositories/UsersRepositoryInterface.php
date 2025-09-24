@@ -28,4 +28,18 @@ interface UsersRepositoryInterface
      * @return array
      */
     public function updateUserRole(int $userId, string $role): array;
+
+    /**
+     * Get All Agents.
+     *
+     *  @return Collection
+     */
+    public function getAllAgents(): Collection;
+
+     /**
+     * Get All Agencies.
+     *
+     *  @return Collection
+     */
+    public function getAgencyUsers(): Collection;
 }

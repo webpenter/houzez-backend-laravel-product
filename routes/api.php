@@ -128,14 +128,26 @@ Route::prefix('v1')->group(function () {
             Route::delete('/delete-account', 'deleteAccount');
         });
 
-        Route::prefix('settings')->group(function () {
-            // Route::get('get-logo', [SettingController::class, 'getLogo']);
-            Route::post('update-logo', [SettingController::class, 'updateLogo']);
-            // Route::get('get-banner', [SettingController::class, 'getBanner']);
-            Route::post('update-banner', [SettingController::class, 'updateBanner']);
-            // Route::get('social-media', [SettingController::class, 'getSocialMedia']);
-            Route::post('update-social-media', [SettingController::class, 'updateSocialMedia']);
+        // Settings related routes
+        Route::prefix('settings')->controller(SettingController::class)->group(function () {
+            // Route::get('get-logo','getLogo');
+            Route::post('update-logo','updateLogo');
+            // Route::get('get-banner','getBanner');
+            Route::post('update-banner','updateBanner');
+            // Route::get('social-media','getSocialMedia');
+            Route::post('update-social-media','updateSocialMedia');
+            Route::get('/site-information', 'getSiteInformation');
+            Route::post('/update-site-information', 'updateSiteInformation');
+            Route::get('/stripe','getStripeSettings');
+            Route::post('/update-stripe','updateStripeSettings');
+            Route::get('/contact','getContactSettings');
+            Route::post('/update-contact','updateContactSettings');
+            Route::get('/email','getEmailSettings');
+            Route::post('/update-email','updateEmailSettings');
+            Route::get('/seo','getSeoSettings');
+            Route::post('/update-seo','updateSeoSettings');
         });
+
 
         // Profile-related routes
         Route::prefix('profile')->controller(UserProfileController::class)->group(function () {
@@ -289,6 +301,8 @@ Route::prefix('v1')->group(function () {
             // All-Users related routes
             Route::controller(UsersController::class)->group(function () {
                 Route::get('/get-all-users',  'getAllUsers');
+                Route::get('/get-all-agents',  'getAllAgents');
+                Route::get('/get-agency-users','getAgencyUsers');
                 Route::post('/delete-user/{user}',  'deleteUser');
                 Route::post('/change-user-role/{user}/{role}',  'updateUserRole');
             });

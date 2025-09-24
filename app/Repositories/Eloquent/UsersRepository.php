@@ -69,4 +69,28 @@ class UsersRepository implements UsersRepositoryInterface
 
         return ['message' => 'User role updated successfully', 'status' => 200];
     }
+
+    /**
+     * Get all users
+     *
+     * @return Collection
+     */
+    public function getAllAgents(): Collection
+    {
+        return User::where('role', 'agent')
+            ->withCount('properties') 
+            ->get();
+    }
+
+    /**
+     * Get all agencies
+     *
+     * @return Collection
+     */
+    public function getAgencyUsers(): Collection
+    {
+        return User::where('role', 'agency')
+            ->withCount('properties')
+            ->get();
+    }
 }
