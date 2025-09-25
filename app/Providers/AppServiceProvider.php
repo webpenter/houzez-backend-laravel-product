@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use App\Models\Property;
 use App\Models\Setting;
-use App\Observers\property\PropertyObserver;
+use App\Observers\Property\PropertyObserver;
 use App\Repositories\ActivityRepositoryInterface;
 use App\Repositories\AppPropertyRepositoryInterface;
 use App\Repositories\DealRepositoryInterface;

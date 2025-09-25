@@ -50,16 +50,18 @@ class PropertyFactory extends Factory
             'map_street_view' => $this->faker->optional(0.2)->boolean,
             'latitude' => $this->faker->latitude,
             'longitude' => $this->faker->longitude,
-            'video_url' => $this->faker->optional(0.4)->url,
-            'virtual_tour' => $this->faker->optional(0.3)->url,
+            'video_url' => '<iframe width="730" height="387" src="https://www.youtube.com/embed/cuGfG0J1aIw" frameborder="0" allowfullscreen></iframe>',
+            'virtual_tour' => '<iframe width="853" height="480" src="https://my.matterport.com/show/?m=zEWsxhZpGba&play=1&qs=1" frameborder="0" allowfullscreen="allowfullscreen"></iframe>',
+
             'contact_information' => [
                 'phone' => $this->faker->optional()->phoneNumber,
                 'email' => $this->faker->optional()->email,
             ],
             'private_note' => $this->faker->optional(0.2)->paragraph,
-            'property_status' => $this->faker->randomElement(['published', 'pending', 'expired', 'draft', 'on_hold', 'disapproved']),
-            'is_paid' => $this->faker->boolean(30),
-            'is_featured' => $this->faker->boolean(20),
+            // 'property_status' => $this->faker->randomElement(['published', 'pending', 'expired', 'draft', 'on_hold', 'disapproved']),
+            'property_status' => $this->faker->randomElement(['published']),
+            'is_paid' => $this->faker->boolean(50),
+            'is_featured' => $this->faker->boolean(100),
             'views' => $this->faker->numberBetween(0, 10000),
             'unique_views' => $this->faker->numberBetween(0, 8000),
         ];
