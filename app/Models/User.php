@@ -36,7 +36,7 @@ class User extends Authenticatable
         'is_admin',
         'role',
         'agency_id', // Added for agency association
-    ];
+    ]; 
 
     /**
      * The attributes that should be hidden for serialization.

@@ -13,11 +13,19 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'username' => 'testuser',
-            'email' => 'test@example.com',
+         // Run UserSeeder first to create users
+        $this->call([
+            UserSeeder::class,
+            UserProfileSeeder::class,
         ]);
+
+        // Run PropertySeeder first (assuming it's already created)
+        $this->call(PropertySeeder::class);
+
+        // Then run SubPropertySeeder
+        $this->call(SubPropertySeeder::class);
+
+        // Run FloorPlanSeeder to create floor plans
+        $this->call(FloorPlanSeeder::class);
     }
 }

@@ -23,21 +23,50 @@ class Property extends Model
      * @var array
      */
     protected $fillable = [
-        'title','slug', 'description', 'type', 'status', 'label', 'price', 'second_price',
-        'after_price', 'price_prefix','user_id',
-        'bedrooms', 'bathrooms', 'garages', 'garages_size', 'area_size',
-        'size_prefix', 'land_area', 'land_area_size_postfix', 'property_id', 'year_built',
+        'title',
+        'slug',
+        'description',
+        'type',
+        'status',
+        'label',
+        'price',
+        'second_price',
+        'after_price',
+        'price_prefix',
+        'user_id',
+        'bedrooms',
+        'bathrooms',
+        'garages',
+        'garages_size',
+        'area_size',
+        'size_prefix',
+        'land_area',
+        'land_area_size_postfix',
+        'property_id',
+        'year_built',
         'property_feature',
-        'energy_class', 'global_energy_performance_index', 'renewable_energy_performance_index',
+        'energy_class',
+        'global_energy_performance_index',
+        'renewable_energy_performance_index',
         'energy_performance_of_the_building',
-        'address', 'country', 'county_state', 'city', 'neighborhood', 'zip_postal_code',
-        'map_street_view', 'latitude', 'longitude',
+        'address',
+        'country',
+        'county_state',
+        'city',
+        'neighborhood',
+        'zip_postal_code',
+        'map_street_view',
+        'latitude',
+        'longitude',
         'video_url',
         'virtual_tour',
         'contact_information',
         'private_note',
-        'property_status', 'is_paid', 'is_featured',
-        'views', 'unique_views',
+        'property_status',
+        'is_paid',
+        'is_featured',
+        'views',
+        'unique_views',
     ];
 
     /**
@@ -172,13 +201,12 @@ class Property extends Model
     }
 
     public function creator()
-{
-    return $this->belongsTo(User::class, 'user_id'); // agency or agent who created
-}
+    {
+        return $this->belongsTo(User::class, 'user_id'); // agency or agent who created
+    }
 
-public function assignedAgent()
-{
-    return $this->belongsTo(User::class, 'assigned_agent_id');
-}
-
+    public function assignedAgent()
+    {
+        return $this->belongsTo(User::class, 'assigned_agent_id');
+    }
 }
