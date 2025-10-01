@@ -2,8 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,19 +11,31 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-         // Run UserSeeder first to create users
+        // Run UserSeeder first to create users
         $this->call([
             UserSeeder::class,
             UserProfileSeeder::class,
         ]);
 
-        // Run PropertySeeder first (assuming it's already created)
+        // Run PropertySeeder
+        $this->call(SettingSeeder::class);
+
+        // Run PropertySeeder
         $this->call(PropertySeeder::class);
 
-        // Then run SubPropertySeeder
+        // Run PropertyImageSeeder
+        $this->call(PropertyImageSeeder::class);
+
+        // Run SubPropertySeeder
         $this->call(SubPropertySeeder::class);
 
-        // Run FloorPlanSeeder to create floor plans
+        // Run FloorPlanSeeder
         $this->call(FloorPlanSeeder::class);
+
+        // Run TeamSeeder for team members
+        $this->call(TeamSeeder::class);
+
+        // Run BlogSeeder for real estate blogs
+        $this->call(BlogSeeder::class);
     }
 }

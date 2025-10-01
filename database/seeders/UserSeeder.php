@@ -21,7 +21,6 @@ class UserSeeder extends Seeder
             'password' => bcrypt('password123'), // Securely hashed password
             'is_admin' => true,
             'role' => 'adminstrator',
-            'agency_id' => null, // Admin not tied to an agency
         ]);
 
         // Create an agency user
@@ -31,7 +30,6 @@ class UserSeeder extends Seeder
             'password' => bcrypt('password123'),
             'is_admin' => false,
             'role' => 'agency',
-            'agency_id' => null, // Assuming agency_id 1 exists; adjust if needed
         ]);
 
         // Create a regular user (agent)
@@ -41,7 +39,6 @@ class UserSeeder extends Seeder
             'password' => bcrypt('password123'),
             'is_admin' => false,
             'role' => 'agent',
-            'agency_id' => User::where('role', 'agency')->first()->id,
         ]);
 
         // Create additional users for variety
@@ -51,7 +48,6 @@ class UserSeeder extends Seeder
             'password' => bcrypt('password123'),
             'is_admin' => false,
             'role' => 'agent',
-            'agency_id' => null, // Independent agent
         ]);
 
         // Create a client user
@@ -61,7 +57,6 @@ class UserSeeder extends Seeder
             'password' => bcrypt('password123'),
             'is_admin' => false,
             'role' => 'subscriber',
-            'agency_id' => null, // Clients not tied to an agency
         ]);
 
     }

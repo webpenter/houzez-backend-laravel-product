@@ -47,7 +47,7 @@ class UserProfileSeeder extends Seeder
 
         // Agency User
         UserProfile::create([
-            'user_id' => User::where('username', 'agency')->first()->id,
+            'user_id' => User::where('username', 'agency_one')->first()->id,
             'public_name' => 'Agency One',
             'first_name' => 'Agency',
             'last_name' => 'One',
