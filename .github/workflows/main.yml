@@ -41,19 +41,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          source: |
-            app
-            bootstrap
-            config
-            database
-            public
-            resources
-            routes
-            storage
-            artisan
-            composer.json
-            composer.lock
-            vendor
+          source: "app bootstrap config database public resources routes storage artisan composer.json composer.lock vendor"
           target: "/home/u787826149/domains/webpenter.com/public_html/realestate-backend"
           port: 65002
           overwrite: true
