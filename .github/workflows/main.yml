@@ -6,35 +6,14 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout repo
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Setup PHP
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2' # match your Laravel version
-          extensions: mbstring, bcmath, intl, pdo_mysql
-          tools: composer:v2
-
-      # 3. Install dependencies (production only)
-      - name: Install Composer dependencies
-        run: composer install --no-dev --optimize-autoloader
-
-      # 4. Cache Laravel config & routes
-      - name: Laravel Optimizations
-        run: |
-          php artisan config:clear || true
-          php artisan route:clear || true
-          php artisan cache:clear || true
-
-      # 5. Run Laravel setup on server (migrate, cache, etc.)
-      - name: SSH Commands
+      - name: Deploy via SSH
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -44,7 +23,14 @@ jobs:
           port: 65002
           script: |
             cd /home/u787826149/domains/webpenter.com/public_html/realestate-backend
-            # php artisan migrate --force
+            git reset --hard
+            git pull origin main
+            composer install --no-dev --optimize-autoloader
+            php artisan migrate --force
+            php artisan config:clear
+            php artisan cache:clear
+            php artisan route:clear
+            php artisan view:clear
             php artisan config:cache
             php artisan route:cache
             php artisan storage:link || true
