@@ -56,6 +56,8 @@ jobs:
             vendor
           target: "/home/u787826149/domains/webpenter.com/public_html/realestate-backend"
           port: 65002
+          overwrite: true
+          rm: true
 
       # 6. Run Laravel setup on server (migrate, cache, etc.)
       - name: SSH Commands
