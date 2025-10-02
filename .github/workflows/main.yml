@@ -33,21 +33,7 @@ jobs:
           php artisan route:clear || true
           php artisan cache:clear || true
 
-      # 5. Deploy to Hostinger via SCP
-      - name: Deploy via SCP
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          source: "app bootstrap config database public resources routes storage artisan composer.json composer.lock vendor"
-          target: "/home/u787826149/domains/webpenter.com/public_html/realestate-backend"
-          port: 65002
-          overwrite: true
-          rm: true
-
-      # 6. Run Laravel setup on server (migrate, cache, etc.)
+      # 5. Run Laravel setup on server (migrate, cache, etc.)
       - name: SSH Commands
         uses: appleboy/ssh-action@master
         with:
