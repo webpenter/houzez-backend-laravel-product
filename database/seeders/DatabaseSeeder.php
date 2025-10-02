@@ -37,5 +37,8 @@ class DatabaseSeeder extends Seeder
 
         // Run BlogSeeder for real estate blogs
         $this->call(BlogSeeder::class);
+
+        // Run ReviewSeeder for real estate blogs
+        $this->call(ReviewSeeder::class);
     }
 }

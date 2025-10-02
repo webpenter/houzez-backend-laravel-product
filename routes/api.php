@@ -130,11 +130,8 @@ Route::prefix('v1')->group(function () {
 
         // Settings related routes
         Route::prefix('settings')->controller(SettingController::class)->group(function () {
-            // Route::get('get-logo','getLogo');
             Route::post('update-logo','updateLogo');
-            // Route::get('get-banner','getBanner');
             Route::post('update-banner','updateBanner');
-            // Route::get('social-media','getSocialMedia');
             Route::post('update-social-media','updateSocialMedia');
             Route::get('/site-information', 'getSiteInformation');
             Route::post('/update-site-information', 'updateSiteInformation');
