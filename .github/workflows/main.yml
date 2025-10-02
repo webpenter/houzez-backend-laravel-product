@@ -1,4 +1,4 @@
-name: Deploy Laravel to Hostinger
+name: Deploy Laravel App to Hostinger
 
 on:
   push:
@@ -6,25 +6,59 @@ on:
       - main
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Checkout repo
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Upload Laravel project via SCP
+      # 2. Setup PHP
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2' # match your Laravel version
+          extensions: mbstring, bcmath, intl, pdo_mysql
+          tools: composer:v2
+
+      # 3. Install dependencies (production only)
+      - name: Install Composer dependencies
+        run: composer install --no-dev --optimize-autoloader
+
+      # 4. Cache Laravel config & routes
+      - name: Laravel Optimizations
+        run: |
+          php artisan config:clear || true
+          php artisan route:clear || true
+          php artisan cache:clear || true
+
+      # 5. Deploy to Hostinger via SCP
+      - name: Deploy via SCP
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          source: "."  # You might want to exclude .git and node_modules
-          target: "/home/u787826149/domains/webpenter.com/public_html/admin-buy"
+          source: |
+            app
+            bootstrap
+            config
+            database
+            public
+            resources
+            routes
+            storage
+            artisan
+            composer.json
+            composer.lock
+            vendor
+          target: "/home/u787826149/domains/webpenter.com/public_html/realestate-backend"
           port: 65002
 
-      - name: Run Laravel post-deploy commands
+      # 6. Run Laravel setup on server (migrate, cache, etc.)
+      - name: SSH Commands
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -33,9 +67,8 @@ jobs:
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           port: 65002
           script: |
-            cd /home/u787826149/domains/webpenter.com/public_html/admin-buy
-            # composer install --no-dev --optimize-autoloader
+            cd /home/u787826149/domains/webpenter.com/public_html/realestate-backend
+            # php artisan migrate --force
             php artisan config:cache
             php artisan route:cache
-            php artisan view:cache
-            # php artisan migrate --force
+            php artisan storage:link || true
