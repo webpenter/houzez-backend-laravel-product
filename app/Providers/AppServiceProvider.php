@@ -88,8 +88,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(AgentRepositoryInterface::class, AgentRepository::class);
         $this->app->bind(AgencyRepositoryInterface::class, AgencyRepository::class);
 
-        // Settings repositories binding
-        $this->app->bind(SettingRepositoryInterface::class, SettingRepository::class);
+        // Settings repositories
+        // Settings repository binding
+        $this->app->bind(SettingRepositoryInterface::class, function ($app) {
+            return new SettingRepository($app->make(Setting::class));
+        });
     }
 
     /**
