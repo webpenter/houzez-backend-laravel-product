@@ -4,9 +4,26 @@ namespace App\Repositories\Eloquent;
 
 use App\Repositories\UsersRepositoryInterface;
 use App\Models\User;
+use Hash;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+use InvalidArgumentException;
+
 class UsersRepository implements UsersRepositoryInterface
 {
+
+    protected $userModel;
+
+    /**
+     * UsersRepository constructor.
+     *
+     * @param User $userModel
+     */
+    public function __construct(User $userModel)
+    {
+        $this->userModel = $userModel;
+    }
+
     /**
      * Get all users.
      *
@@ -78,7 +95,7 @@ class UsersRepository implements UsersRepositoryInterface
     public function getAllAgents(): Collection
     {
         return User::where('role', 'agent')
-            ->withCount('properties') 
+            ->withCount('properties')
             ->get();
     }
 
@@ -92,5 +109,25 @@ class UsersRepository implements UsersRepositoryInterface
         return User::where('role', 'agency')
             ->withCount('properties')
             ->get();
+    }
+
+    /**
+     * Create a new user.
+     *
+     * @param array $data
+     * @return Model
+     * @throws InvalidArgumentException
+     */
+    public function create(array $data): Model
+    {
+        if (!isset($data['username'], $data['email'], $data['password'])) {
+            throw new InvalidArgumentException('Required user data (username, email, password) is missing.');
+        }
+
+        return $this->userModel->create([
+            'username' => $data['username'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+        ]);
     }
 }

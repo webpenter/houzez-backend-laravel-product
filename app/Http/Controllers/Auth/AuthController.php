@@ -8,45 +8,60 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Resources\Auth\UserResource;
 use App\Models\User;
+use App\Repositories\UsersRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use InvalidArgumentException;
 
 class AuthController extends Controller
 {
+    protected $usersRepository;
+
+    /**
+     * AuthController constructor.
+     *
+     * @param UsersRepositoryInterface $usersRepository
+     */
+    public function __construct(UsersRepositoryInterface $usersRepository)
+    {
+        $this->usersRepository = $usersRepository;
+    }
+
     /**
      * Register a new user and return their details along with an authentication token.
      *
-     * @param \App\Http\Requests\RegisterRequest $request The HTTP request containing user registration data.
-     *
-     * @return \Illuminate\Http\JsonResponse A JSON response with a success message, the registered user data, and a Sanctum authentication token.
+     * @param RegisterRequest $request
+     * @return JsonResponse
      */
     public function register(RegisterRequest $request): JsonResponse
     {
-        $validated = $request->validated();
+        try {
+            $user = $this->usersRepository->create($request->validated());
+            $token = $user->generateToken();
 
-        if (!$validated) {
-            return new JsonResponse([
-                'errors' => $request->errors(),
+            return response()->json([
+                'success' => true,
+                'message' => 'User registered successfully',
+                'data' => [
+                    'user' => new UserResource($user),
+                    'token' => $token,
+                    'admin' => $user->isAdmin(),
+                    'isSubscribed' => $user->canCreateProperty(),
+                ],
+            ], 201);
+        } catch (InvalidArgumentException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
             ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to register user: ' . $e->getMessage(),
+            ], 500);
         }
-
-        $user = User::create([
-            'username' => $request->username,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
-
-        $token = $user->generateToken();
-
-        return new JsonResponse([
-            'message' => 'User registered successfully',
-            'user' => new UserResource($user),
-            'token' => $token,
-            'admin' => false,
-            'isSubscribed' => false,
-        ], 201);
     }
 
     /**

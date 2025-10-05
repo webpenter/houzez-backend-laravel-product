@@ -2,7 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\Deal;
+use App\Models\Enquiry;
+use App\Models\Lead;
 use App\Models\Property;
+use App\Models\Review;
 use App\Models\Setting;
 use App\Observers\Property\PropertyObserver;
 use App\Repositories\ActivityRepositoryInterface;
@@ -79,7 +83,16 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(InsightRepositoryInterface::class, InsightRepository::class);
 
         // Board repositories binding
-        $this->app->bind(ActivityRepositoryInterface::class, ActivityRepository::class);
+        
+        // Activity repository binding
+        $this->app->bind(ActivityRepositoryInterface::class, function ($app) {
+            return new ActivityRepository(
+                $app->make(Review::class),
+                $app->make(Lead::class),
+                $app->make(Deal::class),
+                $app->make(Enquiry::class)
+            );
+        });
         $this->app->bind(DealRepositoryInterface::class, DealRepository::class);
         $this->app->bind(LeadRepositoryInterface::class, LeadRepository::class);
         $this->app->bind(EnquiryRepositoryInterface::class, EnquiryRepository::class);
