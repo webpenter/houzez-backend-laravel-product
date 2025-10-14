@@ -46,7 +46,9 @@ use App\Repositories\UsersRepositoryInterface;
 use App\Repositories\AgentRepositoryInterface;
 use App\Repositories\AgencyRepositoryInterface;
 use App\Repositories\Eloquent\SettingRepository;
+use App\Repositories\Eloquent\UserProfileRepository;
 use App\Repositories\SettingRepositoryInterface;
+use App\Repositories\UserProfileRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -83,7 +85,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(InsightRepositoryInterface::class, InsightRepository::class);
 
         // Board repositories binding
-        
+
         // Activity repository binding
         $this->app->bind(ActivityRepositoryInterface::class, function ($app) {
             return new ActivityRepository(
@@ -100,6 +102,8 @@ class AppServiceProvider extends ServiceProvider
         // Agent & Agency repositories binding
         $this->app->bind(AgentRepositoryInterface::class, AgentRepository::class);
         $this->app->bind(AgencyRepositoryInterface::class, AgencyRepository::class);
+
+        $this->app->bind(UserProfileRepositoryInterface::class, UserProfileRepository::class);
 
         // Settings repositories
         // Settings repository binding
