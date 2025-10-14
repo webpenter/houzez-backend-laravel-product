@@ -16,6 +16,8 @@ use App\Models\Setting;
 use App\Repositories\SettingRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 
 class SettingController extends Controller
 {
@@ -43,21 +45,62 @@ class SettingController extends Controller
      */
     public function updateLogo(LogoSettingRequest $request): JsonResponse
     {
-        // Save file
-        $fileName = 'logo-' . time() . '.' . $request->logo->extension();
-        $request->logo->move(public_path('site-images'), $fileName);
-        $filePath = 'site-images/' . $fileName;
+        // Initialize Intervention Image manager
+        $manager = new ImageManager(new Driver());
 
-        // Update or create setting
+        // Original uploaded file
+        $file = $request->file('logo');
+        $extension = $file->getClientOriginalExtension();
+        $timestamp = time();
+
+        // Base file name (without type)
+        $baseName = 'logo-' . $timestamp;
+
+        // Define output directory
+        $directory = public_path('site-images');
+
+        if (!file_exists($directory)) {
+            mkdir($directory, 0777, true);
+        }
+
+        // === Create multiple versions ===
+        $originalPath = $directory . "/{$baseName}.{$extension}";
+        $logoPath     = $directory . "/{$baseName}-logo.{$extension}";
+        $bannerPath   = $directory . "/{$baseName}-banner.{$extension}";
+        $thumbPath    = $directory . "/{$baseName}-thumb.{$extension}";
+
+        // Save original image
+        $file->move($directory, "{$baseName}.{$extension}");
+
+        // Read the saved image
+        $image = $manager->read($originalPath);
+
+        // Create logo (square 200x200)
+        $image->scale(width: 90, height: 125)->save($logoPath);
+
+        // Create banner (wide)
+        $manager->read($originalPath)->cover(1200, 400)->save($bannerPath);
+
+        // Create thumbnail (small)
+        $manager->read($originalPath)->scale(width: 100, height: 100)->save($thumbPath);
+
+        // Convert to relative paths for DB
+        $relativeLogoPath = 'site-images/' . basename($logoPath);
+
+        // Update or create DB record
         $setting = $this->settingRepository->updateOrCreate('logo', [
-            'value' => $filePath,
+            'value' => $relativeLogoPath,
             'type' => 'image',
             'is_visible' => true
         ]);
 
+        // Return all versions
         return response()->json([
             'message' => 'Logo updated successfully',
-            'logo' => url($setting->value),
+            'original' => url('site-images/' . basename($originalPath)),
+            'logo' => url($relativeLogoPath),
+            'banner' => url('site-images/' . basename($bannerPath)),
+            'thumb' => url('site-images/' . basename($thumbPath)),
         ], 200);
     }
 

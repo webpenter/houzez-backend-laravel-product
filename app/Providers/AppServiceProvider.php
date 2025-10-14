@@ -45,8 +45,10 @@ use App\Repositories\TourRequestRepositoryInterface;
 use App\Repositories\UsersRepositoryInterface;
 use App\Repositories\AgentRepositoryInterface;
 use App\Repositories\AgencyRepositoryInterface;
+use App\Repositories\Eloquent\SavedSearchRepository;
 use App\Repositories\Eloquent\SettingRepository;
 use App\Repositories\Eloquent\UserProfileRepository;
+use App\Repositories\SavedSearchRepositoryInterface;
 use App\Repositories\SettingRepositoryInterface;
 use App\Repositories\UserProfileRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
@@ -104,6 +106,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(AgencyRepositoryInterface::class, AgencyRepository::class);
 
         $this->app->bind(UserProfileRepositoryInterface::class, UserProfileRepository::class);
+        $this->app->bind(SavedSearchRepositoryInterface::class, SavedSearchRepository::class);
 
         // Settings repositories
         // Settings repository binding
