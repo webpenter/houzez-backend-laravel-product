@@ -48,59 +48,40 @@ class SettingController extends Controller
         // Initialize Intervention Image manager
         $manager = new ImageManager(new Driver());
 
-        // Original uploaded file
+        // Uploaded file details
         $file = $request->file('logo');
         $extension = $file->getClientOriginalExtension();
         $timestamp = time();
-
-        // Base file name (without type)
         $baseName = 'logo-' . $timestamp;
-
-        // Define output directory
         $directory = public_path('site-images');
 
+        // Create folder if not exists
         if (!file_exists($directory)) {
             mkdir($directory, 0777, true);
         }
 
-        // === Create multiple versions ===
-        $originalPath = $directory . "/{$baseName}.{$extension}";
-        $logoPath     = $directory . "/{$baseName}-logo.{$extension}";
-        $bannerPath   = $directory . "/{$baseName}-banner.{$extension}";
-        $thumbPath    = $directory . "/{$baseName}-thumb.{$extension}";
+        // Define logo path
+        $logoPath = $directory . "/{$baseName}-logo.{$extension}";
 
-        // Save original image
-        $file->move($directory, "{$baseName}.{$extension}");
+        // Read, resize, and save logo
+        $manager->read($file->getRealPath())
+            ->scale(width: 90, height: 125)
+            ->save($logoPath);
 
-        // Read the saved image
-        $image = $manager->read($originalPath);
+        // Create full URL
+        $fullUrl = url('site-images/' . basename($logoPath));
 
-        // Create logo (square 200x200)
-        $image->scale(width: 90, height: 125)->save($logoPath);
-
-        // Create banner (wide)
-        $manager->read($originalPath)->cover(1200, 400)->save($bannerPath);
-
-        // Create thumbnail (small)
-        $manager->read($originalPath)->scale(width: 100, height: 100)->save($thumbPath);
-
-        // Convert to relative paths for DB
-        $relativeLogoPath = 'site-images/' . basename($logoPath);
-
-        // Update or create DB record
+        // Save/Update in DB (store full URL)
         $setting = $this->settingRepository->updateOrCreate('logo', [
-            'value' => $relativeLogoPath,
+            'value' => $fullUrl, // ✅ Full URL stored in DB
             'type' => 'image',
             'is_visible' => true
         ]);
 
-        // Return all versions
+        // Response
         return response()->json([
             'message' => 'Logo updated successfully',
-            'original' => url('site-images/' . basename($originalPath)),
-            'logo' => url($relativeLogoPath),
-            'banner' => url('site-images/' . basename($bannerPath)),
-            'thumb' => url('site-images/' . basename($thumbPath)),
+            'logo' => $fullUrl,
         ], 200);
     }
 
@@ -121,21 +102,43 @@ class SettingController extends Controller
      */
     public function updateBanner(BannerSettingRequest $request): JsonResponse
     {
-        // Save file
-        $fileName = 'banner-' . time() . '.' . $request->banner->extension();
-        $request->banner->move(public_path('site-images'), $fileName);
-        $filePath = 'site-images/' . $fileName;
+        // Initialize Intervention Image manager
+        $manager = new ImageManager(new Driver());
 
-        // Update or create setting
+        // Uploaded file details
+        $file = $request->file('banner');
+        $extension = $file->getClientOriginalExtension();
+        $timestamp = time();
+        $baseName = 'banner-' . $timestamp;
+        $directory = public_path('site-images');
+
+        // Create folder if not exists
+        if (!file_exists($directory)) {
+            mkdir($directory, 0777, true);
+        }
+
+        // Define banner path
+        $bannerPath = $directory . "/{$baseName}.{$extension}";
+
+        // Read, resize, and save banner (1352x600)
+        $manager->read($file->getRealPath())
+            ->resize(1352, 600) // ✅ Resize to exact dimensions
+            ->save($bannerPath, 90); // Optional: 90% quality
+
+        // Create full URL
+        $fullUrl = url('site-images/' . basename($bannerPath));
+
+        // Save or update setting in DB
         $setting = $this->settingRepository->updateOrCreate('banner', [
-            'value' => $filePath,
+            'value' => $fullUrl, // ✅ Full URL stored in DB
             'type' => 'image',
-            'is_visible' => true
+            'is_visible' => true,
         ]);
 
+        // Return JSON response
         return response()->json([
             'message' => 'Banner updated successfully',
-            'banner' => url($setting->value),
+            'banner'  => $fullUrl,
         ], 200);
     }
 
