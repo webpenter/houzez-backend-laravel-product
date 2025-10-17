@@ -63,6 +63,10 @@ class User extends Authenticatable
         ];
     }
 
+    protected $attributes = [
+        'is_admin' => false,
+    ];
+
     /**
      * Check if the user has admin privileges.
      *
@@ -70,7 +74,7 @@ class User extends Authenticatable
      */
     public function isAdmin(): bool
     {
-        return $this->is_admin;
+         return (bool) $this->is_admin;
     }
 
     /**

@@ -102,7 +102,7 @@ return [
     | Global "From" Address
     |--------------------------------------------------------------------------
     |
-    | You may wish for all emails sent by your application to be sent from
+    | You maxy wish for all emails sent by your application to be sent from
     | the same address. Here you may specify a name and address that is
     | used globally for all emails that are sent by your application.
     |

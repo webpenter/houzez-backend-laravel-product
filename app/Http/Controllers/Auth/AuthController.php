@@ -7,13 +7,18 @@ use App\Http\Requests\Auth\ChangePasswordRequest;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Resources\Auth\UserResource;
+use App\Models\Email;
+use App\Models\EmailLog;
+use App\Models\EmailTemplate;
 use App\Models\User;
 use App\Repositories\UsersRepositoryInterface;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use InvalidArgumentException;
+use Mail;
 
 class AuthController extends Controller
 {
@@ -41,6 +46,13 @@ class AuthController extends Controller
             $user = $this->usersRepository->create($request->validated());
             $token = $user->generateToken();
 
+            // ✅ Send welcome email to user
+            $this->sendEmailUsingTemplate('user_registration_user', $user, [$user->email]);
+
+            // ✅ Send notification email to admin
+            $adminEmail = \App\Models\Setting::where('key', 'support_email')->value('value') ?? 'admin@realestate.com';
+            $this->sendEmailUsingTemplate('user_registration_admin', $user, [$adminEmail]);
+
             return response()->json([
                 'success' => true,
                 'message' => 'User registered successfully',
@@ -63,6 +75,93 @@ class AuthController extends Controller
             ], 500);
         }
     }
+
+
+    private function sendEmailUsingTemplate(string $slug, $dataSource, array $to)
+    {
+        $template = EmailTemplate::where('slug', $slug)->first();
+
+        if (!$template) {
+            return false;
+        }
+
+        $subject = $template->subject;
+        $content = $template->content;
+
+        // ✅ Extract placeholders dynamically (e.g. {{email}}, {{username}}, {{role}}, etc.)
+        preg_match_all('/{{(.*?)}}/', $content . ' ' . $subject, $matches);
+        $placeholders = array_unique($matches[1]);
+
+        // ✅ Create replacement array
+        $replacements = [];
+
+        foreach ($placeholders as $placeholder) {
+            $key = trim($placeholder);
+
+            // 1️⃣ Try to get value from $dataSource (user model or passed data)
+            $replacements[$key] = $dataSource[$key]
+                ?? ($dataSource instanceof \App\Models\User ? $dataSource->{$key} ?? '' : '');
+
+            // 2️⃣ Add dynamic defaults (optional)
+            if ($key === 'date') {
+                $replacements[$key] = now()->format('Y-m-d');
+            }
+            if ($key === 'time') {
+                $replacements[$key] = now()->format('H:i:s');
+            }
+        }
+
+        // ✅ Replace placeholders in both subject and content
+        foreach ($replacements as $key => $value) {
+            $subject = str_replace('{{' . $key . '}}', e($value), $subject);
+            $content = str_replace('{{' . $key . '}}', e($value), $content);
+        }
+
+        // ✅ Save email record
+        $email = Email::create([
+            'template_id' => $template->id,
+            'to_email'    => json_encode($to),
+            'subject'     => $subject,
+            'content'     => $content,
+            'status'      => 'queued',
+            'created_by'  => Auth::id(),
+        ]);
+
+        try {
+            // Fetch sender email from settings
+            $adminEmail = \App\Models\Setting::where('key', 'support_email')->value('value') ?? config('mail.from.address');
+
+            Mail::send([], [], function ($message) use ($to, $subject, $content, $adminEmail) {
+                $message->from($adminEmail, config('mail.from.name'))
+                    ->to($to)
+                    ->subject($subject)
+                    ->html($content);
+            });
+
+            $email->update(['status' => 'sent', 'sent_at' => now()]);
+
+            EmailLog::create([
+                'email_id' => $email->id,
+                'recipient' => implode(',', $to),
+                'event' => 'sent',
+                'provider_response' => 'Mail sent successfully',
+                'created_at' => now(),
+            ]);
+        } catch (Exception $e) {
+            $email->update(['status' => 'failed', 'fail_reason' => $e->getMessage()]);
+
+            EmailLog::create([
+                'email_id' => $email->id,
+                'event' => 'failed',
+                'provider_response' => $e->getMessage(),
+                'created_at' => now(),
+            ]);
+        }
+
+        return true;
+    }
+
+
 
     /**
      * Authenticate a user and return their details along with an authentication token.
@@ -92,7 +191,7 @@ class AuthController extends Controller
             'token' => $token,
             'admin' => $admin,
             'isSubscribed' => $isSubscribed,
-        ],200);
+        ], 200);
     }
 
     /**
