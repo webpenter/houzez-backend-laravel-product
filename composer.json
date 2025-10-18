@@ -7,6 +7,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "intervention/image": "^3.11",
         "jenssegers/agent": "^2.6",
         "laravel/cashier": "^15.6",
         "laravel/framework": "^11.31",

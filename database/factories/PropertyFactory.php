@@ -23,7 +23,7 @@ class PropertyFactory extends Factory
             'label' => $this->faker->randomElement(['featured', 'new', 'hot', 'sold', null]),
             'price' => $this->faker->randomFloat(2, 50000, 5000000),
             'second_price' => $this->faker->randomFloat(2, 10000, 1000000),
-            'after_price' => $this->faker->randomElement(['/month', '/year', null]),
+            'after_price' => $this->faker->randomElement(['month', 'year', null]),
             'price_prefix' => $this->faker->randomElement(['$', '€', '£']),
             'user_id' => User::inRandomOrder()->first()->id ?? 1, // Requires at least one user; seed users first if needed
             'bedrooms' => $this->faker->numberBetween(1, 6),

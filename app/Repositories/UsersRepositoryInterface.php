@@ -3,6 +3,8 @@
 namespace App\Repositories;
 
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+
 interface UsersRepositoryInterface
 {
     /**
@@ -42,4 +44,12 @@ interface UsersRepositoryInterface
      *  @return Collection
      */
     public function getAgencyUsers(): Collection;
+
+    /**
+     * Create a new user.
+     *
+     * @param array $data
+     * @return Model
+     */
+    public function create(array $data): Model;
 }

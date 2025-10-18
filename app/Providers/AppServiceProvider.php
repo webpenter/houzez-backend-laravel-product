@@ -2,7 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\Deal;
+use App\Models\Enquiry;
+use App\Models\Lead;
 use App\Models\Property;
+use App\Models\Review;
 use App\Models\Setting;
 use App\Observers\Property\PropertyObserver;
 use App\Repositories\ActivityRepositoryInterface;
@@ -41,8 +45,12 @@ use App\Repositories\TourRequestRepositoryInterface;
 use App\Repositories\UsersRepositoryInterface;
 use App\Repositories\AgentRepositoryInterface;
 use App\Repositories\AgencyRepositoryInterface;
+use App\Repositories\Eloquent\SavedSearchRepository;
 use App\Repositories\Eloquent\SettingRepository;
+use App\Repositories\Eloquent\UserProfileRepository;
+use App\Repositories\SavedSearchRepositoryInterface;
 use App\Repositories\SettingRepositoryInterface;
+use App\Repositories\UserProfileRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -79,7 +87,16 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(InsightRepositoryInterface::class, InsightRepository::class);
 
         // Board repositories binding
-        $this->app->bind(ActivityRepositoryInterface::class, ActivityRepository::class);
+
+        // Activity repository binding
+        $this->app->bind(ActivityRepositoryInterface::class, function ($app) {
+            return new ActivityRepository(
+                $app->make(Review::class),
+                $app->make(Lead::class),
+                $app->make(Deal::class),
+                $app->make(Enquiry::class)
+            );
+        });
         $this->app->bind(DealRepositoryInterface::class, DealRepository::class);
         $this->app->bind(LeadRepositoryInterface::class, LeadRepository::class);
         $this->app->bind(EnquiryRepositoryInterface::class, EnquiryRepository::class);
@@ -88,8 +105,14 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(AgentRepositoryInterface::class, AgentRepository::class);
         $this->app->bind(AgencyRepositoryInterface::class, AgencyRepository::class);
 
-        // Settings repositories binding
-        $this->app->bind(SettingRepositoryInterface::class, SettingRepository::class);
+        $this->app->bind(UserProfileRepositoryInterface::class, UserProfileRepository::class);
+        $this->app->bind(SavedSearchRepositoryInterface::class, SavedSearchRepository::class);
+
+        // Settings repositories
+        // Settings repository binding
+        $this->app->bind(SettingRepositoryInterface::class, function ($app) {
+            return new SettingRepository($app->make(Setting::class));
+        });
     }
 
     /**

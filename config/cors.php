@@ -7,7 +7,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['http://localhost:5173','http://localhost:3000','https://buy.webpenter.com'], // your Vite frontend port
+    'allowed_origins' => ['http://localhost:5173','http://localhost:3000','https://buy.webpenter.com', 'https://realestate.webpenter.com'], // your Vite frontend port
 
     'allowed_origins_patterns' => [],
 

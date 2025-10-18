@@ -134,8 +134,8 @@ class AgencyRepository implements AgencyRepositoryInterface
     /**
      * Search agencies by name and address.
      *
-     * Eager loads related `profile` and `agencies` data, and calculates 
-     * average rating from `agentReviews`. Filters results by agency name 
+     * Eager loads related `profile` and `agencies` data, and calculates
+     * average rating from `agentReviews`. Filters results by agency name
      * and address if provided.
      *
      * @param string|null $name     Optional agency owner full name.

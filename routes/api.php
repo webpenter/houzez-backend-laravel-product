@@ -26,7 +26,9 @@ use App\Http\Controllers\Boards\ActivityController;
 use App\Http\Controllers\Insights\InsightController;
 use App\Http\Controllers\Agent\AgentController;
 use App\Http\Controllers\Agency\AgencyController;
+use App\Http\Controllers\EmailManagement\EmailTemplateController;
 use App\Http\Controllers\Settings\SettingController;
+use App\Models\EmailTemplate;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Route;
 
@@ -130,11 +132,8 @@ Route::prefix('v1')->group(function () {
 
         // Settings related routes
         Route::prefix('settings')->controller(SettingController::class)->group(function () {
-            // Route::get('get-logo','getLogo');
             Route::post('update-logo','updateLogo');
-            // Route::get('get-banner','getBanner');
             Route::post('update-banner','updateBanner');
-            // Route::get('social-media','getSocialMedia');
             Route::post('update-social-media','updateSocialMedia');
             Route::get('/site-information', 'getSiteInformation');
             Route::post('/update-site-information', 'updateSiteInformation');
@@ -157,6 +156,11 @@ Route::prefix('v1')->group(function () {
             Route::post('/update-picture',  'updateProfilePicture');
             Route::get('/get-social-media', 'getSocialMedia');
             Route::post('/update-social-media', 'updateSocialMedia');
+        });
+
+        // Email-Management Routes
+        Route::prefix('email-management')->controller(EmailTemplateController::class)->group(function () {
+            Route::post('/template', 'store');
         });
 
         // Properties-related routes
@@ -209,7 +213,7 @@ Route::prefix('v1')->group(function () {
         Route::prefix('saved-searches')->controller(SavedSearchController::class)->group(function () {
             Route::get('/get-user', 'getUserSearches');
             Route::post('/store-or-remove', 'storeOrRemoveSearch');
-            Route::get('/is-saved', 'isSearchSaved');
+            Route::post('/is-saved', 'isSearchSaved');
             Route::post('/delete/{id}', 'destroy');
         });
 

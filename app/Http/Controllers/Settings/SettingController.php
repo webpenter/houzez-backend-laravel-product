@@ -3,20 +3,37 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Settings\BannerSettingRequest;
+use App\Http\Requests\Settings\ContactSettingRequest;
+use App\Http\Requests\Settings\EmailSettingRequest;
+use App\Http\Requests\Settings\LogoSettingRequest;
+use App\Http\Requests\Settings\SeoSettingRequest;
 use App\Http\Requests\Settings\SettingRequest;
+use App\Http\Requests\Settings\SiteInformationSettingRequest;
+use App\Http\Requests\Settings\SocialMediaSettingRequest;
+use App\Http\Requests\Settings\StripeSettingRequest;
 use App\Models\Setting;
 use App\Repositories\SettingRepositoryInterface;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request; // ✅ correct
+use Illuminate\Http\Request;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 
 class SettingController extends Controller
 {
+    protected $settingRepository;
+
+    public function __construct(SettingRepositoryInterface $settingRepository)
+    {
+        $this->settingRepository = $settingRepository;
+    }
+
     /**
      * Fetch logo from settings table
      */
-    public function getLogo()
+    public function getLogo(): JsonResponse
     {
-        $logo = Setting::where('key', 'logo')->value('value');
+        $logo = $this->settingRepository->getByKey('logo');
 
         return response()->json([
             'logo' => $logo ? url($logo) : null
@@ -26,39 +43,54 @@ class SettingController extends Controller
     /**
      * Update logo in settings table
      */
-    public function updateLogo(Request $request)
+    public function updateLogo(LogoSettingRequest $request): JsonResponse
     {
-        $request->validate([
-            'logo' => 'required|image|mimes:jpg,jpeg,png,gif|max:2048',
+        // Initialize Intervention Image manager
+        $manager = new ImageManager(new Driver());
+
+        // Uploaded file details
+        $file = $request->file('logo');
+        $extension = $file->getClientOriginalExtension();
+        $timestamp = time();
+        $baseName = 'logo-' . $timestamp;
+        $directory = public_path('site-images');
+
+        // Create folder if not exists
+        if (!file_exists($directory)) {
+            mkdir($directory, 0777, true);
+        }
+
+        // Define logo path
+        $logoPath = $directory . "/{$baseName}-logo.{$extension}";
+
+        // Read, resize, and save logo
+        $manager->read($file->getRealPath())
+            ->scale(width: 90, height: 125)
+            ->save($logoPath);
+
+        // Create full URL
+        $fullUrl = url('site-images/' . basename($logoPath));
+
+        // Save/Update in DB (store full URL)
+        $setting = $this->settingRepository->updateOrCreate('logo', [
+            'value' => $fullUrl, // ✅ Full URL stored in DB
+            'type' => 'image',
+            'is_visible' => true
         ]);
 
-        // Save file
-        $fileName = 'logo-' . time() . '.' . $request->logo->extension();
-        $request->logo->move(public_path('site-images'), $fileName);
-        $filePath = 'site-images/' . $fileName;
-
-        // Update or create setting
-        $setting = Setting::updateOrCreate(
-            ['key' => 'logo'],
-            [
-                'value' => $filePath,
-                'type' => 'image',
-                'is_visible' => true
-            ]
-        );
-
+        // Response
         return response()->json([
             'message' => 'Logo updated successfully',
-            'logo'    => url($setting->value),
+            'logo' => $fullUrl,
         ], 200);
     }
 
     /**
      * Fetch banner image from settings table
      */
-    public function getBanner()
+    public function getBanner(): JsonResponse
     {
-        $banner = Setting::where('key', 'banner')->value('value');
+        $banner = $this->settingRepository->getByKey('banner');
 
         return response()->json([
             'banner' => $banner ? url($banner) : null
@@ -68,42 +100,67 @@ class SettingController extends Controller
     /**
      * Update banner image in settings table
      */
-    public function updateBanner(Request $request)
+    public function updateBanner(BannerSettingRequest $request): JsonResponse
     {
-        $request->validate([
-            'banner' => 'required|image|mimes:jpg,jpeg,png,gif|max:4096',
+        // Initialize Intervention Image manager
+        $manager = new ImageManager(new Driver());
+
+        // Uploaded file details
+        $file = $request->file('banner');
+        $extension = $file->getClientOriginalExtension();
+        $timestamp = time();
+        $baseName = 'banner-' . $timestamp;
+        $directory = public_path('site-images');
+
+        // Create folder if not exists
+        if (!file_exists($directory)) {
+            mkdir($directory, 0777, true);
+        }
+
+        // Define banner path
+        $bannerPath = $directory . "/{$baseName}.{$extension}";
+
+        // Read, resize, and save banner (1352x600)
+        $manager->read($file->getRealPath())
+            ->resize(1352, 600) // ✅ Resize to exact dimensions
+            ->save($bannerPath, 90); // Optional: 90% quality
+
+        // Create full URL
+        $fullUrl = url('site-images/' . basename($bannerPath));
+
+        // Save or update setting in DB
+        $setting = $this->settingRepository->updateOrCreate('banner', [
+            'value' => $fullUrl, // ✅ Full URL stored in DB
+            'type' => 'image',
+            'is_visible' => true,
         ]);
 
-        // Save file
-        $fileName = 'banner-' . time() . '.' . $request->banner->extension();
-        $request->banner->move(public_path('site-images'), $fileName);
-        $filePath = 'site-images/' . $fileName;
-
-        // Update or create setting
-        $setting = Setting::updateOrCreate(
-            ['key' => 'banner'],
-            [
-                'value' => $filePath,
-                'type' => 'image',
-                'is_visible' => true
-            ]
-        );
-
+        // Return JSON response
         return response()->json([
             'message' => 'Banner updated successfully',
-            'banner'  => url($setting->value),
+            'banner'  => $fullUrl,
         ], 200);
     }
 
-    public function getSocialMedia()
+    /**
+     * Fetch social media settings
+     */
+    public function getSocialMedia(): JsonResponse
     {
         $keys = [
-            'facebook', 'twitter', 'linkedin', 'instagram',
-            'google_plus', 'youtube', 'pinterest', 'vimeo',
-            'skype', 'website'
+            'facebook',
+            'twitter',
+            'linkedin',
+            'instagram',
+            'google_plus',
+            'youtube',
+            'pinterest',
+            'vimeo',
+            'skype',
+            'website'
         ];
 
-        $settings = Setting::whereIn('key', $keys)->get();
+        $settings = $this->settingRepository->getByKeys($keys);
 
         $socialMedia = [];
         foreach ($keys as $key) {
@@ -114,49 +171,42 @@ class SettingController extends Controller
             ];
         }
 
-        return response()->json(['social_media' => $socialMedia]);
-    }
-
-    public function updateSocialMedia(Request $request)
-    {
-        $data = $request->all(); // payload is directly coming, not inside 'social_media'
-
-        // Define allowed social media keys (only these will be updated)
-        $allowedKeys = [
-            'facebook', 'twitter', 'linkedin', 'instagram',
-            'google_plus', 'pinterest', 'skype', 'vimeo',
-            'website', 'youtube'
-        ];
-
-        foreach ($data as $key => $item) {
-            // Skip non-social media keys
-            if (!in_array($key, $allowedKeys)) {
-                continue;
-            }
-
-            Setting::updateOrCreate(
-                ['key' => $key],
-                [
-                    'value'      => $item['value'] ?? '',
-                    'type'       => 'url', // keep type fixed for social media
-                    'is_visible' => isset($item['is_visible']) ? (bool) $item['is_visible'] : true
-                ]
-            );
-        }
-
-        return response()->json(['message' => 'Social Media updated successfully!']);
+        return response()->json(['social_media' => $socialMedia], 200);
     }
 
     /**
-     * Get site information settings
-     *
-     * @return JsonResponse
+     * Update social media settings
+     */
+    public function updateSocialMedia(SocialMediaSettingRequest $request): JsonResponse
+    {
+        $data = $request->all();
+
+        $allowedKeys = [
+            'facebook',
+            'twitter',
+            'linkedin',
+            'instagram',
+            'google_plus',
+            'pinterest',
+            'skype',
+            'vimeo',
+            'website',
+            'youtube'
+        ];
+
+        $this->settingRepository->updateMultiple($data, $allowedKeys, 'url');
+
+        return response()->json(['message' => 'Social Media updated successfully!'], 200);
+    }
+
+    /**
+     * Fetch site information settings
      */
     public function getSiteInformation(): JsonResponse
     {
         $keys = ['email', 'phone_number', 'site_name', 'site_title'];
 
-        $settings = Setting::whereIn('key', $keys)->get();
+        $settings = $this->settingRepository->getByKeys($keys);
 
         $siteInfo = [];
         foreach ($keys as $key) {
@@ -172,30 +222,13 @@ class SettingController extends Controller
 
     /**
      * Update site information settings
-     *
-     * @param Request $request
-     * @return JsonResponse
      */
-    public function updateSiteInformation(Request $request): JsonResponse
+    public function updateSiteInformation(SiteInformationSettingRequest $request): JsonResponse
     {
         $data = $request->all();
-
         $allowedKeys = ['email', 'phone_number', 'site_name', 'site_title'];
 
-        foreach ($data as $key => $item) {
-            if (!in_array($key, $allowedKeys)) {
-                continue;
-            }
-
-            Setting::updateOrCreate(
-                ['key' => $key],
-                [
-                    'value'      => $item['value'] ?? '',
-                    'type'       => 'string',
-                    'is_visible' => isset($item['is_visible']) ? (bool) $item['is_visible'] : true
-                ]
-            );
-        }
+        $this->settingRepository->updateMultiple($data, $allowedKeys, 'string');
 
         return response()->json(['message' => 'Site Information updated successfully!'], 200);
     }
@@ -207,7 +240,7 @@ class SettingController extends Controller
     {
         $keys = ['stripe_public_key', 'stripe_private_key', 'currency'];
 
-        $settings = Setting::whereIn('key', $keys)->get();
+        $settings = $this->settingRepository->getByKeys($keys);
 
         $stripeSettings = [];
         foreach ($keys as $key) {
@@ -218,50 +251,30 @@ class SettingController extends Controller
             ];
         }
 
-        return response()->json(['stripe' => $stripeSettings]);
+        return response()->json(['stripe' => $stripeSettings], 200);
     }
 
     /**
      * Update Stripe settings
      */
-    public function updateStripeSettings(Request $request): JsonResponse
+    public function updateStripeSettings(StripeSettingRequest $request): JsonResponse
     {
-        $request->validate([
-            'stripe_public_key.value'  => 'required|string',
-            'stripe_private_key.value' => 'required|string',
-            'currency.value'           => 'required|string|max:5',
-        ]);
-
         $data = $request->all();
-
         $allowedKeys = ['stripe_public_key', 'stripe_private_key', 'currency'];
 
-        foreach ($data as $key => $item) {
-            if (!in_array($key, $allowedKeys)) {
-                continue;
-            }
+        $this->settingRepository->updateMultiple($data, $allowedKeys, 'string');
 
-            Setting::updateOrCreate(
-                ['key' => $key],
-                [
-                    'value'      => $item['value'] ?? '',
-                    'type'       => 'string',
-                    'is_visible' => isset($item['is_visible']) ? (bool) $item['is_visible'] : true
-                ]
-            );
-        }
-
-        return response()->json(['message' => 'Stripe settings updated successfully!']);
+        return response()->json(['message' => 'Stripe settings updated successfully!'], 200);
     }
 
     /**
-     * Fetch Contact Settings
+     * Fetch contact settings
      */
     public function getContactSettings(): JsonResponse
     {
         $keys = ['contact_email', 'contact_phone', 'address', 'mobile_number', 'whatsapp_number'];
 
-        $settings = Setting::whereIn('key', $keys)->get();
+        $settings = $this->settingRepository->getByKeys($keys);
 
         $contact = [];
         foreach ($keys as $key) {
@@ -272,42 +285,23 @@ class SettingController extends Controller
             ];
         }
 
-        return response()->json(['contact' => $contact]);
+        return response()->json(['contact' => $contact], 200);
     }
 
     /**
-     * Update Contact Settings
+     * Update contact settings
      */
-    public function updateContactSettings(Request $request): JsonResponse
+    public function updateContactSettings(ContactSettingRequest $request): JsonResponse
     {
-        $request->validate([
-            'contact_email.value'     => 'nullable|email',
-            'contact_phone.value'     => 'nullable|string|max:20',
-            'address.value'           => 'nullable|string|max:255',
-            'mobile_number.value'     => 'nullable|string|max:20',
-            'whatsapp_number.value'   => 'nullable|string|max:20',
-        ]);
 
         $data = $request->all();
         $allowedKeys = ['contact_email', 'contact_phone', 'address', 'mobile_number', 'whatsapp_number'];
 
-        foreach ($data as $key => $item) {
-            if (!in_array($key, $allowedKeys)) {
-                continue;
-            }
+        $this->settingRepository->updateMultiple($data, $allowedKeys, 'string');
 
-            Setting::updateOrCreate(
-                ['key' => $key],
-                [
-                    'value'      => $item['value'] ?? '',
-                    'type'       => 'string',
-                    'is_visible' => isset($item['is_visible']) ? (bool) $item['is_visible'] : true
-                ]
-            );
-        }
-
-        return response()->json(['message' => 'Contact settings updated successfully!']);
+        return response()->json(['message' => 'Contact settings updated successfully!'], 200);
     }
+
 
     /**
      * Fetch Email Settings
@@ -324,7 +318,7 @@ class SettingController extends Controller
             'mail_from_name'
         ];
 
-        $settings = Setting::whereIn('key', $keys)->get();
+        $settings = $this->settingRepository->getByKeys($keys);
 
         $email = [];
         foreach ($keys as $key) {
@@ -335,13 +329,13 @@ class SettingController extends Controller
             ];
         }
 
-        return response()->json(['email_settings' => $email]);
+        return response()->json(['email_settings' => $email], 200);
     }
 
     /**
      * Update Email Settings
      */
-    public function updateEmailSettings(Request $request): JsonResponse
+    public function updateEmailSettings(EmailSettingRequest $request): JsonResponse
     {
         $request->validate([
             'mail_driver.value'       => 'required|string|in:smtp,sendmail,mailgun,ses',
@@ -355,39 +349,35 @@ class SettingController extends Controller
 
         $data = $request->all();
         $allowedKeys = [
-            'mail_driver', 'mail_host', 'mail_port', 'mail_username',
-            'mail_password', 'mail_from_address', 'mail_from_name'
+            'mail_driver',
+            'mail_host',
+            'mail_port',
+            'mail_username',
+            'mail_password',
+            'mail_from_address',
+            'mail_from_name'
         ];
 
-        foreach ($data as $key => $item) {
-            if (!in_array($key, $allowedKeys)) {
-                continue;
-            }
+        $this->settingRepository->updateMultiple($data, $allowedKeys, 'string');
 
-            Setting::updateOrCreate(
-                ['key' => $key],
-                [
-                    'value'      => $item['value'] ?? '',
-                    'type'       => 'string',
-                    'is_visible' => isset($item['is_visible']) ? (bool) $item['is_visible'] : true
-                ]
-            );
-        }
-
-        return response()->json(['message' => 'Email settings updated successfully!']);
+        return response()->json(['message' => 'Email settings updated successfully!'], 200);
     }
 
+
     /**
-     * Fetch SEO settings from database
+     * Fetch SEO settings
      */
     public function getSeoSettings(): JsonResponse
     {
         $keys = [
-            'meta_title', 'meta_description', 'meta_keywords',
-            'google_analytics_code', 'facebook_pixel_code'
+            'meta_title',
+            'meta_description',
+            'meta_keywords',
+            'google_analytics_code',
+            'facebook_pixel_code'
         ];
 
-        $settings = Setting::whereIn('key', $keys)->get();
+        $settings = $this->settingRepository->getByKeys($keys);
 
         $seo = [];
         foreach ($keys as $key) {
@@ -399,33 +389,22 @@ class SettingController extends Controller
     }
 
     /**
-     * Update SEO settings in database
+     * Update SEO settings
      */
-    public function updateSeoSettings(Request $request): JsonResponse
+    public function updateSeoSettings(SeoSettingRequest $request): JsonResponse
     {
-        $request->validate([
-            'meta_title'            => 'nullable|string|max:255',
-            'meta_description'      => 'nullable|string|max:500',
-            'meta_keywords'         => 'nullable|string|max:500',
-            'google_analytics_code' => 'nullable|string|max:1000',
-            'facebook_pixel_code'   => 'nullable|string|max:1000',
-        ]);
 
-        foreach ($request->all() as $key => $value) {
-            Setting::updateOrCreate(
-                ['key' => $key],
-                [
-                    'value'      => $value,
-                    'type'       => 'text',
-                    'is_visible' => true,
-                ]
-            );
-        }
+        $data = $request->all();
+        $allowedKeys = [
+            'meta_title',
+            'meta_description',
+            'meta_keywords',
+            'google_analytics_code',
+            'facebook_pixel_code'
+        ];
+
+        $this->settingRepository->updateMultiple($data, $allowedKeys, 'text');
 
         return response()->json(['message' => 'SEO settings updated successfully!'], 200);
     }
-
-
-
-
 }

@@ -3,88 +3,72 @@
 namespace App\Http\Controllers\Others;
 
 use App\Http\Controllers\Controller;
-use App\Models\SavedSearch;
+use App\Repositories\SavedSearchRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class SavedSearchController extends Controller
 {
-    /**
-     * Get all saved searches for the authenticated user.
-     *
-     * @return JsonResponse
-     */
-    public function getUserSearches(): JsonResponse
+    protected SavedSearchRepositoryInterface $savedSearchRepository;
+
+    public function __construct(SavedSearchRepositoryInterface $savedSearchRepository)
     {
-        $searches = SavedSearch::whereUserId(Auth::id())->get(['id', 'parameters']);
-        return response()->json([ 'searches' => $searches]);
+        $this->savedSearchRepository = $savedSearchRepository;
     }
 
-    /**
-     * Store or remove a saved search for the authenticated user.
-     *
-     * @param Request $request
-     * @return JsonResponse
-     */
+    public function getUserSearches(): JsonResponse
+    {
+        $searches = $this->savedSearchRepository->getUserSearches();
+
+        return response()->json([
+            'success'  => true,
+            'count'    => $searches->count(),
+            'searches' => $searches,
+        ]);
+    }
+
     public function storeOrRemoveSearch(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'parameters' => 'required|string',
         ]);
 
-        $userId = Auth::id();
-        $existingSearch = SavedSearch::where('user_id', $userId)
-            ->where('parameters', $validated['parameters'])
-            ->first();
+        $result = $this->savedSearchRepository->storeOrRemoveSearch($validated);
 
-        if ($existingSearch) {
-            $existingSearch->delete();
-            return response()->json(['success' => true, 'message' => 'Search removed.'], 204);
-        } else {
-            $search = SavedSearch::create([
-                'user_id' => $userId,
-                'parameters' => $validated['parameters'],
-            ]);
-            return response()->json(['success' => true, 'data' => $search], 201);
-        }
+        return response()->json([
+            'success' => true,
+            ...$result,
+        ], $result['action'] === 'saved' ? 201 : 200);
     }
 
-    /**
-     * Check if a saved search exists for the authenticated user.
-     *
-     * @param Request $request
-     * @return JsonResponse
-     */
     public function isSearchSaved(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'parameters' => 'required|string',
         ]);
 
-        $userId = Auth::id();
-        $exists = SavedSearch::where('user_id', $userId)
-            ->where('parameters', $validated['parameters'])
-            ->exists();
+        $exists = $this->savedSearchRepository->isSearchSaved($validated);
 
-        return response()->json(['success' => true, 'isSaved' => $exists]);
+        return response()->json([
+            'success' => true,
+            'isSaved' => $exists,
+        ]);
     }
 
-    /**
-     * Delete a saved search by ID.
-     *
-     * @param int $id
-     * @return JsonResponse
-     */
     public function destroy(int $id): JsonResponse
     {
-        $search = SavedSearch::whereId($id)->whereUserId(Auth::id())->first();
+        $deleted = $this->savedSearchRepository->deleteSearch($id);
 
-        if (!$search) {
-            return response()->json([ 'success' => false, 'message' => 'Search not found' ], 404);
+        if (!$deleted) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Search not found.',
+            ], 404);
         }
 
-        $search->delete();
-        return response()->json([ 'success' => true, 'message' => 'Search deleted successfully' ]);
+        return response()->json([
+            'success' => true,
+            'message' => 'Search deleted successfully.',
+        ]);
     }
 }
