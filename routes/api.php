@@ -159,9 +159,21 @@ Route::prefix('v1')->group(function () {
         });
 
         // Email-Management Routes
-        Route::prefix('email-management')->controller(EmailTemplateController::class)->group(function () {
-            Route::post('/template', 'store');
+        Route::prefix('email-management')->group(function () {
+
+            // Templates Routes
+            Route::prefix('templates')->controller(EmailTemplateController::class)->group(function () {
+                Route::get('/', 'index');      // Get all email templates
+                Route::post('/', 'store');         // Create new template
+                Route::get('{id}', 'show');                // View single template
+                Route::put('{id}', 'update');              // Update template
+                Route::delete('{id}', 'destroy');          // Delete template
+                Route::put('{id}/status', 'updateStatus'); // Change status (active/inactive)
+            });
+
+
         });
+
 
         // Properties-related routes
         Route::prefix('properties')->group(function () {
