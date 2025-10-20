@@ -13,8 +13,12 @@ use Illuminate\Support\Facades\Validator;
 
 class PropertyImageRepository implements PropertyImageRepositoryInterface
 {
-    /**
-     * ## Handles the creation or update of property images.
+/**
+     * ✅ Handles uploading and saving property images securely.
+     * - Limits max images to 6 per property.
+     * - Saves images using Laravel Storage (better for production & CDN).
+     * - Generates full URL with domain.
+     * - Automatically marks the first image as thumbnail if none exists.
      *
      * @param Request $request
      * @param int $propertyId
@@ -24,15 +28,18 @@ class PropertyImageRepository implements PropertyImageRepositoryInterface
     {
         $images = $request->file('images');
 
+        // ✅ Count existing images for this property
         $existingImages = PropertyImage::where('property_id', $propertyId)->count();
 
+        // ✅ Validate image limit (max 6)
         if ($existingImages >= 6) {
             return [
                 'status' => 422,
-                'response' => ['message' => 'This property already has 6 images, no more can be uploaded.']
+                'response' => ['message' => 'Maximum of 6 images allowed for this property.']
             ];
         }
 
+        // ✅ Calculate remaining slots
         $remainingSlots = 6 - $existingImages;
 
         if (count($images) > $remainingSlots) {
@@ -42,48 +49,54 @@ class PropertyImageRepository implements PropertyImageRepositoryInterface
             ];
         }
 
-        $imagePaths = [];
+        $imageRecords = [];
+
         foreach ($images as $image) {
-            $destinationPath = public_path('property_images');
+            // ✅ Generate secure and unique file name
+            $filename = uniqid('property_') . '_' . preg_replace('/\s+/', '_', $image->getClientOriginalName());
 
-            if (!File::exists($destinationPath)) {
-                File::makeDirectory($destinationPath, 0755, true);
-            }
+            // ✅ Store image using Laravel storage
+            $path = $image->storeAs('property_images', $filename, 'public');
 
-            $filename = uniqid() . '_' . $image->getClientOriginalName();
-            $image->move($destinationPath, $filename);
+            // ✅ Generate full domain-based URL
+            $fullUrl = url('storage/' . $path);
 
-            $fullPath = url('property_images/' . $filename);
-
+            // ✅ Save image record in DB
             $imageRecord = PropertyImage::create([
                 'property_id' => $propertyId,
-                'image_path' => $fullPath,
-                'is_thumbnail' => false,
+                'image_path'  => $fullUrl,
+                'is_thumbnail'=> false,
             ]);
 
-            $imagePaths[] = $imageRecord;
+            $imageRecords[] = $imageRecord;
         }
 
-        if ($existingImages == 0) {
-            $imagePaths[0]->update(['is_thumbnail' => true]);
-        } else {
-            $thumbnailImage = PropertyImage::where('property_id', $propertyId)
-                ->where('is_thumbnail', true)
-                ->first();
-
-            if (!$thumbnailImage) {
-                $imagePaths[0]->update(['is_thumbnail' => true]);
-            }
-        }
+        // ✅ If no previous images, set first image as thumbnail
+        $this->setThumbnailIfNotExists($propertyId, $imageRecords[0] ?? null);
 
         return [
             'status' => 200,
             'response' => [
-                'message' => 'Images uploaded successfully',
-                'images' => $imagePaths,
+                'message' => 'Images uploaded successfully!',
+                'images'  => $imageRecords,
             ]
         ];
     }
+
+    /**
+     * ✅ Sets the first image as thumbnail if none is set already.
+     */
+    private function setThumbnailIfNotExists(int $propertyId, $newImage = null): void
+    {
+        $existingThumbnail = PropertyImage::where('property_id', $propertyId)
+            ->where('is_thumbnail', true)
+            ->first();
+
+        if (!$existingThumbnail && $newImage) {
+            $newImage->update(['is_thumbnail' => true]);
+        }
+    }
+
 
     /**
      * ## Get Images by Property ID
