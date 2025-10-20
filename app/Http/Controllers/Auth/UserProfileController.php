@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\UpdateProfilePictureRequest;
+use App\Http\Requests\Profile\ProfilePictureRequest;
 use App\Http\Resources\Auth\UserProfileResource;
 use App\Http\Resources\Auth\UserSocialMediaResource;
 use App\Repositories\UserProfileRepositoryInterface;
@@ -38,13 +39,8 @@ class UserProfileController extends Controller
     /**
      * Update the authenticated user's profile picture.
      */
-    public function updateProfilePicture(Request $request): JsonResponse
+    public function updateProfilePicture(ProfilePictureRequest $request): JsonResponse
     {
-        // Use request validation class if it exists, otherwise basic validation
-        $validated = $request->validate([
-            'profile_picture' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
-
         $file = $request->file('profile_picture');
         $updatedUrl = $this->userProfileRepository->updateProfilePicture($file);
 

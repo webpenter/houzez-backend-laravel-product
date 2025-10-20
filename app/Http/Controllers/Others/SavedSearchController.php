@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Others;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\SavedSearch\SavedSearchRequest;
 use App\Repositories\SavedSearchRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -27,13 +28,10 @@ class SavedSearchController extends Controller
         ]);
     }
 
-    public function storeOrRemoveSearch(Request $request): JsonResponse
+    public function storeOrRemoveSearch(SavedSearchRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'parameters' => 'required|string',
-        ]);
 
-        $result = $this->savedSearchRepository->storeOrRemoveSearch($validated);
+        $result = $this->savedSearchRepository->storeOrRemoveSearch($request->validated());
 
         return response()->json([
             'success' => true,
@@ -41,13 +39,9 @@ class SavedSearchController extends Controller
         ], $result['action'] === 'saved' ? 201 : 200);
     }
 
-    public function isSearchSaved(Request $request): JsonResponse
+    public function isSearchSaved(SavedSearchRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'parameters' => 'required|string',
-        ]);
-
-        $exists = $this->savedSearchRepository->isSearchSaved($validated);
+        $exists = $this->savedSearchRepository->isSearchSaved($request->validated());
 
         return response()->json([
             'success' => true,
