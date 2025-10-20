@@ -5,6 +5,8 @@ namespace App\Repositories\Eloquent;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\UserProfileRepositoryInterface;
+use Illuminate\Support\Facades\Storage;
+use Str;
 
 class UserProfileRepository implements UserProfileRepositoryInterface
 {
@@ -47,18 +49,23 @@ class UserProfileRepository implements UserProfileRepositoryInterface
         $user = Auth::user();
         $profile = $user->profile ?? $user->profile()->create([]);
 
-        // Delete old picture if exists
+        // ✅ Delete old file if exists
         if (!empty($profile->profile_picture)) {
-            $oldPath = public_path('profile-picture/' . basename($profile->profile_picture));
-            if (file_exists($oldPath)) {
-                unlink($oldPath);
-            }
+            $oldFilePath = str_replace(url('/') . '/storage/', '', $profile->profile_picture);
+            Storage::disk('public')->delete($oldFilePath);
         }
 
-        $fileName = time() . '_' . $file->getClientOriginalName();
-        $file->move(public_path('profile-picture'), $fileName);
+        // ✅ Get original file name and make it unique
+        $originalName = $file->getClientOriginalName(); // e.g. 'photo.png'
+        $uniqueFileName = time() . '_' . Str::slug(pathinfo($originalName, PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
 
-        $fullUrl = url('profile-picture/' . $fileName);
+        // ✅ Store using original name (inside storage/app/public/profile_picture)
+        $path = $file->storeAs('profile_picture', $uniqueFileName, 'public');
+
+        // ✅ Generate full URL with domain
+        $fullUrl = url('storage/' . $path);
+
+        // ✅ Update database
         $profile->update(['profile_picture' => $fullUrl]);
 
         return $fullUrl;
