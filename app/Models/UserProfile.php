@@ -18,6 +18,7 @@ class UserProfile extends Model
      * excluded to prevent unauthorized ownership changes.
      */
     protected $fillable = [
+        'user_id',
         'public_name',       // Display name shown publicly
         'first_name',
         'last_name',
